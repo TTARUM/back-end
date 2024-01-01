@@ -2,25 +2,19 @@ package com.ttarum.common.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
 import java.time.Instant;
 
 @MappedSuperclass
-public abstract class UpdatableEntity {
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+public abstract class UpdatableEntity extends BaseEntity {
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @PrePersist
+    @Override
     public void prePersist() {
-        Instant now = Instant.now();
-        this.createdAt = now;
-        this.updatedAt = now;
+        this.updatedAt = Instant.now();
     }
 
     @PreUpdate

@@ -1,6 +1,7 @@
 package com.ttarum.user.domain;
 
 import com.ttarum.common.domain.BaseEntity;
+import com.ttarum.common.domain.UpdatableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "user")
-public class User extends BaseEntity {
+public class User extends UpdatableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int UNSIGNED not null")

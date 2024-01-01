@@ -14,6 +14,7 @@ public abstract class UpdatableEntity extends BaseEntity {
 
     @Override
     public void prePersist() {
+        super.prePersist();
         this.updatedAt = Instant.now();
     }
 

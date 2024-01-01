@@ -1,9 +1,8 @@
 package com.ttarum.item.domain;
 
+import com.ttarum.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.Instant;
 
 @Builder
 @AllArgsConstructor
@@ -11,7 +10,7 @@ import java.time.Instant;
 @Getter
 @Entity
 @Table(name = "item")
-public class Item {
+public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int UNSIGNED not null")
@@ -38,13 +37,5 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = Instant.now();
-    }
 
 }

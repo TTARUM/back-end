@@ -1,6 +1,7 @@
 package com.ttarum.review.domain;
 
 import com.ttarum.common.domain.BaseEntity;
+import com.ttarum.common.domain.UpdatableEntity;
 import com.ttarum.item.domain.Item;
 import com.ttarum.user.domain.User;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "review")
-public class Review extends BaseEntity {
+public class Review extends UpdatableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int UNSIGNED not null")

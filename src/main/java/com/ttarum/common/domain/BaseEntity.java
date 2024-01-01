@@ -7,7 +7,7 @@ import jakarta.persistence.PrePersist;
 import java.time.Instant;
 
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;

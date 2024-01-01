@@ -1,11 +1,10 @@
 package com.ttarum.inquiry.domain;
 
+import com.ttarum.common.domain.BaseEntity;
 import com.ttarum.item.domain.Item;
 import com.ttarum.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.Instant;
 
 @Builder
 @AllArgsConstructor
@@ -13,7 +12,7 @@ import java.time.Instant;
 @Getter
 @Entity
 @Table(name = "inquiry")
-public class Inquiry {
+public class Inquiry extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int UNSIGNED not null")
@@ -36,12 +35,9 @@ public class Inquiry {
     @Column(name = "exist_answer", nullable = false)
     private Boolean existAnswer;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @PrePersist
+    @Override
     public void prePersist() {
-        this.createdAt = Instant.now();
+        super.prePersist();
         this.existAnswer = false;
     }
 }

@@ -3,7 +3,6 @@ package com.ttarum.common.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 
 import java.time.Instant;
 
@@ -15,7 +14,6 @@ public class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        Instant now = Instant.now();
-        this.createdAt = now;
+        this.createdAt = Instant.now();
     }
 }

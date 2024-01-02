@@ -1,10 +1,9 @@
 package com.ttarum.order.domain;
 
+import com.ttarum.common.domain.BaseEntity;
 import com.ttarum.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.Instant;
 
 @Builder
 @AllArgsConstructor
@@ -12,7 +11,7 @@ import java.time.Instant;
 @Getter
 @Entity
 @Table(name = "`order`")
-public class Order {
+public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", columnDefinition = "int UNSIGNED not null")
@@ -36,15 +35,8 @@ public class Order {
     @Column(name = "price", columnDefinition = "int UNSIGNED not null")
     private Long price;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = Instant.now();
-    }
 }

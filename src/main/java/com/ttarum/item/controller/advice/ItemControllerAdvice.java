@@ -21,6 +21,7 @@ public class ItemControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorResponse unknownException(final Exception e) {
-        return ErrorResponse.generate(e.getMessage());
+        log.error("Error", e);
+        return ErrorResponse.generate("서버 내부 오류");
     }
 }

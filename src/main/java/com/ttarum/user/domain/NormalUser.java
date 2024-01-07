@@ -11,12 +11,11 @@ import lombok.*;
 @Table(name = "normal_user")
 public class NormalUser {
     @Id
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
     private Long id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "login_id", nullable = false, length = 20)

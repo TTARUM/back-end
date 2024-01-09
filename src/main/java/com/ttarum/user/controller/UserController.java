@@ -1,11 +1,7 @@
 package com.ttarum.user.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Slf4j
-@RestController
-@RequestMapping("/api/users")
-public class UserController implements IUserController {
+@Tag(name = "User", description = "회원")
+public interface UserController {
 }

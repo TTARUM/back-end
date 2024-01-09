@@ -23,10 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-class ItemControllerTest {
+class ItemControllerImplTest {
 
     @InjectMocks
-    private ItemController itemController;
+    private ItemControllerImpl itemControllerImpl;
 
     @Mock
     private ItemService itemService;
@@ -36,7 +36,7 @@ class ItemControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(itemController)
+        mockMvc = MockMvcBuilders.standaloneSetup(itemControllerImpl)
                 .setControllerAdvice(new ItemControllerAdvice())
                 .build();
     }

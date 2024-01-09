@@ -6,7 +6,7 @@ import lombok.*;
 
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @Table(name = "item")
@@ -23,10 +23,7 @@ public class Item extends BaseEntity {
     private String description;
 
     @Column(name = "price", columnDefinition = "int UNSIGNED not null")
-    private Long price;
-
-    @Column(name = "volume", columnDefinition = "int UNSIGNED not null")
-    private Long volume;
+    private Integer price;
 
     @Column(name = "item_image_url", nullable = false, length = 100)
     private String itemImageUrl;

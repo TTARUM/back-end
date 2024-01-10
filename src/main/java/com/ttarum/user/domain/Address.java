@@ -19,7 +19,7 @@ public class Address {
     private String address;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
     private User user;
 
 }

@@ -15,7 +15,7 @@ public class NormalUser {
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
     private User user;
 
     @Column(name = "login_id", nullable = false, length = 20)

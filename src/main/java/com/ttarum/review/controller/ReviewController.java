@@ -1,11 +1,7 @@
 package com.ttarum.review.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Slf4j
-@RestController
-@RequestMapping("/api/reviews")
-public class ReviewController implements IReviewController {
+@Tag(name = "review", description = "리뷰")
+public interface ReviewController {
 }

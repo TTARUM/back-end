@@ -15,10 +15,10 @@ import java.util.Objects;
 @Embeddable
 public class WishListId implements Serializable {
     private static final long serialVersionUID = -195332860357327664L;
-    @Column(name = "user_id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "user_id", columnDefinition = "int not null")
     private Long userId;
 
-    @Column(name = "item_id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "item_id", columnDefinition = "int not null")
     private Long itemId;
 
     @Override

@@ -13,7 +13,7 @@ import lombok.*;
 public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", columnDefinition = "int not null")
     private Long id;
 
     @Column(name = "name", nullable = false, length = 100)
@@ -22,7 +22,7 @@ public class Item extends BaseEntity {
     @Column(name = "description", nullable = false, length = 300)
     private String description;
 
-    @Column(name = "price", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "price", columnDefinition = "int not null")
     private Integer price;
 
     @Column(name = "item_image_url", nullable = false, length = 100)

@@ -15,7 +15,7 @@ import lombok.*;
 public class Inquiry extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", columnDefinition = "int not null")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

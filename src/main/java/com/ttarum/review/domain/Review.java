@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Review extends UpdatableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int not null")
+    @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -32,7 +32,7 @@ public class Review extends UpdatableEntity {
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
-    @Column(name = "star", columnDefinition = "tinyint not null")
+    @Column(name = "star", nullable = false, columnDefinition = "tinyint")
     private Short star;
 
     @Column(name = "is_deleted", nullable = false)

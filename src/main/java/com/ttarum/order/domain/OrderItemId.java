@@ -15,10 +15,10 @@ import java.util.Objects;
 @Embeddable
 public class OrderItemId implements Serializable {
     private static final long serialVersionUID = 898633847107699104L;
-    @Column(name = "order_id", columnDefinition = "int not null")
+    @Column(name = "order_id", nullable = false, columnDefinition = "int")
     private Long orderId;
 
-    @Column(name = "item_id", columnDefinition = "int not null")
+    @Column(name = "item_id", nullable = false, columnDefinition = "int")
     private Long itemId;
 
     @Override

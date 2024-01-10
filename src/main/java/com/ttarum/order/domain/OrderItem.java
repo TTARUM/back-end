@@ -24,7 +24,7 @@ public class OrderItem {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @Column(name = "amount", columnDefinition = "int not null")
+    @Column(name = "amount", nullable = false, columnDefinition = "int")
     private Long amount;
 
 }

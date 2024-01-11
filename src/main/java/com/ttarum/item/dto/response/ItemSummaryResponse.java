@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ItemSummaryResponse {
 
+    private final long id;
     private final String categoryName;
     private final String name;
     private final int price;

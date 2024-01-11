@@ -11,7 +11,7 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("""
-            SELECT new com.ttarum.item.dto.response.ItemSummaryResponse(i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl) 
+            SELECT new com.ttarum.item.dto.response.ItemSummaryResponse(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl) 
             FROM Item i
             LEFT JOIN FETCH Review r 
             ON r.item.id = i.id

@@ -62,12 +62,13 @@ class ItemServiceTest {
     @Test
     @DisplayName("아이템 이름으로 아이템을 조회할 수 있다.")
     void getItemSummary() {
-        List<ItemSummaryResponse> list = List.of(new ItemSummaryResponse("sample", "sample", 13000, 2.3, "/Home/image"));
+        List<ItemSummaryResponse> list = List.of(new ItemSummaryResponse(1, "sample", "sample", 13000, 2.3, "/Home/image"));
 
         doReturn(list).when(itemRepository).getItemSummaryListByName("sample");
         List<ItemSummaryResponse> response = itemService.getItemSummaryList("sample");
 
         assertThat(response).hasSize(1);
+        assertThat(response.get(0).getId()).isEqualTo(1L);
         assertThat(response.get(0).getName()).isEqualTo("sample");
         assertThat(response.get(0).getPrice()).isEqualTo(13000);
         assertThat(response.get(0).getRating()).isEqualTo(2.3);

@@ -1,11 +1,13 @@
 package com.ttarum.review.domain;
 
-import com.ttarum.common.domain.BaseEntity;
 import com.ttarum.common.domain.UpdatableEntity;
 import com.ttarum.item.domain.Item;
 import com.ttarum.user.domain.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
@@ -16,7 +18,7 @@ import lombok.*;
 public class Review extends UpdatableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", columnDefinition = "int not null")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -30,7 +32,7 @@ public class Review extends UpdatableEntity {
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
-    @Column(name = "star", columnDefinition = "tinyint UNSIGNED not null")
+    @Column(name = "star", columnDefinition = "tinyint not null")
     private Short star;
 
     @Column(name = "is_deleted", nullable = false)

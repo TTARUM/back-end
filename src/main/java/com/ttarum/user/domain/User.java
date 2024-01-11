@@ -1,9 +1,11 @@
 package com.ttarum.user.domain;
 
-import com.ttarum.common.domain.BaseEntity;
 import com.ttarum.common.domain.UpdatableEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.List;
 public class User extends UpdatableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", columnDefinition = "int not null")
     private Long id;
 
     @Column(name = "name", nullable = false, length = 45)

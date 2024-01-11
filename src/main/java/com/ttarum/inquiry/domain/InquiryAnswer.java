@@ -13,7 +13,7 @@ import lombok.*;
 public class InquiryAnswer extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", columnDefinition = "int not null")
     private Long id;
 
     @Column(name = "content", nullable = false, length = 1000)

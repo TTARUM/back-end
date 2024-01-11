@@ -1,6 +1,7 @@
 package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemException;
 import com.ttarum.item.repository.ItemRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -55,5 +57,21 @@ class ItemServiceTest {
         assertThatThrownBy(() -> itemService.getItem(0L))
                 .isInstanceOf(ItemException.class)
                 .hasMessage("아이템이 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("아이템 이름으로 아이템을 조회할 수 있다.")
+    void getItemSummary() {
+        List<ItemSummaryResponse> list = List.of(new ItemSummaryResponse("sample", "sample", 13000, 2.3, "/Home/image"));
+
+        doReturn(list).when(itemRepository).getItemSummaryListByName("sample");
+        List<ItemSummaryResponse> response = itemService.getItemSummaryList("sample");
+
+        assertThat(response).hasSize(1);
+        assertThat(response.get(0).getName()).isEqualTo("sample");
+        assertThat(response.get(0).getPrice()).isEqualTo(13000);
+        assertThat(response.get(0).getRating()).isEqualTo(2.3);
+        assertThat(response.get(0).getImageUrl()).isEqualTo("/Home/image");
+        assertThat(response.get(0).getCategoryName()).isEqualTo("sample");
     }
 }

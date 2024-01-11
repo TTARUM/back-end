@@ -14,7 +14,7 @@ import lombok.*;
 public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int not null")
+    @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
     @Column(name = "status", nullable = false, length = 20)
@@ -32,11 +32,11 @@ public class Order extends BaseEntity {
     @Column(name = "recipient", nullable = false, length = 20)
     private String recipient;
 
-    @Column(name = "price", columnDefinition = "int not null")
+    @Column(name = "price", nullable = false, columnDefinition = "int")
     private Long price;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
     private User user;
 
 }

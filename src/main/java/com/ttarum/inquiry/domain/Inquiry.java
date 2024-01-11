@@ -15,15 +15,15 @@ import lombok.*;
 public class Inquiry extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int not null")
+    @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
 
     @Column(name = "title", nullable = false, length = 100)

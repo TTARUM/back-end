@@ -15,7 +15,7 @@ public class OauthUser {
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
     private User user;
 
     @Column(name = "email", nullable = false, length = 320)

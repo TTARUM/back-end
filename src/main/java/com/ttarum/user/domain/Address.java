@@ -12,14 +12,14 @@ import lombok.*;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int not null")
+    @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
     @Column(name = "address", nullable = false, length = 100)
     private String address;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
     private User user;
 
 }

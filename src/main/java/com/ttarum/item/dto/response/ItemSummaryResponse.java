@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @Builder
@@ -17,4 +19,7 @@ public class ItemSummaryResponse {
     private final int price;
     private final double rating;
     private final String imageUrl;
+    private boolean isInWishList;
+    private final Instant createdAt;
+    private final long salesVolume;
 }

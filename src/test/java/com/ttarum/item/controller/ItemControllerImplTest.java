@@ -2,6 +2,7 @@ package com.ttarum.item.controller;
 
 import com.ttarum.item.controller.advice.ItemControllerAdvice;
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemException;
 import com.ttarum.item.service.ItemService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,14 +12,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,5 +89,56 @@ class ItemControllerImplTest {
                 .andExpect(jsonPath("dateTime").exists())
                 .andExpect(jsonPath("message", "아이템이 존재하지 않습니다.").exists())
                 .andExpect(result -> assertEquals(result.getResolvedException().getClass(), ItemException.class));
+    }
+
+    @Test
+    @DisplayName("아이템의 이름으로 아이템을 검색할 수 있다.")
+    void getSummary() {
+        // given
+        String name = "testName";
+        List<ItemSummaryResponse> itemList = List.of(
+                ItemSummaryResponse.builder().name("testName").categoryName("testCategory").price(13000).imageUrl("/Home/image").rating(3.4).build(),
+                ItemSummaryResponse.builder().name("testName2").categoryName("testCategory2").price(13000).imageUrl("/Home/image").rating(4.6).build()
+        );
+        given(itemService.getItemSummaryList(name)).willReturn(itemList);
+
+        // when
+        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name);
+
+        // then
+        verify(itemService).getItemSummaryList(name);
+        assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(itemList);
+    }
+
+    @Test
+    @DisplayName("아이템의 이름이 null일 경우")
+    void getSummaryValueIsNull() {
+        // given
+        String name = null;
+        given(itemService.getItemSummaryList(name)).willReturn(List.of());
+
+        // when
+        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name);
+
+        // then
+        verify(itemService).getItemSummaryList(name);
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+        assertThat(response.getBody()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("아이템의 이름이 비어있을 경우")
+    void getSummaryValueIsEmpty() {
+        // given
+        String name = "";
+        given(itemService.getItemSummaryList(name)).willReturn(List.of());
+
+        // when
+        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name);
+
+        // then
+        verify(itemService).getItemSummaryList(name);
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+        assertThat(response.getBody()).isEmpty();
     }
 }

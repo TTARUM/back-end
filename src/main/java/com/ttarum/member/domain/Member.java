@@ -1,4 +1,4 @@
-package com.ttarum.user.domain;
+package com.ttarum.member.domain;
 
 import com.ttarum.common.domain.UpdatableEntity;
 import jakarta.persistence.*;
@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "user")
-public class User extends UpdatableEntity {
+@Table(name = "member")
+public class Member extends UpdatableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, columnDefinition = "int")
@@ -34,7 +34,7 @@ public class User extends UpdatableEntity {
     @Column(name = "image_url", length = 100)
     private String imageUrl;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Address> addressList = new ArrayList<>();
 
     @Column(name = "is_deleted", nullable = false)

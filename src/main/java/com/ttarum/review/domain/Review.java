@@ -2,7 +2,7 @@ package com.ttarum.review.domain;
 
 import com.ttarum.common.domain.UpdatableEntity;
 import com.ttarum.item.domain.Item;
-import com.ttarum.user.domain.User;
+import com.ttarum.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,8 +22,8 @@ public class Review extends UpdatableEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")

@@ -1,4 +1,4 @@
-package com.ttarum.user.domain;
+package com.ttarum.member.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,21 +8,21 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "oauth_user")
-public class OauthUser {
+@Table(name = "oauth_member")
+public class OauthMember {
     @Id
     private Long id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
+    private Member member;
 
     @Column(name = "email", nullable = false, length = 320)
     private String email;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "provider_id", nullable = false, updatable = false)
-    private UserProvider provider;
+    private MemberProvider provider;
 
 }

@@ -1,4 +1,4 @@
-package com.ttarum.user.domain;
+package com.ttarum.member.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +19,7 @@ public class Address {
     private String address;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
+    private Member member;
 
 }

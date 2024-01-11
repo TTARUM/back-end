@@ -2,7 +2,7 @@ package com.ttarum.inquiry.domain;
 
 import com.ttarum.common.domain.BaseEntity;
 import com.ttarum.item.domain.Item;
-import com.ttarum.user.domain.User;
+import com.ttarum.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +19,8 @@ public class Inquiry extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")

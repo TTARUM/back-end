@@ -1,4 +1,4 @@
-package com.ttarum.user.domain;
+package com.ttarum.member.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -15,8 +15,8 @@ import java.util.Objects;
 @Embeddable
 public class CartId implements Serializable {
     private static final long serialVersionUID = 2572566655901577304L;
-    @Column(name = "user_id", nullable = false, columnDefinition = "int")
-    private Long userId;
+    @Column(name = "member_id", nullable = false, columnDefinition = "int")
+    private Long memberId;
 
     @Column(name = "item_id", nullable = false, columnDefinition = "int")
     private Long itemId;
@@ -27,12 +27,12 @@ public class CartId implements Serializable {
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         CartId entity = (CartId) o;
         return Objects.equals(this.itemId, entity.itemId) &&
-                Objects.equals(this.userId, entity.userId);
+                Objects.equals(this.memberId, entity.memberId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(itemId, userId);
+        return Objects.hash(itemId, memberId);
     }
 
 }

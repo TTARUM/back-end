@@ -1,7 +1,7 @@
 package com.ttarum.order.domain;
 
 import com.ttarum.common.domain.BaseEntity;
-import com.ttarum.user.domain.User;
+import com.ttarum.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,7 +36,7 @@ public class Order extends BaseEntity {
     private Long price;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "int")
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
+    private Member member;
 
 }

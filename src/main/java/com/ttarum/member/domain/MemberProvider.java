@@ -1,12 +1,12 @@
-package com.ttarum.user.domain;
+package com.ttarum.member.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
 @Entity
-@Table(name = "user_provider")
-public class UserProvider {
+@Table(name = "member_provider")
+public class MemberProvider {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, columnDefinition = "int")

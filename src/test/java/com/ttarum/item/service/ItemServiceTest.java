@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.Instant;
 import java.util.List;
@@ -67,10 +68,11 @@ class ItemServiceTest {
         // given
         ItemSummaryResponse element = new ItemSummaryResponse(1, "sample", "sample", 13000, 2.3, "/Home/image", false, Instant.now(), 1);
         List<ItemSummaryResponse> list = List.of(element);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        when(itemRepository.getItemSummaryListByName("sample")).thenReturn(list);
-        List<ItemSummaryResponse> response = itemService.getItemSummaryList("sample");
+        when(itemRepository.getItemSummaryListByName("sample", pageRequest)).thenReturn(list);
+        List<ItemSummaryResponse> response = itemService.getItemSummaryList("sample", pageRequest);
 
         // then
         assertThat(response).hasSize(1);
@@ -89,9 +91,10 @@ class ItemServiceTest {
     void getItemSummaryEmptyValue() {
         // given
         String name = "";
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        List<ItemSummaryResponse> response = itemService.getItemSummaryList(name);
+        List<ItemSummaryResponse> response = itemService.getItemSummaryList(name, pageRequest);
 
         // then
         assertThat(response).isEmpty();
@@ -102,9 +105,10 @@ class ItemServiceTest {
     void getItemSummaryNullValue() {
         // given
         String name = null;
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        List<ItemSummaryResponse> response = itemService.getItemSummaryList(name);
+        List<ItemSummaryResponse> response = itemService.getItemSummaryList(name, pageRequest);
 
         // then
         assertThat(response).isEmpty();

@@ -9,6 +9,7 @@ import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.ttarum.item.controller.utils.ItemConverter.*;
 
@@ -36,12 +38,18 @@ public class ItemControllerImpl implements ItemController {
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name, @VerificationUser final User user) {
+    public ResponseEntity<List<ItemSummaryResponse>> getSummary(
+            @RequestParam(required = false) final String name,
+            @VerificationUser final User user,
+            @RequestParam final Optional<Integer> page,
+            @RequestParam final Optional<Integer> size
+    ) {
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(9));
         List<ItemSummaryResponse> itemSummaryList;
         if (user.isVerification()) {
-            itemSummaryList = itemService.getItemSummaryList(name, ((LoggedInUser) user).getId());
+            itemSummaryList = itemService.getItemSummaryList(name, pageRequest, ((LoggedInUser) user).getId());
         } else {
-            itemSummaryList = itemService.getItemSummaryList(name);
+            itemSummaryList = itemService.getItemSummaryList(name, pageRequest);
         }
         return ResponseEntity.ok(itemSummaryList);
     }

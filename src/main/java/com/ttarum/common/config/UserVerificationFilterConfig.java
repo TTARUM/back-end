@@ -1,7 +1,7 @@
 package com.ttarum.common.config;
 
 import com.ttarum.common.filter.UserVerificationFilter;
-import com.ttarum.user.repository.UserRepository;
+import com.ttarum.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +14,9 @@ import java.util.List;
 public class UserVerificationFilterConfig {
 
     @Bean
-    public FilterRegistrationBean<UserVerificationFilter> userVerificationFilterRegistration(final UserRepository userRepository) {
+    public FilterRegistrationBean<UserVerificationFilter> userVerificationFilterRegistration(final MemberRepository memberRepository) {
         FilterRegistrationBean<UserVerificationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new UserVerificationFilter(userRepository));
+        filterRegistrationBean.setFilter(new UserVerificationFilter(memberRepository));
         filterRegistrationBean.setUrlPatterns(List.of(
                 "/api/items/list"
         ));

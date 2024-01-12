@@ -3,7 +3,7 @@ package com.ttarum.common.filter;
 import com.ttarum.common.dto.user.UnLoggedInUser;
 import com.ttarum.common.dto.user.User;
 import com.ttarum.common.dto.user.LoggedInUser;
-import com.ttarum.user.repository.UserRepository;
+import com.ttarum.member.repository.MemberRepository;
 import io.micrometer.common.lang.NonNullApi;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +22,7 @@ import java.util.Objects;
 public class UserVerificationFilter extends OncePerRequestFilter {
 
     private static final String AUTHENTICATION = "authentication";
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

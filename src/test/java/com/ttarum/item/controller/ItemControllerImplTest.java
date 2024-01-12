@@ -1,5 +1,6 @@
 package com.ttarum.item.controller;
 
+import com.ttarum.common.dto.user.LoggedInUser;
 import com.ttarum.item.controller.advice.ItemControllerAdvice;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
@@ -37,6 +38,8 @@ class ItemControllerImplTest {
     @Mock
     private ItemService itemService;
 
+    private LoggedInUser user;
+
 
     private MockMvc mockMvc;
 
@@ -44,6 +47,9 @@ class ItemControllerImplTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(itemControllerImpl)
                 .setControllerAdvice(new ItemControllerAdvice())
+                .build();
+        user = LoggedInUser.builder()
+                .id(1L)
                 .build();
     }
 
@@ -100,13 +106,13 @@ class ItemControllerImplTest {
                 ItemSummaryResponse.builder().name("testName").categoryName("testCategory").price(13000).imageUrl("/Home/image").rating(3.4).build(),
                 ItemSummaryResponse.builder().name("testName2").categoryName("testCategory2").price(13000).imageUrl("/Home/image").rating(4.6).build()
         );
-        given(itemService.getItemSummaryList(name)).willReturn(itemList);
+        given(itemService.getItemSummaryList(name, user.getId())).willReturn(itemList);
 
         // when
-        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name);
+        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name, user);
 
         // then
-        verify(itemService).getItemSummaryList(name);
+        verify(itemService).getItemSummaryList(name, user.getId());
         assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(itemList);
     }
 
@@ -115,13 +121,13 @@ class ItemControllerImplTest {
     void getSummaryValueIsNull() {
         // given
         String name = null;
-        given(itemService.getItemSummaryList(name)).willReturn(List.of());
+        given(itemService.getItemSummaryList(name, user.getId())).willReturn(List.of());
 
         // when
-        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name);
+        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name, user);
 
         // then
-        verify(itemService).getItemSummaryList(name);
+        verify(itemService).getItemSummaryList(name, user.getId());
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody()).isEmpty();
     }
@@ -131,13 +137,13 @@ class ItemControllerImplTest {
     void getSummaryValueIsEmpty() {
         // given
         String name = "";
-        given(itemService.getItemSummaryList(name)).willReturn(List.of());
+        given(itemService.getItemSummaryList(name, user.getId())).willReturn(List.of());
 
         // when
-        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name);
+        ResponseEntity<List<ItemSummaryResponse>> response = itemControllerImpl.getSummary(name, user);
 
         // then
-        verify(itemService).getItemSummaryList(name);
+        verify(itemService).getItemSummaryList(name, user.getId());
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody()).isEmpty();
     }

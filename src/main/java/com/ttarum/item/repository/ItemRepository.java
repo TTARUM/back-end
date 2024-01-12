@@ -11,12 +11,28 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("""
-            SELECT new com.ttarum.item.dto.response.ItemSummaryResponse(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl) 
+            SELECT new com.ttarum.item.dto.response.ItemSummaryResponse(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl, false, i.createdAt, COUNT(oi.order.id))
             FROM Item i
-            LEFT JOIN FETCH Review r 
+            LEFT JOIN FETCH Review r
             ON r.item.id = i.id
+            LEFT JOIN FETCH OrderItem oi
+            ON oi.item.id = i.id
             WHERE i.name LIKE %:name%
             GROUP BY i.category.name
             """)
     List<ItemSummaryResponse> getItemSummaryListByName(@Param("name") String name);
+
+    @Query("""
+            SELECT new com.ttarum.item.dto.response.ItemSummaryResponse(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl, (COUNT(wl.id) > 0), i.createdAt, COUNT(oi.order.id))
+            FROM Item i
+            LEFT JOIN FETCH Review r
+            ON r.item.id = i.id
+            LEFT JOIN FETCH OrderItem oi
+            ON oi.item.id = i.id
+            LEFT JOIN FETCH WishList wl
+            ON wl.item.id = i.id AND wl.user.id = :userId
+            WHERE i.name LIKE %:name%
+            GROUP BY i.category.name
+            """)
+    List<ItemSummaryResponse> getItemSummaryListByName(@Param("name") String name, @Param("userId") Long userId);
 }

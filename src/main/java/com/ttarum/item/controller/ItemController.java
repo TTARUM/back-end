@@ -1,5 +1,7 @@
 package com.ttarum.item.controller;
 
+import com.ttarum.common.annotation.VerificationUser;
+import com.ttarum.common.dto.user.User;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,5 +31,5 @@ public interface ItemController {
     @ApiResponse(responseCode = "200", description = "성공")
     @Parameter(name = "name", description = "제품 이름")
     @GetMapping("/list")
-    ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name);
+    ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name, @VerificationUser final User user);
 }

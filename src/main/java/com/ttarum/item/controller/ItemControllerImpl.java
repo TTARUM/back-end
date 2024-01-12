@@ -1,5 +1,8 @@
 package com.ttarum.item.controller;
 
+import com.ttarum.common.annotation.VerificationUser;
+import com.ttarum.common.dto.user.User;
+import com.ttarum.common.dto.user.LoggedInUser;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
@@ -33,8 +36,13 @@ public class ItemControllerImpl implements ItemController {
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name) {
-        List<ItemSummaryResponse> itemSummaryList = itemService.getItemSummaryList(name);
+    public ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name, @VerificationUser final User user) {
+        List<ItemSummaryResponse> itemSummaryList;
+        if (user.isVerification()) {
+            itemSummaryList = itemService.getItemSummaryList(name, ((LoggedInUser) user).getId());
+        } else {
+            itemSummaryList = itemService.getItemSummaryList(name);
+        }
         return ResponseEntity.ok(itemSummaryList);
     }
 }

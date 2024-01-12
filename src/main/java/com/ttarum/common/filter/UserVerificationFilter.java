@@ -29,7 +29,6 @@ public class UserVerificationFilter extends OncePerRequestFilter {
         String authorization = request.getHeader("Authorization");
         User user;
         if (Objects.isNull(authorization)) {
-            log.info("Not Logged in user is coming");
             user = new UnLoggedInUser();
         } else { // FIXME 로그인한 유저인지 확인할 수 있는 로직 필요(토큰 구현 시 작성)
             user = LoggedInUser.builder()

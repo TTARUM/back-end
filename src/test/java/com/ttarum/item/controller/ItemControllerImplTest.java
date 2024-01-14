@@ -1,6 +1,7 @@
 package com.ttarum.item.controller;
 
 import com.ttarum.common.dto.user.LoggedInUser;
+import com.ttarum.common.dto.user.User;
 import com.ttarum.item.controller.advice.ItemControllerAdvice;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
@@ -40,7 +41,7 @@ class ItemControllerImplTest {
     @Mock
     private ItemService itemService;
 
-    private LoggedInUser user;
+    private User user;
 
 
     private MockMvc mockMvc;

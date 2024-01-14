@@ -18,6 +18,9 @@ public class MemberService {
     private final NormalMemberRepository normalMemberRepository;
 
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
+        // TODO: validate nickname
+        // TODO: validate email
+        // TODO: validate password
         if (isNicknameDuplicate(member.getNickname())) {
             throw new MemberException("닉네임이 중복되었습니다.");
         }

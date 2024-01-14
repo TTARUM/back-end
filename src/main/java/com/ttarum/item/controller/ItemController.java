@@ -49,6 +49,6 @@ public interface ItemController {
             @Parameter(name = "page", description = "페이지 넘버", example = "1"),
             @Parameter(name = "size", description = "제품 수", example = "9")
     })
-    @GetMapping("/list")
+    @GetMapping
     ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name, @VerificationUser final User user, final Optional<Integer> page, final Optional<Integer> size);
 }

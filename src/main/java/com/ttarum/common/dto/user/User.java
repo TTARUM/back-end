@@ -2,5 +2,5 @@ package com.ttarum.common.dto.user;
 
 public interface User {
 
-    boolean isVerification();
+    boolean isLoggedIn();
 }

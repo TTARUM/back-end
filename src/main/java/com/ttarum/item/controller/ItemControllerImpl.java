@@ -46,7 +46,7 @@ public class ItemControllerImpl implements ItemController {
     ) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(9));
         List<ItemSummaryResponse> itemSummaryList;
-        if (user.isVerification()) {
+        if (user.isLoggedIn()) {
             itemSummaryList = itemService.getItemSummaryList(name, pageRequest, ((LoggedInUser) user).getId());
         } else {
             itemSummaryList = itemService.getItemSummaryList(name, pageRequest);

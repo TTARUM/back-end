@@ -12,7 +12,7 @@ public class LoggedInUser implements User {
     private final Long id;
 
     @Override
-    public boolean isVerification() {
+    public boolean isLoggedIn() {
         return true;
     }
 }

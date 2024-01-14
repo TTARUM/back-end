@@ -21,11 +21,19 @@ public class MemberService {
         if (isNicknameDuplicate(member.getNickname())) {
             throw new MemberException("닉네임이 중복되었습니다.");
         }
+
+        if (isLoginIdDuplicate(normalMember.getLoginId())) {
+            throw new MemberException("로그인 아이디가 중복되었습니다.");
+        }
         memberRepository.save(member);
         normalMemberRepository.save(normalMember);
     }
 
     public boolean isNicknameDuplicate(final String nickname) {
         return memberRepository.findByNickname(nickname).isPresent();
+    }
+
+    public boolean isLoginIdDuplicate(final String loginId) {
+        return normalMemberRepository.findNormalMemberByLoginId(loginId).isPresent();
     }
 }

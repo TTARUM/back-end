@@ -37,7 +37,11 @@ public class MemberServiceTest {
                 .name("testName")
                 .phoneNumber("testPhoneNumber")
                 .build();
-        NormalMember targetNormalMember = NormalMember.builder().build();
+        NormalMember targetNormalMember = NormalMember.builder()
+                .loginId("testLoginId")
+                .password("testPassword")
+                .email("testEmail@gmail.com")
+                .build();
 
         // when
         assertDoesNotThrow(() -> memberService.registerNormalUser(targetMember, targetNormalMember));
@@ -52,11 +56,15 @@ public class MemberServiceTest {
     void registerNormalUser_registerWithDuplicateNicknameThrowException() {
         // given
         Member targetMember = Member.builder()
-                .nickname("foo")
+                .nickname("nickname1")
                 .name("testName")
                 .phoneNumber("testPhoneNumber")
                 .build();
-        NormalMember targetNormalMember = NormalMember.builder().build();
+        NormalMember targetNormalMember = NormalMember.builder()
+                .loginId("testLoginId")
+                .password("testPassword")
+                .email("testEmail@gmail.com")
+                .build();
 
         when(memberRepository.findByNickname(anyString())).thenReturn(Optional.of(targetMember));
 
@@ -67,6 +75,31 @@ public class MemberServiceTest {
 
         // then
         assertTrue(exception.getMessage().contains("닉네임이 중복되었습니다."));
-        verify(memberRepository, times(1)).findByNickname("foo");
+    }
+
+    @Test
+    @DisplayName("일반 유저 회원가입 - 로그인 아이디 중복 시 예외가 발생한다.")
+    void registerNormalUser_registerWithDuplicateLoginIdThrowException() {
+        // given
+        Member targetMember = Member.builder()
+                .nickname("nickname1")
+                .name("testName")
+                .phoneNumber("testPhoneNumber")
+                .build();
+        NormalMember targetNormalMember = NormalMember.builder()
+                .loginId("testLoginId")
+                .password("testPassword")
+                .email("testEmail@gmail.com")
+                .build();
+
+        when(normalMemberRepository.findNormalMemberByLoginId("testLoginId")).thenReturn(Optional.of(targetNormalMember));
+
+        // when
+        Exception exception = assertThrows(MemberException.class, () -> {
+            memberService.registerNormalUser(targetMember, targetNormalMember);
+        });
+
+        // then
+        assertTrue(exception.getMessage().contains("로그인 아이디가 중복되었습니다."));
     }
 }

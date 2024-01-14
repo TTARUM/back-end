@@ -2,7 +2,6 @@ package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
-import com.ttarum.common.dto.user.LoggedInUser;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
@@ -47,7 +46,7 @@ public class ItemControllerImpl implements ItemController {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(9));
         List<ItemSummaryResponse> itemSummaryList;
         if (user.isLoggedIn()) {
-            itemSummaryList = itemService.getItemSummaryList(name, pageRequest, ((LoggedInUser) user).getId());
+            itemSummaryList = itemService.getItemSummaryList(name, pageRequest, user.getId());
         } else {
             itemSummaryList = itemService.getItemSummaryList(name, pageRequest);
         }

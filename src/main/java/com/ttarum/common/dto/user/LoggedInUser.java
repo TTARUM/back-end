@@ -2,11 +2,9 @@ package com.ttarum.common.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 
 @AllArgsConstructor
 @Builder
-@Getter
 public class LoggedInUser implements User {
 
     private final Long id;
@@ -14,5 +12,10 @@ public class LoggedInUser implements User {
     @Override
     public boolean isLoggedIn() {
         return true;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 }

@@ -5,4 +5,9 @@ public class UnLoggedInUser implements User {
     public boolean isLoggedIn() {
         return false;
     }
+
+    @Override
+    public long getId() {
+        throw new UnsupportedOperationException("This method is not supported");
+    }
 }

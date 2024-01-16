@@ -23,7 +23,9 @@ public class MemberService {
         if (!isValidNickname(member.getNickname())) {
             throw new MemberException("올바르지 않은 닉네임입니다.");
         }
-        // TODO: validate email
+        if (!isValidEmail(normalMember.getEmail())) {
+            throw new MemberException("올바르지 않은 이메일입니다.");
+        }
         // TODO: validate password
         if (isNicknameDuplicate(member.getNickname())) {
             throw new MemberException("닉네임이 중복되었습니다.");
@@ -42,6 +44,13 @@ public class MemberService {
 
     private boolean isValidNickname(final String nickname) {
         return !nickname.isEmpty() && nickname.length() <= 10;
+    }
+
+    private boolean isValidEmail(final String email) {
+        if (email.isEmpty() || email.length() > 320) {
+            return false;
+        }
+        return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
     }
 
     public boolean isNicknameDuplicate(final String nickname) {

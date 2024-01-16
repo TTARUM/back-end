@@ -26,16 +26,18 @@ public class MemberService {
         if (!isValidEmail(normalMember.getEmail())) {
             throw new MemberException("올바르지 않은 이메일입니다.");
         }
-        // TODO: validate password
+        if (!isValidPassword(normalMember.getPassword())) {
+            throw new MemberException("올바르지 않은 비밀번호입니다.");
+        }
         if (isNicknameDuplicate(member.getNickname())) {
             throw new MemberException("닉네임이 중복되었습니다.");
         }
-
         if (isLoginIdDuplicate(normalMember.getLoginId())) {
             throw new MemberException("로그인 아이디가 중복되었습니다.");
         }
         try {
             memberRepository.save(member);
+            // TODO: Before save the password to DB, encrypt it first
             normalMemberRepository.save(normalMember);
         } catch (Exception e) {
             throw new MemberException(e.getMessage());
@@ -51,6 +53,13 @@ public class MemberService {
             return false;
         }
         return email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
+    }
+
+    private boolean isValidPassword(final String password) {
+        if (password.isEmpty() || password.length() > 20) {
+            return false;
+        }
+        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
     }
 
     public boolean isNicknameDuplicate(final String nickname) {

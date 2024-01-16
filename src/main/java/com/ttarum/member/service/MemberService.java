@@ -20,7 +20,9 @@ public class MemberService {
     private final NormalMemberRepository normalMemberRepository;
 
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
-        // TODO: validate nickname
+        if (!isValidNickname(member.getNickname())) {
+            throw new MemberException("올바르지 않은 닉네임입니다.");
+        }
         // TODO: validate email
         // TODO: validate password
         if (isNicknameDuplicate(member.getNickname())) {
@@ -36,6 +38,10 @@ public class MemberService {
         } catch (Exception e) {
             throw new MemberException(e.getMessage());
         }
+    }
+
+    private boolean isValidNickname(final String nickname) {
+        return !nickname.isEmpty() && nickname.length() <= 10;
     }
 
     public boolean isNicknameDuplicate(final String nickname) {

@@ -5,6 +5,7 @@ import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.member.repository.NormalMemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -28,8 +30,12 @@ public class MemberService {
         if (isLoginIdDuplicate(normalMember.getLoginId())) {
             throw new MemberException("로그인 아이디가 중복되었습니다.");
         }
-        memberRepository.save(member);
-        normalMemberRepository.save(normalMember);
+        try {
+            memberRepository.save(member);
+            normalMemberRepository.save(normalMember);
+        } catch (Exception e) {
+            throw new MemberException(e.getMessage());
+        }
     }
 
     public boolean isNicknameDuplicate(final String nickname) {

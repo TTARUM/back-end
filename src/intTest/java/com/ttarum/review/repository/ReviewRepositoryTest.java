@@ -14,4 +14,9 @@ class ReviewRepositoryTest {
     void findReviewResponseByItemId() {
         reviewRepository.findReviewResponseByItemId(1L);
     }
+
+    @Test
+    void findReviewResponseByItemIdWithMemberId() {
+        reviewRepository.findReviewResponseByItemId(1L, 1L);
+    }
 }

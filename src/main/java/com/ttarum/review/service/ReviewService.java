@@ -22,12 +22,10 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
 
-    public List<ReviewResponse> getReviewResponseList(final Long itemId) {
+    public List<ReviewResponse> getReviewResponseList(final Long itemId, final Long userId) {
         getItem(itemId);
-        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId);
-        List<Long> ids = reviewResponseList.stream()
-                .map(ReviewResponse::getId)
-                .toList();
+        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, userId);
+        List<Long> ids = extractId(reviewResponseList);
 
         List<ReviewImage> reviewImageList = reviewRepository.findReviewImageByReviewId(ids);
         reviewImageList.forEach(ri ->
@@ -38,6 +36,28 @@ public class ReviewService {
                         .addImageUrl(ReviewImageResponse.of(ri))
         );
         return reviewResponseList;
+    }
+
+    public List<ReviewResponse> getReviewResponseList(final Long itemId) {
+        getItem(itemId);
+        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId);
+        List<Long> ids = extractId(reviewResponseList);
+
+        List<ReviewImage> reviewImageList = reviewRepository.findReviewImageByReviewId(ids);
+        reviewImageList.forEach(ri ->
+                reviewResponseList.stream()
+                        .filter(r -> r.getId().equals(ri.getReview().getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new ReviewException("Unreachable Exception"))
+                        .addImageUrl(ReviewImageResponse.of(ri))
+        );
+        return reviewResponseList;
+    }
+
+    private List<Long> extractId(final List<ReviewResponse> reviewResponseList) {
+        return reviewResponseList.stream()
+                .map(ReviewResponse::getId)
+                .toList();
     }
 
     private Item getItem(final Long itemId) {

@@ -43,7 +43,7 @@ class ReviewServiceTest {
     @BeforeEach
     void setUp() {
         reviewResponseList = new ArrayList<>();
-        reviewResponseList.add(ReviewResponse.builder().id(1L).build());
+        reviewResponseList.add(ReviewResponse.builder().id(1L).isOwnReview(true).build());
         reviewResponseList.add(ReviewResponse.builder().id(2L).build());
 
         reviewImageList = new ArrayList<>();
@@ -70,6 +70,26 @@ class ReviewServiceTest {
         assertEquals(2L, result.get(1).getId());
         assertEquals(1, result.get(0).getImageUrls().size());
         assertEquals(3, result.get(1).getImageUrls().size());
+    }
+
+    @Test
+    @DisplayName("제품의 PK 값으로 리뷰 목록을 조회할 수 있다.")
+    void getReviewResponseListWithMemberId() {
+        when(reviewRepository.findReviewResponseByItemId(anyLong(), anyLong())).thenReturn(reviewResponseList);
+        when(reviewRepository.findReviewImageByReviewId(anyList())).thenReturn(reviewImageList);
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(Item.builder().id(1L).build()));
+
+        List<ReviewResponse> result = reviewService.getReviewResponseList(1L, 1L);
+
+        verify(reviewRepository, times(1)).findReviewResponseByItemId(anyLong(), anyLong());
+        verify(reviewRepository, times(1)).findReviewImageByReviewId(anyList());
+
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(0).getId());
+        assertEquals(2L, result.get(1).getId());
+        assertEquals(1, result.get(0).getImageUrls().size());
+        assertEquals(3, result.get(1).getImageUrls().size());
+        assertTrue(result.get(0).isOwnReview());
     }
 
     @Test

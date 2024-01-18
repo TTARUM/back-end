@@ -1,7 +1,6 @@
 package com.ttarum.review.service;
 
 import com.ttarum.item.domain.Item;
-import com.ttarum.item.exception.ItemException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.response.ReviewImageResponse;
@@ -62,6 +61,6 @@ public class ReviewService {
 
     private Item getItem(final Long itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemException("해당 제품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new ReviewException("해당 제품을 찾을 수 없습니다."));
     }
 }

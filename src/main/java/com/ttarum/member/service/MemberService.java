@@ -35,14 +35,10 @@ public class MemberService {
         if (isLoginIdDuplicate(normalMember.getLoginId())) {
             throw new MemberException("로그인 아이디가 중복되었습니다.");
         }
-        try {
-            Member saved = memberRepository.save(member);
-            // TODO: Before save the password to DB, encrypt it first
-            normalMember.setMember(saved);
-            normalMemberRepository.save(normalMember);
-        } catch (Exception e) {
-            throw new MemberException(e.getMessage());
-        }
+        Member saved = memberRepository.save(member);
+        // TODO: Before save the password to DB, encrypt it first
+        normalMember.setMember(saved);
+        normalMemberRepository.save(normalMember);
     }
 
     private boolean isValidNickname(final String nickname) {

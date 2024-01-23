@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}
+    image: ${IMAGE_NAME}
     restart: always
     ports:
       - "80:8080"

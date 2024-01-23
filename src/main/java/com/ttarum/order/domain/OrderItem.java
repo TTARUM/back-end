@@ -16,15 +16,15 @@ public class OrderItem {
 
     @MapsId("orderId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false, columnDefinition = "int")
     private Order order;
 
     @MapsId("itemId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
 
-    @Column(name = "amount", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "amount", nullable = false, columnDefinition = "int")
     private Long amount;
 
 }

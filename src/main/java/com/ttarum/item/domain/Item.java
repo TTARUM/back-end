@@ -6,14 +6,14 @@ import lombok.*;
 
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @Table(name = "item")
 public class Item extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
     @Column(name = "name", nullable = false, length = 100)
@@ -22,11 +22,8 @@ public class Item extends BaseEntity {
     @Column(name = "description", nullable = false, length = 300)
     private String description;
 
-    @Column(name = "price", columnDefinition = "int UNSIGNED not null")
-    private Long price;
-
-    @Column(name = "volume", columnDefinition = "int UNSIGNED not null")
-    private Long volume;
+    @Column(name = "price", nullable = false, columnDefinition = "int")
+    private Integer price;
 
     @Column(name = "item_image_url", nullable = false, length = 100)
     private String itemImageUrl;

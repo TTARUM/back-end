@@ -1,11 +1,7 @@
 package com.ttarum.inquiry.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Slf4j
-@RestController
-@RequestMapping("/api/inquirys")
-public class InquiryController implements IInquiryController {
+@Tag(name = "inquiry", description = "문의")
+public interface InquiryController {
 }

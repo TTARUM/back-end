@@ -1,7 +1,7 @@
 package com.ttarum.order.domain;
 
 import com.ttarum.common.domain.BaseEntity;
-import com.ttarum.user.domain.User;
+import com.ttarum.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +14,7 @@ import lombok.*;
 public class Order extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
     @Column(name = "status", nullable = false, length = 20)
@@ -32,11 +32,11 @@ public class Order extends BaseEntity {
     @Column(name = "recipient", nullable = false, length = 20)
     private String recipient;
 
-    @Column(name = "price", columnDefinition = "int UNSIGNED not null")
+    @Column(name = "price", nullable = false, columnDefinition = "int")
     private Long price;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
+    private Member member;
 
 }

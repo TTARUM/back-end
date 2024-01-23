@@ -53,6 +53,7 @@ jobs:
           # Deploy using docker-compose on the EC2 instance
           scp -o StrictHostKeyChecking=no -i "$KEY_FILE" docker-compose.yml $EC2_USER@$EC2_HOST:/tmp/docker-compose.yml
           scp -o StrictHostKeyChecking=no -i "$KEY_FILE" .env $EC2_USER@$EC2_HOST:/tmp/.env
+          scp -r -o StrictHostKeyChecking=no -i "$KEY_FILE" ./initdb $EC2_USER@$EC2_HOST:/tmp/initdb
           ssh -o StrictHostKeyChecking=no -i "$KEY_FILE" $EC2_USER@$EC2_HOST "
             docker compose -f /tmp/docker-compose.yml --env-file /tmp/.env pull
             docker compose -f /tmp/docker-compose.yml --env-file=/tmp/.env up

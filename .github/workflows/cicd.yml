@@ -7,9 +7,7 @@ on:
 
 env:
   IMAGE_NAME: ttarum-back
-  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
   ECR_REPOSITORY: ttarum
-  IMAGE_TAG: latest
   EC2_HOST: ${{ secrets.EC2_HOST }}
   EC2_USER: ec2-user
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -33,9 +31,14 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push the Docker image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Deploy to EC2
         run: |
@@ -43,12 +46,16 @@ jobs:
           KEY_FILE=$(mktemp)
           echo "$SSH_PRIVATE_KEY" > "$KEY_FILE"
           chmod 600 "$KEY_FILE"
+          
+          # Save image name to a file
+          echo "IMAGE_NAME=${{ steps.build-image.outputs.image }}" > .env
 
           # Deploy using docker-compose on the EC2 instance
           scp -o StrictHostKeyChecking=no -i "$KEY_FILE" docker-compose.yml $EC2_USER@$EC2_HOST:/tmp/docker-compose.yml
+          scp -o StrictHostKeyChecking=no -i "$KEY_FILE" .env $EC2_USER@$EC2_HOST:/tmp/.env
           ssh -o StrictHostKeyChecking=no -i "$KEY_FILE" $EC2_USER@$EC2_HOST "
-            docker-compose -f /tmp/docker-compose.yml pull
-            docker-compose -f /tmp/docker-compose.yml up -d
+            docker compose -f /tmp/docker-compose.yml pull --env-file=/tmp/.env
+            docker compose -f /tmp/docker-compose.yml up -d --env-file=/tmp/.env
           "
 
           # Clean up the private key file

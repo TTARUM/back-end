@@ -54,8 +54,8 @@ jobs:
           scp -o StrictHostKeyChecking=no -i "$KEY_FILE" docker-compose.yml $EC2_USER@$EC2_HOST:/tmp/docker-compose.yml
           scp -o StrictHostKeyChecking=no -i "$KEY_FILE" .env $EC2_USER@$EC2_HOST:/tmp/.env
           ssh -o StrictHostKeyChecking=no -i "$KEY_FILE" $EC2_USER@$EC2_HOST "
-            docker compose -f /tmp/docker-compose.yml pull --env-file=/tmp/.env
-            docker compose -f /tmp/docker-compose.yml up -d --env-file=/tmp/.env
+            docker compose -f /tmp/docker-compose.yml --env-file /tmp/.env pull
+            docker compose -f /tmp/docker-compose.yml --env-file=/tmp/.env up
           "
 
           # Clean up the private key file

@@ -68,7 +68,7 @@ jobs:
           scp -r -o StrictHostKeyChecking=no -i "$KEY_FILE" ./initdb $EC2_USER@$EC2_HOST:/tmp/initdb
           ssh -o StrictHostKeyChecking=no -i "$KEY_FILE" $EC2_USER@$EC2_HOST "
             docker compose -f /tmp/docker-compose.yml --env-file /tmp/.env pull
-            docker compose -f /tmp/docker-compose.yml --env-file=/tmp/.env up
+            docker compose -f /tmp/docker-compose.yml --env-file=/tmp/.env up -d
           "
 
           # Clean up the private key file

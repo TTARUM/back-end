@@ -30,15 +30,27 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push the Docker image to Amazon ECR
-        id: build-image
+      - name: Check if the image  tag exists in ECR
+        id: check-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          if aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --region $AWS_REGION 2>&1 | grep -q "ImageNotFoundException"
+          then
+            echo "IMAGE_EXISTS=false" >> $GITHUB_ENV
+          else
+            echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
+          fi
+          echo "IMAGE_NAME=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV 
+
+      - name: Build and push the Docker image to Amazon ECR
+        if: env.IMAGE_EXISTS == 'false'
+        id: build-image
+        run: |
+          docker build -t ${{ env.IMAGE_NAME }} .
+          docker push ${{ env.IMAGE_NAME }}
 
       - name: Deploy to EC2
         run: |
@@ -48,7 +60,7 @@ jobs:
           chmod 600 "$KEY_FILE"
           
           # Save image name to a file
-          echo "IMAGE_NAME=${{ steps.build-image.outputs.image }}" > .env
+          echo "IMAGE_NAME=${{ env.IMAGE_NAME }}" > .env
 
           # Deploy using docker-compose on the EC2 instance
           scp -o StrictHostKeyChecking=no -i "$KEY_FILE" docker-compose.yml $EC2_USER@$EC2_HOST:/tmp/docker-compose.yml

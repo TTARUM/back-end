@@ -9,6 +9,7 @@ import com.ttarum.review.exception.ReviewException;
 import com.ttarum.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
 
-    public List<ReviewResponse> getReviewResponseList(final Long itemId, final Long userId) {
+    public List<ReviewResponse> getReviewResponseList(final Long itemId, final Pageable pageable, final Long userId) {
         getItem(itemId);
-        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, userId);
+        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, pageable, userId);
         List<Long> ids = extractId(reviewResponseList);
 
         List<ReviewImage> reviewImageList = reviewRepository.findReviewImageByReviewId(ids);
@@ -37,9 +38,9 @@ public class ReviewService {
         return reviewResponseList;
     }
 
-    public List<ReviewResponse> getReviewResponseList(final Long itemId) {
+    public List<ReviewResponse> getReviewResponseList(final Long itemId, final Pageable pageable) {
         getItem(itemId);
-        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId);
+        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, pageable);
         List<Long> ids = extractId(reviewResponseList);
 
         List<ReviewImage> reviewImageList = reviewRepository.findReviewImageByReviewId(ids);

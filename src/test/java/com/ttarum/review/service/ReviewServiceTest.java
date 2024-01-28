@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,16 +50,17 @@ class ReviewServiceTest {
         reviewImageList.add(ReviewImage.builder().review(Review.builder().id(2L).build()).order(1).build());
         reviewImageList.add(ReviewImage.builder().review(Review.builder().id(2L).build()).order(2).build());
         reviewImageList.add(ReviewImage.builder().review(Review.builder().id(2L).build()).order(3).build());
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        when(reviewRepository.findReviewResponseByItemId(anyLong())).thenReturn(reviewResponseList);
+        when(reviewRepository.findReviewResponseByItemId(anyLong(), any(Pageable.class))).thenReturn(reviewResponseList);
         when(reviewRepository.findReviewImageByReviewId(anyList())).thenReturn(reviewImageList);
         when(itemRepository.findById(1L)).thenReturn(Optional.of(Item.builder().id(1L).build()));
 
-        List<ReviewResponse> result = reviewService.getReviewResponseList(1L);
+        List<ReviewResponse> result = reviewService.getReviewResponseList(1L, pageRequest);
 
         // then
-        verify(reviewRepository, times(1)).findReviewResponseByItemId(anyLong());
+        verify(reviewRepository, times(1)).findReviewResponseByItemId(anyLong(), any(Pageable.class));
         verify(reviewRepository, times(1)).findReviewImageByReviewId(anyList());
 
         assertThat(result).hasSize(2);
@@ -80,16 +83,18 @@ class ReviewServiceTest {
         reviewImageList.add(ReviewImage.builder().review(Review.builder().id(2L).build()).order(1).build());
         reviewImageList.add(ReviewImage.builder().review(Review.builder().id(2L).build()).order(2).build());
         reviewImageList.add(ReviewImage.builder().review(Review.builder().id(2L).build()).order(3).build());
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
 
         // when
-        when(reviewRepository.findReviewResponseByItemId(anyLong(), anyLong())).thenReturn(reviewResponseList);
+        when(reviewRepository.findReviewResponseByItemId(anyLong(), any(Pageable.class), anyLong())).thenReturn(reviewResponseList);
         when(reviewRepository.findReviewImageByReviewId(anyList())).thenReturn(reviewImageList);
         when(itemRepository.findById(1L)).thenReturn(Optional.of(Item.builder().id(1L).build()));
 
-        List<ReviewResponse> result = reviewService.getReviewResponseList(1L, 1L);
+        List<ReviewResponse> result = reviewService.getReviewResponseList(1L, pageRequest, 1L);
 
         // then
-        verify(reviewRepository, times(1)).findReviewResponseByItemId(anyLong(), anyLong());
+        verify(reviewRepository, times(1)).findReviewResponseByItemId(anyLong(), any(Pageable.class), anyLong());
         verify(reviewRepository, times(1)).findReviewImageByReviewId(anyList());
 
         assertThat(result).hasSize(2);
@@ -103,7 +108,9 @@ class ReviewServiceTest {
     @Test
     @DisplayName("올바르지 않은 제품의 PK 값을 받으면 예외가 발생한다.")
     void getEmptyReviewResponseListByInvalidItemId() {
-        assertThatThrownBy(() -> reviewService.getReviewResponseList(-1L))
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        assertThatThrownBy(() -> reviewService.getReviewResponseList(-1L, pageRequest))
                 .isInstanceOf(ReviewException.class);
     }
 

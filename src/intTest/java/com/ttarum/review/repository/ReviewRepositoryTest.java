@@ -3,6 +3,7 @@ package com.ttarum.review.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
 class ReviewRepositoryTest {
@@ -12,11 +13,13 @@ class ReviewRepositoryTest {
 
     @Test
     void findReviewResponseByItemId() {
-        reviewRepository.findReviewResponseByItemId(1L);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        reviewRepository.findReviewResponseByItemId(1L, pageRequest);
     }
 
     @Test
     void findReviewResponseByItemIdWithMemberId() {
-        reviewRepository.findReviewResponseByItemId(1L, 1L);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        reviewRepository.findReviewResponseByItemId(1L, pageRequest, 1L);
     }
 }

@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @Tag(name = "review", description = "리뷰")
 public interface ReviewController {
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Operation(summary = "특정 제품에 대한 리뷰 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),

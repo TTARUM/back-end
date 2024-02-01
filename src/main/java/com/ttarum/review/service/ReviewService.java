@@ -2,6 +2,7 @@ package com.ttarum.review.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.response.ReviewImageResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
@@ -53,5 +54,23 @@ public class ReviewService {
         if (foundItem.isEmpty()) {
             throw new ReviewException("해당 제품을 찾을 수 없습니다.");
         }
+    }
+
+    @Transactional
+    public void deleteReview(final Long id, final Long memberId) {
+        Review review = getReviewById(id);
+        validateWriter(review, memberId);
+        review.delete();
+    }
+
+    private void validateWriter(final Review review, final Long memberId) {
+        if (!review.getMember().getId().equals(memberId)) {
+            throw new ReviewException("자신의 리뷰만 제거할 수 있습니다.");
+        }
+    }
+
+    private Review getReviewById(final Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new ReviewException("해당 리뷰를 찾을 수 없습니다."));
     }
 }

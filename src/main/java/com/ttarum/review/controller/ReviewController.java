@@ -1,5 +1,6 @@
 package com.ttarum.review.controller;
 
+import com.ttarum.auth.domain.UserDetail;
 import com.ttarum.review.dto.response.ReviewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,7 +9,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,5 +44,14 @@ public interface ReviewController {
     ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
                                                                final Optional<Integer> page,
                                                                final Optional<Integer> size);
+
+    @Operation(summary = "특정 리뷰 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "제거 성공"),
+            @ApiResponse(responseCode = "400", description = "유효하지 않은 리뷰")
+    })
+    @Parameter(name = "reviewId", description = "리뷰의 Id 값", example = "1")
+    @DeleteMapping
+    ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final Optional<Long> optionalReviewId, @AuthenticationPrincipal UserDetail user);
 
 }

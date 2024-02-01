@@ -1,15 +1,15 @@
 package com.ttarum.review.controller;
 
+import com.ttarum.auth.domain.UserDetail;
+import com.ttarum.common.exception.NoParameterException;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +32,14 @@ public class ReviewControllerImpl implements ReviewController {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_SIZE));
         List<ReviewResponse> list = reviewService.getReviewResponseList(itemId, pageRequest);
         return ResponseEntity.ok(list);
+    }
+
+    @DeleteMapping
+    @Override
+    public ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final Optional<Long> optionalReviewId,
+                                               @AuthenticationPrincipal final UserDetail user) {
+        Long reviewId = optionalReviewId.orElseThrow(() -> new NoParameterException("reviewId는 필수값 입니다."));
+        reviewService.deleteReview(reviewId, user.getId());
+        return ResponseEntity.ok().build();
     }
 }

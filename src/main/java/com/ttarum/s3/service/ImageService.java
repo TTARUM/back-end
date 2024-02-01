@@ -16,7 +16,6 @@ public class ImageService {
     }
 
     public URL saveImage(MultipartFile file) throws IOException {
-        byte[] imageBytes = file.getBytes();
-        return s3Component.uploadImage(imageBytes);
+        return s3Component.uploadImage(file.getBytes());
     }
 }

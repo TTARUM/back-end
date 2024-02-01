@@ -1,7 +1,5 @@
 package com.ttarum.review.controller;
 
-import com.ttarum.common.annotation.VerificationUser;
-import com.ttarum.common.dto.user.User;
 import com.ttarum.review.dto.response.ReviewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,7 +20,6 @@ public interface ReviewController {
      * 특정 제품에 대한 리뷰 조회
      *
      * @param itemId 특정 제품의 ID
-     * @param user   로그인한 사용자 여부를 확인하기 위한 객체
      * @param page   페이지 넘버
      * @param size   페이지당 반환되는 리뷰의 개수
      * @return 리뷰 목록
@@ -35,14 +32,12 @@ public interface ReviewController {
     })
     @Parameters(value = {
             @Parameter(name = "itemId", description = "제품의 PK 값", example = "1"),
-            @Parameter(name = "user", hidden = true),
             @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
             @Parameter(name = "size", description = "한 페이지당 리뷰 수 (기본 값 10개)", example = "5")
 
     })
     @GetMapping
     ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
-                                                               @VerificationUser final User user,
                                                                final Optional<Integer> page,
                                                                final Optional<Integer> size);
 

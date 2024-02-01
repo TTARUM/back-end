@@ -23,22 +23,6 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
 
-    public List<ReviewResponse> getReviewResponseList(final Long itemId, final Pageable pageable, final Long userId) {
-        checkItemExistence(itemId);
-        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, pageable, userId);
-        List<Long> ids = extractId(reviewResponseList);
-
-        List<ReviewImage> reviewImageList = reviewRepository.findReviewImageByReviewId(ids);
-        reviewImageList.forEach(ri ->
-                reviewResponseList.stream()
-                        .filter(r -> r.getId().equals(ri.getReview().getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new ReviewException("Unreachable Exception"))
-                        .addImageUrl(ReviewImageResponse.of(ri))
-        );
-        return reviewResponseList;
-    }
-
     public List<ReviewResponse> getReviewResponseList(final Long itemId, final Pageable pageable) {
         checkItemExistence(itemId);
         List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, pageable);

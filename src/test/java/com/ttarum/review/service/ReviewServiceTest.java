@@ -75,7 +75,7 @@ class ReviewServiceTest {
     void getReviewResponseListWithMemberId() {
         // given
         List<ReviewResponse> reviewResponseList = new ArrayList<>();
-        reviewResponseList.add(ReviewResponse.builder().id(1L).isOwnReview(true).build());
+        reviewResponseList.add(ReviewResponse.builder().id(1L).build());
         reviewResponseList.add(ReviewResponse.builder().id(2L).build());
 
         List<ReviewImage> reviewImageList = new ArrayList<>();
@@ -87,14 +87,14 @@ class ReviewServiceTest {
 
 
         // when
-        when(reviewRepository.findReviewResponseByItemId(anyLong(), any(Pageable.class), anyLong())).thenReturn(reviewResponseList);
+        when(reviewRepository.findReviewResponseByItemId(anyLong(), any(Pageable.class))).thenReturn(reviewResponseList);
         when(reviewRepository.findReviewImageByReviewId(anyList())).thenReturn(reviewImageList);
         when(itemRepository.findById(1L)).thenReturn(Optional.of(Item.builder().id(1L).build()));
 
-        List<ReviewResponse> result = reviewService.getReviewResponseList(1L, pageRequest, 1L);
+        List<ReviewResponse> result = reviewService.getReviewResponseList(1L, pageRequest);
 
         // then
-        verify(reviewRepository, times(1)).findReviewResponseByItemId(anyLong(), any(Pageable.class), anyLong());
+        verify(reviewRepository, times(1)).findReviewResponseByItemId(anyLong(), any(Pageable.class));
         verify(reviewRepository, times(1)).findReviewImageByReviewId(anyList());
 
         assertThat(result).hasSize(2);
@@ -102,7 +102,6 @@ class ReviewServiceTest {
         assertThat(result.get(1).getId()).isEqualTo(2L);
         assertThat(result.get(0).getImageUrls()).hasSize(1);
         assertThat(result.get(1).getImageUrls()).hasSize(3);
-        assertThat(result.get(0).isOwnReview()).isTrue();
     }
 
     @Test

@@ -18,19 +18,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             r.content AS content,
             star AS rating,
             r.created_at AS createdAt,
-            r.member_id = :memberId AS isOwnReview
             FROM Review r, Member m
             WHERE r.item_id = :itemId AND m.id = r.member_id
                         """, nativeQuery = true)
-    List<ReviewResponse> findReviewResponseByItemId(@Param("itemId") Long itemId, Pageable pageable, @Param("memberId") Long memberId);
-
-    @Query("""
-            SELECT new com.ttarum.review.dto.response.ReviewResponse(r.id, m.nickname, r.content, r.star, r.createdAt, false)
-            FROM Review r
-            LEFT JOIN FETCH Member m
-            ON m.id = r.member.id
-            WHERE r.item.id = :itemId
-            """)
     List<ReviewResponse> findReviewResponseByItemId(@Param("itemId") Long itemId, Pageable pageable);
 
     @Query("""

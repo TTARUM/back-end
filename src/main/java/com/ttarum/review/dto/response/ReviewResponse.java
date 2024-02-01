@@ -15,15 +15,13 @@ public class ReviewResponse {
     private final short rating;
     private final Queue<ReviewImageResponse> imageUrls = new PriorityQueue<>(Comparator.comparingInt(ReviewImageResponse::getOrder));
     private final Instant createdAt;
-    private boolean isOwnReview;
 
-    public ReviewResponse(final Long id, final String nickname, final String content, final short rating, final Instant createdAt, final boolean isOwnReview) {
+    public ReviewResponse(final Long id, final String nickname, final String content, final short rating, final Instant createdAt) {
         this.id = id;
         this.nickname = nickname;
         this.content = content;
         this.rating = rating;
         this.createdAt = createdAt;
-        this.isOwnReview = isOwnReview;
     }
 
     public void addImageUrl(final ReviewImageResponse reviewImage) {

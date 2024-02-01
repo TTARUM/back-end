@@ -1,7 +1,5 @@
 package com.ttarum.review.controller;
 
-import com.ttarum.common.annotation.VerificationUser;
-import com.ttarum.common.dto.user.User;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +27,10 @@ public class ReviewControllerImpl implements ReviewController {
     @GetMapping
     @Override
     public ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
-                                                                      @VerificationUser final User user,
                                                                       @RequestParam final Optional<Integer> page,
                                                                       @RequestParam final Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_SIZE));
-        List<ReviewResponse> list;
-        if (user.isLoggedIn()) {
-            list = reviewService.getReviewResponseList(itemId, pageRequest, user.getId());
-        } else {
-            list = reviewService.getReviewResponseList(itemId, pageRequest);
-        }
+        List<ReviewResponse> list = reviewService.getReviewResponseList(itemId, pageRequest);
         return ResponseEntity.ok(list);
     }
 }

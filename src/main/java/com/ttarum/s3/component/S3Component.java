@@ -25,8 +25,8 @@ public class S3Component {
                 .build();
     }
 
-    public URL uploadImage(byte[] imageBytes, String originalFilename) {
-        String key = UUID.randomUUID() + "_" + originalFilename;
+    public URL uploadImage(byte[] imageBytes) {
+        String key = UUID.randomUUID().toString();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)

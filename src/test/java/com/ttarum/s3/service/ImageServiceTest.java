@@ -28,7 +28,7 @@ class ImageServiceTest {
         // given
         MultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "test data".getBytes());
         URL expectedUrl = new URL("https://ttarum-bucket.s3.ap-northeast-2.amazonaws.com/uuid_test.jpg");
-        when(s3Component.uploadImage(file.getBytes(), file.getOriginalFilename()))
+        when(s3Component.uploadImage(file.getBytes()))
                 .thenReturn(expectedUrl);
 
         // when

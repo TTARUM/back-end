@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -23,7 +24,7 @@ public class ReviewService {
     private final ItemRepository itemRepository;
 
     public List<ReviewResponse> getReviewResponseList(final Long itemId, final Pageable pageable, final Long userId) {
-        getItem(itemId);
+        checkItemExistence(itemId);
         List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, pageable, userId);
         List<Long> ids = extractId(reviewResponseList);
 
@@ -39,7 +40,7 @@ public class ReviewService {
     }
 
     public List<ReviewResponse> getReviewResponseList(final Long itemId, final Pageable pageable) {
-        getItem(itemId);
+        checkItemExistence(itemId);
         List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, pageable);
         List<Long> ids = extractId(reviewResponseList);
 
@@ -60,8 +61,10 @@ public class ReviewService {
                 .toList();
     }
 
-    private Item getItem(final Long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ReviewException("해당 제품을 찾을 수 없습니다."));
+    private void checkItemExistence(final long itemId) {
+        Optional<Item> foundItem = itemRepository.findById(itemId);
+        if (foundItem.isEmpty()) {
+            throw new ReviewException("해당 제품을 찾을 수 없습니다.");
+        }
     }
 }

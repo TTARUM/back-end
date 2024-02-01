@@ -48,17 +48,17 @@ public interface ReviewController {
     /**
      * 리뷰 제거
      *
-     * @param optionalReviewId 제거할 리뷰의 ID
-     * @param user             로그인한 유저
+     * @param reviewId 제거할 리뷰의 ID
+     * @param user     로그인한 유저
      * @return
      */
     @Operation(summary = "특정 리뷰 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "제거 성공"),
-            @ApiResponse(responseCode = "400", description = "유효하지 않은 리뷰")
+            @ApiResponse(responseCode = "400", description = "존재하지 않은 리뷰의 경우")
     })
-    @Parameter(name = "reviewId", description = "리뷰의 ID 값", example = "1")
+    @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
     @DeleteMapping
-    ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final Optional<Long> optionalReviewId, @AuthenticationPrincipal final UserDetail user);
+    ResponseEntity<Object> deleteReview(@RequestParam final long reviewId, @AuthenticationPrincipal final UserDetail user);
 
 }

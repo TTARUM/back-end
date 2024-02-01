@@ -1,7 +1,6 @@
 package com.ttarum.review.controller;
 
 import com.ttarum.auth.domain.UserDetail;
-import com.ttarum.common.exception.NoParameterException;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -36,9 +35,8 @@ public class ReviewControllerImpl implements ReviewController {
 
     @DeleteMapping
     @Override
-    public ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final Optional<Long> optionalReviewId,
+    public ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
                                                @AuthenticationPrincipal final UserDetail user) {
-        Long reviewId = optionalReviewId.orElseThrow(() -> new NoParameterException("reviewId는 필수값 입니다."));
         reviewService.deleteReview(reviewId, user.getId());
         return ResponseEntity.ok().build();
     }

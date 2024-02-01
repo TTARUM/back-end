@@ -33,6 +33,7 @@ public interface ItemController {
 
     /**
      * 요약된 제품 정보에 대한 검색 메서드
+     *
      * @param name 제품 이름
      * @param user 로그인한 사용자 여부를 확인하기 위한 객체
      * @param page 페이지 넘버
@@ -46,8 +47,8 @@ public interface ItemController {
     @Parameters(value = {
             @Parameter(name = "name", description = "제품 이름"),
             @Parameter(name = "user", hidden = true),
-            @Parameter(name = "page", description = "페이지 넘버", example = "1"),
-            @Parameter(name = "size", description = "제품 수", example = "9")
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9개)", example = "9")
     })
     @GetMapping
     ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name, @VerificationUser final User user, final Optional<Integer> page, final Optional<Integer> size);

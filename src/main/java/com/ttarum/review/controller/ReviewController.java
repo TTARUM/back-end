@@ -52,6 +52,6 @@ public interface ReviewController {
     })
     @Parameter(name = "reviewId", description = "리뷰의 Id 값", example = "1")
     @DeleteMapping
-    ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final Optional<Long> optionalReviewId, @AuthenticationPrincipal UserDetail user);
+    ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final Optional<Long> optionalReviewId, @AuthenticationPrincipal final UserDetail user);
 
 }

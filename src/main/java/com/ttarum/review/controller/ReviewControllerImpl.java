@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequestMapping("/api/reviews")
 public class ReviewControllerImpl implements ReviewController {
 
-    private static final int DEFAULT_SIZE = 10;
+    private static final int PAGE_DEFAULT_SIZE = 10;
 
     private final ReviewService reviewService;
 
@@ -28,7 +28,7 @@ public class ReviewControllerImpl implements ReviewController {
     public ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
                                                                       @RequestParam final Optional<Integer> page,
                                                                       @RequestParam final Optional<Integer> size) {
-        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_SIZE));
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(PAGE_DEFAULT_SIZE));
         List<ReviewResponse> list = reviewService.getReviewResponseList(itemId, pageRequest);
         return ResponseEntity.ok(list);
     }

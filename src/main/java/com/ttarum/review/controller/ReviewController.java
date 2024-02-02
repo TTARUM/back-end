@@ -46,6 +46,14 @@ public interface ReviewController {
                                                                final Optional<Integer> page,
                                                                final Optional<Integer> size);
 
+    /**
+     * 리뷰를 업데이트한다.
+     *
+     * @param reviewId 업데이트할 리뷰의 ID
+     * @param request  업데이트될 정보가 담긴 객체
+     * @param user     로그인한 유저
+     * @return 빈 응답
+     */
     @Operation(summary = "리뷰 업데이트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "리뷰 업데이트 성공"),

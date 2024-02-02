@@ -38,9 +38,8 @@ public class Review extends UpdatableEntity {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @Override
+    @PrePersist
     public void prePersist() {
-        super.prePersist();
         this.isDeleted = false;
     }
 }

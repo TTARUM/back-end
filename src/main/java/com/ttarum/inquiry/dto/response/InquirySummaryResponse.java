@@ -17,9 +17,9 @@ public class InquirySummaryResponse {
     private String title;
     private final boolean isSecretInquiry;
     private final boolean isThisOwnInquiry;
-    private final boolean hasAnswer; // O
+    private final boolean hasAnswer;
     private final String memberName; // O 백엔드에서 이름 모자이크
-    private final Instant createdAt; // O
+    private final Instant createdAt;
 
     public InquirySummaryResponse(final Long id,
                                   final String title,

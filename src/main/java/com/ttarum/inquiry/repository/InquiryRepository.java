@@ -1,6 +1,7 @@
 package com.ttarum.inquiry.repository;
 
 import com.ttarum.inquiry.domain.Inquiry;
+import com.ttarum.inquiry.domain.InquiryAnswer;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
@@ -45,4 +47,8 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
     @Query("SELECT ii.fileUrl FROM InquiryImage ii WHERE ii.inquiry.id = :inquiryId")
     List<String> findInquiryImageByInquiryId(@Param("inquiryId") long inquiryId);
+
+    @Query("SELECT ia FROM InquiryAnswer ia WHERE ia.inquiry.id = :inquiryId")
+    Optional<InquiryAnswer> findAnswerByInquiryId(@Param("inquiryId") long inquiryId);
+
 }

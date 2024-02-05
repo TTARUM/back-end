@@ -1,8 +1,11 @@
 package com.ttarum.inquiry.service;
 
 import com.ttarum.inquiry.domain.Inquiry;
+import com.ttarum.inquiry.domain.InquiryAnswer;
 import com.ttarum.inquiry.dto.response.InquiryDetailedResponse;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
+import com.ttarum.inquiry.dto.response.answer.InquiryAnswerNotExistResponse;
+import com.ttarum.inquiry.dto.response.answer.InquiryAnswerResponse;
 import com.ttarum.inquiry.exception.InquiryException;
 import com.ttarum.inquiry.repository.InquiryRepository;
 import com.ttarum.item.domain.Item;
@@ -45,13 +48,23 @@ public class InquiryService {
     public InquiryDetailedResponse getInquiryDetailedResponse(final long inquiryId, final long memberId) {
         Inquiry inquiry = getInquiryById(inquiryId);
         validateAccessToInquiry(memberId, inquiry);
-        InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry);
+        InquiryAnswerResponse inquiryAnswerResponse = getInquiryAnswerResponseByInquiryId(inquiryId);
+        InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
         List<String> imageUrls = inquiryRepository.findInquiryImageByInquiryId(inquiryId);
         for (String imageUrl : imageUrls) {
             response.addImageUrl(imageUrl);
         }
         return response;
+    }
+
+    private InquiryAnswerResponse getInquiryAnswerResponseByInquiryId(final long inquiryId) {
+        Optional<InquiryAnswer> optionalAnswer = inquiryRepository.findAnswerByInquiryId(inquiryId);
+        if (optionalAnswer.isEmpty()) {
+            return new InquiryAnswerNotExistResponse();
+        } else {
+            return InquiryAnswerResponse.of(optionalAnswer.get());
+        }
     }
 
     private void validateAccessToInquiry(final long memberId, final Inquiry inquiry) {
@@ -68,7 +81,8 @@ public class InquiryService {
     public InquiryDetailedResponse getInquiryDetailedResponse(final long inquiryId) {
         Inquiry inquiry = getInquiryById(inquiryId);
         validateAccessToInquiry(inquiry);
-        InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry);
+        InquiryAnswerResponse inquiryAnswerResponse = getInquiryAnswerResponseByInquiryId(inquiryId);
+        InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
         List<String> imageUrls = inquiryRepository.findInquiryImageByInquiryId(inquiryId);
         for (String imageUrl : imageUrls) {

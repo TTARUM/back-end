@@ -1,6 +1,7 @@
 package com.ttarum.inquiry.dto.response;
 
 import com.ttarum.inquiry.domain.Inquiry;
+import com.ttarum.inquiry.dto.response.answer.InquiryAnswerResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,15 +14,16 @@ import java.util.List;
 @AllArgsConstructor
 public class InquiryDetailedResponse {
 
-    private static final String DEFAULT_ANSWER_CONTENT = "문의 답변 예 입니다.";
-
     private final String title;
+    private final String content;
     private final List<InquiryImageResponse> imageUrls = new ArrayList<>();
-    private final String answerContent = DEFAULT_ANSWER_CONTENT; // 관리자 페이지가 없으므로 예시 답변으로 설정
+    private final InquiryAnswerResponse inquiryAnswer;
 
-    public static InquiryDetailedResponse of(final Inquiry inquiry) {
+    public static InquiryDetailedResponse of(final Inquiry inquiry, InquiryAnswerResponse inquiryAnswerResponse) {
         return InquiryDetailedResponse.builder()
                 .title(inquiry.getTitle())
+                .content(inquiry.getContent())
+                .inquiryAnswer(inquiryAnswerResponse)
                 .build();
     }
 

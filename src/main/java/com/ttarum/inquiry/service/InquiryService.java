@@ -5,6 +5,8 @@ import com.ttarum.inquiry.dto.response.InquiryDetailedResponse;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
 import com.ttarum.inquiry.exception.InquiryException;
 import com.ttarum.inquiry.repository.InquiryRepository;
+import com.ttarum.item.domain.Item;
+import com.ttarum.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -20,12 +23,22 @@ import java.util.List;
 public class InquiryService {
 
     private final InquiryRepository inquiryRepository;
+    private final ItemRepository itemRepository;
 
     public List<InquirySummaryResponse> getInquirySummaryResponseList(final long itemId, final long memberId, final Pageable pageable) {
+        checkItemExistence(itemId);
         return inquiryRepository.findInquirySummaryByItemIdAndMemberId(itemId, memberId, pageable);
     }
 
+    private void checkItemExistence(final long itemId) {
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+        if (optionalItem.isEmpty()) {
+            throw new InquiryException("제품이 존재하지 않습니다.");
+        }
+    }
+
     public List<InquirySummaryResponse> getInquirySummaryResponseList(final long itemId, final Pageable pageable) {
+        checkItemExistence(itemId);
         return inquiryRepository.findInquirySummaryByItemId(itemId, pageable);
     }
 

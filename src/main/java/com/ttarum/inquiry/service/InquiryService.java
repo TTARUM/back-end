@@ -48,7 +48,14 @@ public class InquiryService {
     public InquiryDetailedResponse getInquiryDetailedResponse(final long inquiryId, final long memberId) {
         Inquiry inquiry = getInquiryById(inquiryId);
         validateAccessToInquiry(memberId, inquiry);
-        InquiryAnswerResponse inquiryAnswerResponse = getInquiryAnswerResponseByInquiryId(inquiryId);
+
+        InquiryAnswerResponse inquiryAnswerResponse;
+        if (Boolean.TRUE.equals(inquiry.getExistAnswer())) {
+            InquiryAnswer inquiryAnswer = getInquiryAnswerByInquiryId(inquiryId);
+            inquiryAnswerResponse = InquiryAnswerResponse.of(inquiryAnswer);
+        } else {
+            inquiryAnswerResponse = new InquiryAnswerNotExistResponse();
+        }
         InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
         List<String> imageUrls = inquiryRepository.findInquiryImageByInquiryId(inquiryId);
@@ -58,13 +65,9 @@ public class InquiryService {
         return response;
     }
 
-    private InquiryAnswerResponse getInquiryAnswerResponseByInquiryId(final long inquiryId) {
-        Optional<InquiryAnswer> optionalAnswer = inquiryRepository.findAnswerByInquiryId(inquiryId);
-        if (optionalAnswer.isEmpty()) {
-            return new InquiryAnswerNotExistResponse();
-        } else {
-            return InquiryAnswerResponse.of(optionalAnswer.get());
-        }
+    private InquiryAnswer getInquiryAnswerByInquiryId(final long inquiryId) {
+        return inquiryRepository.findAnswerByInquiryId(inquiryId)
+                .orElseThrow(() -> new InquiryException("문의 답변이 존재하지 않습니다."));
     }
 
     private void validateAccessToInquiry(final long memberId, final Inquiry inquiry) {
@@ -81,7 +84,14 @@ public class InquiryService {
     public InquiryDetailedResponse getInquiryDetailedResponse(final long inquiryId) {
         Inquiry inquiry = getInquiryById(inquiryId);
         validateAccessToInquiry(inquiry);
-        InquiryAnswerResponse inquiryAnswerResponse = getInquiryAnswerResponseByInquiryId(inquiryId);
+
+        InquiryAnswerResponse inquiryAnswerResponse;
+        if (Boolean.TRUE.equals(inquiry.getExistAnswer())) {
+            InquiryAnswer inquiryAnswer = getInquiryAnswerByInquiryId(inquiryId);
+            inquiryAnswerResponse = InquiryAnswerResponse.of(inquiryAnswer);
+        } else {
+            inquiryAnswerResponse = new InquiryAnswerNotExistResponse();
+        }
         InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
         List<String> imageUrls = inquiryRepository.findInquiryImageByInquiryId(inquiryId);

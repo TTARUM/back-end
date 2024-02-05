@@ -19,6 +19,15 @@ import java.util.Optional;
 @Tag(name = "inquiry", description = "문의")
 public interface InquiryController {
 
+    /**
+     * 특정 제품의 문의글 조회
+     *
+     * @param itemId 특정 제품의 ID
+     * @param user   로그인한 사용자 여부를 확인하기 위한 객체
+     * @param page   페이지 넘버
+     * @param size   페이지 당 조회할 문의글 수
+     * @return 조회된 문의글 리스트
+     */
     @Operation(summary = "특정 제품의 문의글 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -36,6 +45,13 @@ public interface InquiryController {
                                                                            Optional<Integer> page,
                                                                            Optional<Integer> size);
 
+    /**
+     * 문의글 조회
+     *
+     * @param inquiryId 조회할 문의글의 ID
+     * @param user      로그인한 사용자 여부를 확인하기 위한 객체
+     * @return 문의글
+     */
     @Operation(summary = "문의 글 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),

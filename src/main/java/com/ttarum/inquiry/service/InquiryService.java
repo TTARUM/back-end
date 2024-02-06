@@ -23,6 +23,14 @@ public class InquiryService {
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
 
+    /**
+     * 문의글 등록 메서드
+     *
+     * @param request  등록할 문의글의 데이터가 담긴 객체
+     * @param memberId 등록할 회원의 ID
+     * @return 등록된 문의글의 ID
+     * @throws InquiryException 유효하지 않은 회원의 ID, 존재하지 않는 제품에 등록하려는 경우, 제목이나 내용이 비어있을 경우 발생하는 예외
+     */
     @Transactional
     public long postInquiry(final InquiryCreationRequest request, final long memberId) {
         Inquiry inquiry = request.transferToInquiry();

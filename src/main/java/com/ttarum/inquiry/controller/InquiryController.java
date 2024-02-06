@@ -22,6 +22,14 @@ import java.util.List;
 @Tag(name = "inquiry", description = "문의")
 public interface InquiryController {
 
+    /**
+     * 문의글 등록 메서드
+     *
+     * @param request 등록할 문의글의 데이터가 담긴 객체
+     * @param images  이미지 파일들
+     * @param user    로그인한 사용자
+     * @return 등록된 문의글의 ID
+     */
     @Operation(summary = "문의글 등록")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "문의글 등록 성공"),

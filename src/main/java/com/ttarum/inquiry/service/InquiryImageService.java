@@ -26,6 +26,14 @@ public class InquiryImageService {
     private final InquiryImageRepository inquiryImageRepository;
     private final ImageService imageService;
 
+    /**
+     * 문의글에 이미지를 저장한다.
+     *
+     * @param inquiryId 이미지가 저장될 문의글의 ID
+     * @param image     저장할 이미지 파일
+     * @return 저장된 이미지의 ID
+     * @throws InquiryException 문의글이 존재하지 않는 경우, 파일이 존재하지 않는 경우, 이미지 파일이 아닌 경우 발생하는 예외
+     */
     @Transactional
     public long saveImage(final long inquiryId, final MultipartFile image) {
         try {
@@ -44,6 +52,7 @@ public class InquiryImageService {
         return inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new InquiryException("해당 문의글이 존재하지 않습니다."));
     }
+
     @SuppressWarnings({"null", "DataFlowIssue"})
     public void validateImageFile(final MultipartFile file) {
         if (Objects.isNull(file) || file.isEmpty())

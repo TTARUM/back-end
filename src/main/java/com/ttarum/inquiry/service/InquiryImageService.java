@@ -27,7 +27,7 @@ public class InquiryImageService {
     private final ImageService imageService;
 
     /**
-     * 문의글에 이미지를 저장한다.
+     * 문의글의 이미지를 저장한다.
      *
      * @param inquiryId 이미지가 저장될 문의글의 ID
      * @param image     저장할 이미지 파일

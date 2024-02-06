@@ -7,6 +7,7 @@ import com.ttarum.inquiry.service.InquiryImageService;
 import com.ttarum.inquiry.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +30,7 @@ public class InquiryControllerImpl implements InquiryController {
     private final InquiryImageService inquiryImageService;
 
     @Transactional
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Override
     public ResponseEntity<InquiryCreationResponse> postInquiry(@RequestPart(name = "inquiryRequest") final InquiryCreationRequest request,
                                                                @RequestPart(name = "images", required = false) final List<MultipartFile> images,

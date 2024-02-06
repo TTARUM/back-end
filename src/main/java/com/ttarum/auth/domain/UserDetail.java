@@ -1,12 +1,17 @@
 package com.ttarum.auth.domain;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@Getter
 // fixme
 public class UserDetail implements UserDetails {
+
+    private long id;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

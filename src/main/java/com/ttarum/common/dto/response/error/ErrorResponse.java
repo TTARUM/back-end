@@ -6,7 +6,7 @@ import lombok.Getter;
 
 import java.time.Instant;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ErrorResponse {
 

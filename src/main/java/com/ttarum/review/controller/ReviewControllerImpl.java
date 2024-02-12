@@ -1,15 +1,15 @@
 package com.ttarum.review.controller;
 
+import com.ttarum.auth.domain.UserDetail;
+import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @RequestMapping("/api/reviews")
 public class ReviewControllerImpl implements ReviewController {
 
-    private static final int DEFAULT_SIZE = 10;
+    private static final int PAGE_DEFAULT_SIZE = 10;
 
     private final ReviewService reviewService;
 
@@ -29,8 +29,25 @@ public class ReviewControllerImpl implements ReviewController {
     public ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
                                                                       @RequestParam final Optional<Integer> page,
                                                                       @RequestParam final Optional<Integer> size) {
-        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_SIZE));
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(PAGE_DEFAULT_SIZE));
         List<ReviewResponse> list = reviewService.getReviewResponseList(itemId, pageRequest);
         return ResponseEntity.ok(list);
+    }
+
+    @DeleteMapping
+    @Override
+    public ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
+                                               @AuthenticationPrincipal final UserDetail user) {
+        reviewService.deleteReview(reviewId, user.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    @Override
+    public ResponseEntity<Void> updateReview(final Long reviewId,
+                                             @RequestBody final ReviewUpdateRequest request,
+                                             final UserDetail user) {
+        reviewService.updateReview(reviewId, request, user.getId());
+        return ResponseEntity.ok().build();
     }
 }

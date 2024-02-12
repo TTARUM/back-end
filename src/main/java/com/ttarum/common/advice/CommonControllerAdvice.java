@@ -1,10 +1,12 @@
 package com.ttarum.common.advice;
 
 import com.ttarum.common.dto.response.error.ErrorResponse;
+import com.ttarum.common.dto.response.error.MissingServletRequestParameterExceptionResponse;
 import com.ttarum.common.dto.response.error.TypeMismatchExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,5 +29,11 @@ public class CommonControllerAdvice {
                 Objects.nonNull(e.getRequiredType()) ? e.getRequiredType().getTypeName() : "",
                 Objects.nonNull(e.getValue())? e.getValue().getClass().getName() : ""
         );
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ErrorResponse missingServletRequestParameterExceptionHandler(final MissingServletRequestParameterException e) {
+        return MissingServletRequestParameterExceptionResponse.generate(Instant.now(), e);
     }
 }

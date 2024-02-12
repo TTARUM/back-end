@@ -18,10 +18,10 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             ON r.item.id = i.id
             LEFT JOIN FETCH OrderItem oi
             ON oi.item.id = i.id
-            WHERE i.name LIKE %:name%
+            WHERE i.name LIKE %:query%
             GROUP BY i.category.name
             """)
-    List<ItemSummaryResponse> getItemSummaryListByName(@Param("name") String name, Pageable pageable);
+    List<ItemSummaryResponse> getItemSummaryListByName(@Param("query") String query, Pageable pageable);
 
     @Query("""
             SELECT new com.ttarum.item.dto.response.ItemSummaryResponse(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl, (COUNT(wl.id) > 0), i.createdAt, COUNT(oi.order.id))
@@ -32,8 +32,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             ON oi.item.id = i.id
             LEFT JOIN FETCH WishList wl
             ON wl.item.id = i.id AND wl.member.id = :memberId
-            WHERE i.name LIKE %:name%
+            WHERE i.name LIKE %:query%
             GROUP BY i.category.name
             """)
-    List<ItemSummaryResponse> getItemSummaryListByName(@Param("name") String name, Pageable pageable, @Param("memberId") Long memberId);
+    List<ItemSummaryResponse> getItemSummaryListByName(@Param("query") String query, Pageable pageable, @Param("memberId") Long memberId);
 }

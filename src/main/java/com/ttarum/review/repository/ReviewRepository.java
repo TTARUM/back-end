@@ -19,7 +19,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             star AS rating,
             r.created_at AS createdAt,
             FROM Review r, Member m
-            WHERE r.item_id = :itemId AND m.id = r.member_id
+            WHERE r.item_id = :itemId AND m.id = r.member_id AND r.is_deleted = false
                         """, nativeQuery = true)
     List<ReviewResponse> findReviewResponseByItemId(@Param("itemId") Long itemId, Pageable pageable);
 

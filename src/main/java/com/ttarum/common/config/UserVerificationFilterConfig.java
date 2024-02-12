@@ -18,7 +18,9 @@ public class UserVerificationFilterConfig {
         FilterRegistrationBean<UserVerificationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new UserVerificationFilter(memberRepository));
         filterRegistrationBean.setUrlPatterns(List.of(
-                "/api/items/list"
+                "/api/items/list",
+                "/api/inquiries/list",
+                "/api/inquiries"
         ));
         return filterRegistrationBean;
     }

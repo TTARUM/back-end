@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthControllerImpl implements AuthController {
     private final AuthService authService;
 
+    @Override
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody final NormalLoginRequest dto) {
         LoginResponse loginResponse = authService.normalLogin(dto);

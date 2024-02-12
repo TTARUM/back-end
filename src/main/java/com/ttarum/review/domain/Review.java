@@ -43,4 +43,8 @@ public class Review extends UpdatableEntity {
         super.prePersist();
         this.isDeleted = false;
     }
+
+    public void delete() {
+        isDeleted = true;
+    }
 }

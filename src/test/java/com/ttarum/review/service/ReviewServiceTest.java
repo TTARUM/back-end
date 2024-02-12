@@ -2,6 +2,7 @@ package com.ttarum.review.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.member.domain.Member;
 import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.response.ReviewResponse;
@@ -79,4 +80,61 @@ class ReviewServiceTest {
                 .isInstanceOf(ReviewException.class);
     }
 
+    @Test
+    @DisplayName("자신의 리뷰를 제거할 수 있다.")
+    void deleteReview() {
+        // given
+        long reviewId = 1;
+        long memberId = 1;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Review review = Review.builder()
+                .member(member)
+                .build();
+
+        // when
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        reviewService.deleteReview(reviewId, memberId);
+
+        // then
+        assertThat(review.getIsDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 리뷰를 제거할 경우 예외가 발생한다.")
+    void deleteReviewFailureByInvalidReviewId() {
+        // given
+        long reviewId = 1;
+        long memberId = 1;
+
+        // when
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> reviewService.deleteReview(reviewId, memberId))
+                .isInstanceOf(ReviewException.class);
+    }
+
+    @Test
+    @DisplayName("다른 사람의 리뷰를 제거할 경우 예외가 발생한다.")
+    void deleteReviewFailureByInvalidMemberId() {
+        // given
+        long reviewId = 1;
+        long writerId = 1;
+        long memberId = 2;
+        Member member = Member.builder()
+                .id(writerId)
+                .build();
+        Review review = Review.builder()
+                .member(member)
+                .build();
+
+        // when
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+
+        // then
+        assertThatThrownBy(() -> reviewService.deleteReview(reviewId, memberId))
+                .isInstanceOf(ReviewException.class);
+    }
 }

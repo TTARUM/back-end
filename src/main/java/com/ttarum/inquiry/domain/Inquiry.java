@@ -35,9 +35,11 @@ public class Inquiry extends BaseEntity {
     @Column(name = "exist_answer", nullable = false)
     private Boolean existAnswer;
 
-    @Override
+    @Column(name = "is_secret", nullable = false)
+    private Boolean isSecret;
+
+    @PrePersist
     public void prePersist() {
-        super.prePersist();
         this.existAnswer = false;
     }
 }

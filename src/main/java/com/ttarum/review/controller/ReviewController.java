@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -45,6 +47,22 @@ public interface ReviewController {
     ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
                                                                final Optional<Integer> page,
                                                                final Optional<Integer> size);
+
+    /**
+     * 리뷰 제거
+     *
+     * @param reviewId 제거할 리뷰의 ID
+     * @param user     로그인한 유저
+     * @return
+     */
+    @Operation(summary = "특정 리뷰 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "제거 성공"),
+            @ApiResponse(responseCode = "400", description = "존재하지 않은 리뷰의 경우")
+    })
+    @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
+    @DeleteMapping
+    ResponseEntity<Object> deleteReview(@RequestParam final long reviewId, @AuthenticationPrincipal final UserDetail user);
 
     /**
      * 리뷰를 업데이트한다.

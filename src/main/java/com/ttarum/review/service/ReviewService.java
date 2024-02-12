@@ -57,6 +57,18 @@ public class ReviewService {
     }
 
     @Transactional
+    public void deleteReview(final Long reviewId, final Long memberId) {
+        Review review = getReviewById(reviewId);
+        validateWriter(review, memberId);
+        review.delete();
+    }
+
+    private Review getReviewById(final Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new ReviewException("해당 리뷰를 찾을 수 없습니다."));
+    }
+
+    @Transactional
     public void updateReview(final Long reviewId, final ReviewUpdateRequest request, final Long memberId) {
         Review review = getReviewById(reviewId);
         if (Boolean.TRUE.equals(review.getIsDeleted())) {
@@ -70,10 +82,5 @@ public class ReviewService {
         if (!review.getMember().getId().equals(memberId)) {
             throw new ReviewException("사용자의 리뷰가 아닙니다.");
         }
-    }
-
-    private Review getReviewById(final Long reviewId) {
-        return reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewException("해당 리뷰를 찾을 수 없습니다."));
     }
 }

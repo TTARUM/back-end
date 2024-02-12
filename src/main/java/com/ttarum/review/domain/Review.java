@@ -3,6 +3,7 @@ package com.ttarum.review.domain;
 import com.ttarum.common.domain.UpdatableEntity;
 import com.ttarum.item.domain.Item;
 import com.ttarum.member.domain.Member;
+import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,5 +46,9 @@ public class Review extends UpdatableEntity {
 
     public void delete() {
         isDeleted = true;
+    }
+
+    public void update(final ReviewUpdateRequest request) {
+        this.content = request.getContent();
     }
 }

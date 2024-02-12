@@ -1,6 +1,7 @@
 package com.ttarum.review.controller;
 
 import com.ttarum.auth.domain.UserDetail;
+import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,15 @@ public class ReviewControllerImpl implements ReviewController {
     public ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
                                                @AuthenticationPrincipal final UserDetail user) {
         reviewService.deleteReview(reviewId, user.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    @Override
+    public ResponseEntity<Void> updateReview(final Long reviewId,
+                                             @RequestBody final ReviewUpdateRequest request,
+                                             final UserDetail user) {
+        reviewService.updateReview(reviewId, request, user.getId());
         return ResponseEntity.ok().build();
     }
 }

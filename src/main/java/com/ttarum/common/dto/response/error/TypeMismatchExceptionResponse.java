@@ -1,5 +1,6 @@
 package com.ttarum.common.dto.response.error;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -11,6 +12,7 @@ public class TypeMismatchExceptionResponse extends ErrorResponse {
     private final String requiredType;
     private final String actualType;
 
+    @Builder
     protected TypeMismatchExceptionResponse(final Instant dateTime, final String message, final String property, final String requiredType, final String actualType) {
         super(dateTime, message);
         this.property = property;
@@ -21,6 +23,12 @@ public class TypeMismatchExceptionResponse extends ErrorResponse {
     }
 
     public static TypeMismatchExceptionResponse generate(final Instant now, final String message, final String property, final String requiredType, final String actualType) {
-        return new TypeMismatchExceptionResponse(now, message, property, requiredType, actualType);
+        return TypeMismatchExceptionResponse.builder()
+                .dateTime(now)
+                .message(message)
+                .property(property)
+                .requiredType(requiredType)
+                .actualType(actualType)
+                .build();
     }
 }

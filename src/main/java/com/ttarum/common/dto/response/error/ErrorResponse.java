@@ -13,7 +13,7 @@ public class ErrorResponse {
     private final Instant dateTime;
     private final String message;
 
-    public static ErrorResponse generate(final String message) {
-        return new ErrorResponse(Instant.now(), message);
+    public static ErrorResponse generate(final Instant dateTime, final String message) {
+        return new ErrorResponse(dateTime, message);
     }
 }

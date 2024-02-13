@@ -47,4 +47,3 @@ public class UserDetail implements UserDetails {
         return false;
     }
 }
-

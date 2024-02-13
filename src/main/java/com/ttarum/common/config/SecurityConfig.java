@@ -23,6 +23,7 @@ public class SecurityConfig {
 
         http
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        
         return http.build();
     }
 }

@@ -2,7 +2,9 @@ package com.ttarum.review.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
+import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewImageResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.exception.ReviewException;
@@ -11,12 +13,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReviewService {
 
@@ -49,6 +53,34 @@ public class ReviewService {
         Optional<Item> foundItem = itemRepository.findById(itemId);
         if (foundItem.isEmpty()) {
             throw new ReviewException("해당 제품을 찾을 수 없습니다.");
+        }
+    }
+
+    @Transactional
+    public void deleteReview(final Long reviewId, final Long memberId) {
+        Review review = getReviewById(reviewId);
+        validateWriter(review, memberId);
+        review.delete();
+    }
+
+    private Review getReviewById(final Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new ReviewException("해당 리뷰를 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public void updateReview(final Long reviewId, final ReviewUpdateRequest request, final Long memberId) {
+        Review review = getReviewById(reviewId);
+        if (Boolean.TRUE.equals(review.getIsDeleted())) {
+            throw new ReviewException("삭제된 리뷰는 수정이 불가능합니다.");
+        }
+        validateWriter(review, memberId);
+        review.update(request);
+    }
+
+    private void validateWriter(final Review review, final Long memberId) {
+        if (!review.getMember().getId().equals(memberId)) {
+            throw new ReviewException("사용자의 리뷰가 아닙니다.");
         }
     }
 }

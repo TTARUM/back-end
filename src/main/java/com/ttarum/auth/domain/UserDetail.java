@@ -6,11 +6,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-@Getter
 // fixme
+@Getter
 public class UserDetail implements UserDetails {
 
-    private long id;
+    private Long id;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

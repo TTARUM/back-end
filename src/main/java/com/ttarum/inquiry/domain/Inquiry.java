@@ -42,6 +42,11 @@ public class Inquiry extends BaseEntity {
     @Column(name = "is_secret", nullable = false)
     private Boolean isSecret;
 
+    @PrePersist
+    public void prePersist() {
+        this.existAnswer = false;
+    }
+
     public void validate() {
         if (!StringUtils.hasText(title)) {
             throw new InquiryException("제목이 비어있습니다.");
@@ -49,11 +54,5 @@ public class Inquiry extends BaseEntity {
         if (!StringUtils.hasText(content)) {
             throw new InquiryException("내용이 비어있습니다.");
         }
-    }
-
-    @Override
-    public void prePersist() {
-        super.prePersist();
-        this.existAnswer = false;
     }
 }

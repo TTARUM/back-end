@@ -34,7 +34,7 @@ public interface ItemController {
     /**
      * 요약된 제품 정보에 대한 검색 메서드
      *
-     * @param name 제품 이름
+     * @param query 검색어
      * @param user 로그인한 사용자 여부를 확인하기 위한 객체
      * @param page 페이지 넘버
      * @param size 아이템 사이즈
@@ -45,11 +45,11 @@ public interface ItemController {
     @ResponseStatus(HttpStatus.OK)
     @ApiResponse(responseCode = "200", description = "성공")
     @Parameters(value = {
-            @Parameter(name = "name", description = "제품 이름"),
+            @Parameter(name = "query", description = "검색어"),
             @Parameter(name = "user", hidden = true),
             @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9개)", example = "9")
     })
     @GetMapping
-    ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String name, @VerificationUser final User user, final Optional<Integer> page, final Optional<Integer> size);
+    ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String query, @VerificationUser final User user, final Optional<Integer> page, final Optional<Integer> size);
 }

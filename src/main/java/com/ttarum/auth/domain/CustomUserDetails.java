@@ -1,6 +1,7 @@
 package com.ttarum.auth.domain;
 
 import com.ttarum.member.domain.Member;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,9 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 // fixme
+@Getter
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private final Member member;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

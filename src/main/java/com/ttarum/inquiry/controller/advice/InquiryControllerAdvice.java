@@ -1,7 +1,7 @@
-package com.ttarum.item.controller.advice;
+package com.ttarum.inquiry.controller.advice;
 
 import com.ttarum.common.dto.response.error.ErrorResponse;
-import com.ttarum.item.exception.ItemException;
+import com.ttarum.inquiry.exception.InquiryException;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,12 +13,12 @@ import java.time.Instant;
 
 @Slf4j
 @Hidden
-@RestControllerAdvice(basePackages = "com.ttarum.item")
-public class ItemControllerAdvice {
+@RestControllerAdvice(basePackages = {"com.ttarum.inquiry"})
+public class InquiryControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ItemException.class)
-    public ErrorResponse itemException(final ItemException e) {
+    @ExceptionHandler(InquiryException.class)
+    public ErrorResponse inquiryException(final InquiryException e) {
         return ErrorResponse.generate(Instant.now(), e.getMessage());
     }
 

@@ -2,8 +2,10 @@ package com.ttarum.review.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.member.domain.Member;
 import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
+import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.exception.ReviewException;
 import com.ttarum.review.repository.ReviewRepository;
@@ -79,4 +81,171 @@ class ReviewServiceTest {
                 .isInstanceOf(ReviewException.class);
     }
 
+    @Test
+    @DisplayName("자신의 리뷰를 제거할 수 있다.")
+    void deleteReview() {
+        // given
+        long reviewId = 1;
+        long memberId = 1;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Review review = Review.builder()
+                .member(member)
+                .build();
+
+        // when
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        reviewService.deleteReview(reviewId, memberId);
+
+        // then
+        assertThat(review.getIsDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 리뷰를 제거할 경우 예외가 발생한다.")
+    void deleteReviewFailureByInvalidReviewId() {
+        // given
+        long reviewId = 1;
+        long memberId = 1;
+
+        // when
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> reviewService.deleteReview(reviewId, memberId))
+                .isInstanceOf(ReviewException.class);
+    }
+
+    @Test
+    @DisplayName("다른 사람의 리뷰를 제거할 경우 예외가 발생한다.")
+    void deleteReviewFailureByInvalidMemberId() {
+        // given
+        long reviewId = 1;
+        long writerId = 1;
+        long memberId = 2;
+        Member member = Member.builder()
+                .id(writerId)
+                .build();
+        Review review = Review.builder()
+                .member(member)
+                .build();
+
+        // when
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+
+        // then
+        assertThatThrownBy(() -> reviewService.deleteReview(reviewId, memberId))
+                .isInstanceOf(ReviewException.class);
+    }
+    @Test
+    @DisplayName("리뷰를 수정할 수 있다.")
+    void updateReview() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .build();
+        Review review = Review.builder()
+                .id(1L)
+                .content("content before updated")
+                .member(member)
+                .isDeleted(false)
+                .build();
+        ReviewUpdateRequest request = ReviewUpdateRequest.builder()
+                .content("content after updated")
+                .build();
+
+        // when
+        when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
+        reviewService.updateReview(review.getId(), request, member.getId());
+
+        // then
+        assertThat(review.getContent()).isEqualTo(request.getContent());
+        verify(reviewRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 리뷰를 수정할 경우 예외가 발생한다.")
+    void updateReviewFailureByInvalidReviewId() {
+        // given
+        long memberId = 1L;
+        long reviewId = 1L;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Review review = Review.builder()
+                .id(reviewId)
+                .content("content before updated")
+                .member(member)
+                .isDeleted(false)
+                .build();
+        ReviewUpdateRequest request = ReviewUpdateRequest.builder()
+                .content("content after updated")
+                .build();
+
+        // when
+        when(reviewRepository.findById(review.getId())).thenThrow(new ReviewException("해당 리뷰를 찾을 수 없습니다."));
+
+        // then
+        assertThatThrownBy(() -> reviewService.updateReview(reviewId, request, memberId))
+                .isInstanceOf(ReviewException.class)
+                .hasMessage("해당 리뷰를 찾을 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("다른 사람의 리뷰를 수정할 경우 예외가 발생한다.")
+    void updateReviewFailureByInvalidWriter() {
+        // given
+        long memberId = 1L;
+        long reviewId = 1L;
+        long anotherMemberId = 2L;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Review review = Review.builder()
+                .id(reviewId)
+                .content("content before updated")
+                .member(member)
+                .isDeleted(false)
+                .build();
+        ReviewUpdateRequest request = ReviewUpdateRequest.builder()
+                .content("content after updated")
+                .build();
+
+        // when
+        when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
+
+        // then
+        assertThatThrownBy(() -> reviewService.updateReview(reviewId, request, anotherMemberId))
+                .isInstanceOf(ReviewException.class)
+                .hasMessage("사용자의 리뷰가 아닙니다.");
+    }
+
+    @Test
+    @DisplayName("삭제된 리뷰를 수정할 경우 예외가 발생한다.")
+    void updateReviewFailureByInvalidReview() {
+        // given
+        long memberId = 1L;
+        long reviewId = 1L;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Review review = Review.builder()
+                .id(reviewId)
+                .content("content before updated")
+                .member(member)
+                .isDeleted(true)
+                .build();
+        ReviewUpdateRequest request = ReviewUpdateRequest.builder()
+                .content("content after updated")
+                .build();
+
+        // when
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+
+        // then
+        assertThatThrownBy(() -> reviewService.updateReview(reviewId, request, memberId))
+                .isInstanceOf(ReviewException.class)
+                .hasMessage("삭제된 리뷰는 수정이 불가능합니다.");
+    }
 }

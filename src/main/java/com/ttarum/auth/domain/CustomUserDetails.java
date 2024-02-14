@@ -1,12 +1,16 @@
 package com.ttarum.auth.domain;
 
+import com.ttarum.member.domain.Member;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 // fixme
+@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
+    private final Member member;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -19,12 +23,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return member.getId().toString();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return !member.getIsDeleted();
     }
 
     @Override
@@ -39,6 +43,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

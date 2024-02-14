@@ -9,9 +9,7 @@ class JwtUtilTest {
     @Test
     void generateAndExtractToken() {
         JwtUtil jwtUtil = new JwtUtil("secret-key-for-jwt-01010101010101");
-        Long memberId = 2L;
-
-        System.out.println(jwtUtil.generateToken(memberId));
+        Long memberId = 1234L;
 
         assertDoesNotThrow(() -> jwtUtil.generateToken(memberId));
         String jws = jwtUtil.generateToken(memberId);

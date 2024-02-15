@@ -2,7 +2,7 @@ package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
-import com.ttarum.item.exception.ItemException;
+import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,8 +58,7 @@ class ItemServiceTest {
         doReturn(Optional.empty()).when(itemRepository).findById(0L);
 
         assertThatThrownBy(() -> itemService.getItem(0L))
-                .isInstanceOf(ItemException.class)
-                .hasMessage("아이템이 존재하지 않습니다.");
+                .isInstanceOf(ItemNotFoundException.class);
     }
 
     @Test

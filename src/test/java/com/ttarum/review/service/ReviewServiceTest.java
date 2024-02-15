@@ -1,6 +1,7 @@
 package com.ttarum.review.service;
 
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.review.domain.Review;
@@ -8,6 +9,7 @@ import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.exception.ReviewException;
+import com.ttarum.review.exception.ReviewNotFoundException;
 import com.ttarum.review.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,7 +80,7 @@ class ReviewServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         assertThatThrownBy(() -> reviewService.getReviewResponseList(-1L, pageRequest))
-                .isInstanceOf(ReviewException.class);
+                .isInstanceOf(ItemNotFoundException.class);
     }
 
     @Test
@@ -114,7 +116,7 @@ class ReviewServiceTest {
 
         // then
         assertThatThrownBy(() -> reviewService.deleteReview(reviewId, memberId))
-                .isInstanceOf(ReviewException.class);
+                .isInstanceOf(ReviewNotFoundException.class);
     }
 
     @Test
@@ -184,12 +186,11 @@ class ReviewServiceTest {
                 .build();
 
         // when
-        when(reviewRepository.findById(review.getId())).thenThrow(new ReviewException("해당 리뷰를 찾을 수 없습니다."));
+        when(reviewRepository.findById(review.getId())).thenThrow(new ReviewNotFoundException());
 
         // then
         assertThatThrownBy(() -> reviewService.updateReview(reviewId, request, memberId))
-                .isInstanceOf(ReviewException.class)
-                .hasMessage("해당 리뷰를 찾을 수 없습니다.");
+                .isInstanceOf(ReviewNotFoundException.class);
     }
 
     @Test

@@ -1,7 +1,11 @@
 package com.ttarum.member.exception;
 
-public class MemberException extends RuntimeException {
-    public MemberException(final String message) {
-        super(message);
+import com.ttarum.common.exception.TtarumException;
+import org.springframework.http.HttpStatusCode;
+
+public class MemberException extends TtarumException {
+
+    public MemberException(final HttpStatusCode status, final String message) {
+        super(status, message);
     }
 }

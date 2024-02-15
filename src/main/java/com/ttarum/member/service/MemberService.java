@@ -8,6 +8,7 @@ import com.ttarum.member.repository.NormalMemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -21,19 +22,19 @@ public class MemberService {
 
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
         if (!isValidNickname(member.getNickname())) {
-            throw new MemberException("올바르지 않은 닉네임입니다.");
+            throw new MemberException(HttpStatus.BAD_REQUEST, "올바르지 않은 닉네임입니다.");
         }
         if (!isValidEmail(normalMember.getEmail())) {
-            throw new MemberException("올바르지 않은 이메일입니다.");
+            throw new MemberException(HttpStatus.BAD_REQUEST, "올바르지 않은 이메일입니다.");
         }
         if (!isValidPassword(normalMember.getPassword())) {
-            throw new MemberException("올바르지 않은 비밀번호입니다.");
+            throw new MemberException(HttpStatus.BAD_REQUEST, "올바르지 않은 비밀번호입니다.");
         }
         if (isNicknameDuplicate(member.getNickname())) {
-            throw new MemberException("닉네임이 중복되었습니다.");
+            throw new MemberException(HttpStatus.BAD_REQUEST, "닉네임이 중복되었습니다.");
         }
         if (isLoginIdDuplicate(normalMember.getLoginId())) {
-            throw new MemberException("로그인 아이디가 중복되었습니다.");
+            throw new MemberException(HttpStatus.BAD_REQUEST, "로그인 아이디가 중복되었습니다.");
         }
         Member saved = memberRepository.save(member);
         // TODO: Before save the password to DB, encrypt it first

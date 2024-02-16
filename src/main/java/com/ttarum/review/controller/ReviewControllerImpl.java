@@ -1,6 +1,6 @@
 package com.ttarum.review.controller;
 
-import com.ttarum.auth.domain.UserDetail;
+import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.service.ReviewService;
@@ -37,7 +37,7 @@ public class ReviewControllerImpl implements ReviewController {
     @DeleteMapping
     @Override
     public ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
-                                               @AuthenticationPrincipal final UserDetail user) {
+                                               @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.deleteReview(reviewId, user.getId());
         return ResponseEntity.ok().build();
     }
@@ -46,7 +46,7 @@ public class ReviewControllerImpl implements ReviewController {
     @Override
     public ResponseEntity<Void> updateReview(final Long reviewId,
                                              @RequestBody final ReviewUpdateRequest request,
-                                             final UserDetail user) {
+                                             final CustomUserDetails user) {
         reviewService.updateReview(reviewId, request, user.getId());
         return ResponseEntity.ok().build();
     }

@@ -1,11 +1,11 @@
 package com.ttarum.inquiry.controller;
 
+import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
 import com.ttarum.inquiry.dto.response.InquiryDetailedResponse;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
 import com.ttarum.inquiry.service.InquiryService;
-import com.ttarum.auth.domain.UserDetail;
 import com.ttarum.inquiry.dto.request.InquiryCreationRequest;
 import com.ttarum.inquiry.dto.response.InquiryCreationResponse;
 import com.ttarum.inquiry.service.InquiryImageService;
@@ -71,7 +71,7 @@ public class InquiryControllerImpl implements InquiryController {
     @Override
     public ResponseEntity<InquiryCreationResponse> postInquiry(@RequestPart(name = "inquiryRequest") final InquiryCreationRequest request,
                                                                @RequestPart(name = "images", required = false) final List<MultipartFile> images,
-                                                               @AuthenticationPrincipal final UserDetail user) {
+                                                               @AuthenticationPrincipal final CustomUserDetails user) {
         long inquiryId = inquiryService.postInquiryArticle(request, user.getId());
 
         if (Objects.nonNull(images)) {

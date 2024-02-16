@@ -1,6 +1,6 @@
 package com.ttarum.review.controller;
 
-import com.ttarum.auth.domain.UserDetail;
+import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,11 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +58,7 @@ public interface ReviewController {
     })
     @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
     @DeleteMapping
-    ResponseEntity<Object> deleteReview(@RequestParam final long reviewId, @AuthenticationPrincipal final UserDetail user);
+    ResponseEntity<Object> deleteReview(@RequestParam final long reviewId, @AuthenticationPrincipal final CustomUserDetails user);
 
     /**
      * 리뷰를 업데이트한다.
@@ -82,6 +78,6 @@ public interface ReviewController {
             @Parameter(name = "user", hidden = true)
     })
     @PutMapping
-    ResponseEntity<Void> updateReview(Long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal UserDetail user);
+    ResponseEntity<Void> updateReview(Long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
 
 }

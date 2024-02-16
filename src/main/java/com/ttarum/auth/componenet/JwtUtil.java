@@ -38,9 +38,7 @@ public class JwtUtil {
         }
     }
 
-    public Long extractMemberId(String token) {
-            return Long.parseLong(
-                Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject()
-            );
+    public String extractMemberId(String token) {
+            return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
     }
 }

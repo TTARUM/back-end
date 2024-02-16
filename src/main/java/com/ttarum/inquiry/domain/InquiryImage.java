@@ -1,8 +1,9 @@
 package com.ttarum.inquiry.domain;
 
-import com.ttarum.inquiry.exception.ImageException;
+import com.ttarum.inquiry.exception.InquiryImageException;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 @Builder
@@ -36,7 +37,7 @@ public class InquiryImage {
 
     private void validate() {
         if (!StringUtils.hasText(fileUrl)) {
-            throw new ImageException("파일의 URL이 비어있습니다.");
+            throw new InquiryImageException(HttpStatus.INTERNAL_SERVER_ERROR, "파일의 URL이 비어있습니다.");
         }
     }
 }

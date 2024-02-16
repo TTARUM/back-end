@@ -2,12 +2,15 @@ package com.ttarum.inquiry.service;
 
 import com.ttarum.inquiry.domain.Inquiry;
 import com.ttarum.inquiry.domain.InquiryImage;
+import com.ttarum.inquiry.exception.InquiryImageException;
 import com.ttarum.inquiry.exception.InquiryException;
+import com.ttarum.inquiry.exception.InquiryNotFoundException;
 import com.ttarum.inquiry.repository.InquiryImageRepository;
 import com.ttarum.inquiry.repository.InquiryRepository;
 import com.ttarum.s3.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,22 +47,22 @@ public class InquiryImageService {
 
             return inquiryImageRepository.save(inquiryImage).getId();
         } catch (IOException e) {
-            throw new InquiryException("이미지 저장에 실패했습니다.", e);
+            throw new InquiryImageException(HttpStatus.BAD_REQUEST, "이미지 저장에 실패했습니다.", e);
         }
     }
 
     private Inquiry getInquiryByInquiryId(final long inquiryId) {
         return inquiryRepository.findById(inquiryId)
-                .orElseThrow(() -> new InquiryException("해당 문의글이 존재하지 않습니다."));
+                .orElseThrow(InquiryNotFoundException::new);
     }
 
     @SuppressWarnings({"null", "DataFlowIssue"})
     public void validateImageFile(final MultipartFile file) {
         if (Objects.isNull(file) || file.isEmpty())
-            throw new InquiryException("파일이 존재하지 않습니다.");
+            throw new InquiryImageException(HttpStatus.BAD_REQUEST, "파일이 존재하지 않습니다.");
 
 
         if (!file.getContentType().startsWith("image/"))
-            throw new InquiryException("이미지 파일만 업로드가 가능합니다.");
+            throw new InquiryImageException(HttpStatus.BAD_REQUEST, "이미지 파일만 업로드가 가능합니다.");
     }
 }

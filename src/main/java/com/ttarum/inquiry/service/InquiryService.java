@@ -6,12 +6,17 @@ import com.ttarum.inquiry.dto.response.InquiryDetailedResponse;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
 import com.ttarum.inquiry.dto.response.answer.InquiryAnswerNotExistResponse;
 import com.ttarum.inquiry.dto.response.answer.InquiryAnswerResponse;
+import com.ttarum.inquiry.exception.InquiryAnswerNotFoundException;
 import com.ttarum.inquiry.exception.InquiryException;
 import com.ttarum.inquiry.dto.request.InquiryCreationRequest;
+import com.ttarum.inquiry.exception.InquiryForbiddenException;
+import com.ttarum.inquiry.exception.InquiryNotFoundException;
 import com.ttarum.inquiry.repository.InquiryRepository;
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
+import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +56,7 @@ public class InquiryService {
     private void checkItemExistence(final long itemId) {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         if (optionalItem.isEmpty()) {
-            throw new InquiryException("제품이 존재하지 않습니다.");
+            throw new ItemNotFoundException();
         }
     }
 
@@ -103,18 +108,18 @@ public class InquiryService {
 
     private Inquiry getInquiryById(final long inquiryId) {
         return inquiryRepository.findById(inquiryId)
-                .orElseThrow(() -> new InquiryException("해당 문의 글을 찾을 수 없습니다."));
+                .orElseThrow(InquiryNotFoundException::new);
     }
 
     private void validateAccessToInquiry(final long memberId, final Inquiry inquiry) {
         if (Boolean.TRUE.equals(inquiry.getIsSecret()) && !inquiry.getMember().getId().equals(memberId)) {
-            throw new InquiryException("해당 문의글을 열람할 권한이 없습니다.");
+            throw new InquiryForbiddenException();
         }
     }
 
     private InquiryAnswer getInquiryAnswerByInquiryId(final long inquiryId) {
         return inquiryRepository.findAnswerByInquiryId(inquiryId)
-                .orElseThrow(() -> new InquiryException("문의 답변이 존재하지 않습니다."));
+                .orElseThrow(InquiryAnswerNotFoundException::new);
     }
 
     /**
@@ -148,7 +153,7 @@ public class InquiryService {
 
     private void validateAccessToInquiry(final Inquiry inquiry) {
         if (Boolean.TRUE.equals(inquiry.getIsSecret())) {
-            throw new InquiryException("해당 문의글을 열람할 권한이 없습니다.");
+            throw new InquiryForbiddenException();
         }
     }
 
@@ -173,11 +178,11 @@ public class InquiryService {
 
     private Member getMemberById(final long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new InquiryException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(MemberNotFoundException::new);
     }
 
     private Item getItemById(final InquiryCreationRequest request) {
         return itemRepository.findById(request.getItemId())
-                .orElseThrow(() -> new InquiryException("해당 제품이 존재하지 않습니다."));
+                .orElseThrow(ItemNotFoundException::new);
     }
 }

@@ -2,7 +2,7 @@ package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
-import com.ttarum.item.exception.ItemException;
+import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +53,6 @@ public class ItemService {
 
     private Item getItemById(final Long id) {
         return itemRepository.findById(id)
-                .orElseThrow(() -> new ItemException("아이템이 존재하지 않습니다."));
+                .orElseThrow(ItemNotFoundException::new);
     }
 }

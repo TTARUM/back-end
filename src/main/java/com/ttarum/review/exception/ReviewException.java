@@ -1,12 +1,11 @@
 package com.ttarum.review.exception;
 
-public class ReviewException extends RuntimeException {
+import com.ttarum.common.exception.TtarumException;
+import org.springframework.http.HttpStatusCode;
 
-    public ReviewException(final String message) {
-        super(message);
-    }
+public class ReviewException extends TtarumException {
 
-    public ReviewException(final String message, final Throwable cause) {
-        super(message, cause);
+    public ReviewException(final HttpStatusCode status, final String message) {
+        super(status, message);
     }
 }

@@ -6,6 +6,7 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 @Builder
@@ -49,10 +50,10 @@ public class Inquiry extends BaseEntity {
 
     public void validate() {
         if (!StringUtils.hasText(title)) {
-            throw new InquiryException("제목이 비어있습니다.");
+            throw new InquiryException(HttpStatus.BAD_REQUEST, "제목이 비어있습니다.");
         }
         if (!StringUtils.hasText(content)) {
-            throw new InquiryException("내용이 비어있습니다.");
+            throw new InquiryException(HttpStatus.BAD_REQUEST, "내용이 비어있습니다.");
         }
     }
 }

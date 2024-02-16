@@ -2,7 +2,8 @@ package com.ttarum.inquiry.service;
 
 import com.ttarum.inquiry.domain.Inquiry;
 import com.ttarum.inquiry.domain.InquiryImage;
-import com.ttarum.inquiry.exception.InquiryException;
+import com.ttarum.inquiry.exception.InquiryImageException;
+import com.ttarum.inquiry.exception.InquiryNotFoundException;
 import com.ttarum.inquiry.repository.InquiryImageRepository;
 import com.ttarum.inquiry.repository.InquiryRepository;
 import com.ttarum.s3.service.ImageService;
@@ -79,7 +80,7 @@ class InquiryImageServiceTest {
 
         // then
         assertThatThrownBy(() -> inquiryImageService.saveImage(inquiryId, multipartFile))
-                .isInstanceOf(InquiryException.class)
+                .isInstanceOf(InquiryImageException.class)
                 .hasMessage("파일이 존재하지 않습니다.");
     }
 
@@ -97,7 +98,7 @@ class InquiryImageServiceTest {
 
         // then
         assertThatThrownBy(() -> inquiryImageService.saveImage(inquiryId, multipartFile))
-                .isInstanceOf(InquiryException.class)
+                .isInstanceOf(InquiryImageException.class)
                 .hasMessage("이미지 파일만 업로드가 가능합니다.");
     }
 
@@ -116,11 +117,10 @@ class InquiryImageServiceTest {
 
         // when
         when(imageService.saveImage(multipartFile)).thenReturn(url);
-        when(inquiryRepository.findById(inquiryId)).thenThrow(new InquiryException("해당 문의글이 존재하지 않습니다."));
+        when(inquiryRepository.findById(inquiryId)).thenThrow(new InquiryNotFoundException());
 
         // then
         assertThatThrownBy(() -> inquiryImageService.saveImage(inquiryId, multipartFile))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("해당 문의글이 존재하지 않습니다.");
+                .isInstanceOf(InquiryNotFoundException.class);
     }
 }

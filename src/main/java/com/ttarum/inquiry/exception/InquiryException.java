@@ -1,12 +1,15 @@
 package com.ttarum.inquiry.exception;
 
-public class InquiryException extends RuntimeException {
+import com.ttarum.common.exception.TtarumException;
+import org.springframework.http.HttpStatusCode;
 
-    public InquiryException(final String message) {
-        super(message);
+public class InquiryException extends TtarumException {
+
+    public InquiryException(final HttpStatusCode status, final String message) {
+        super(status, message);
     }
 
-    public InquiryException(final String message, final Throwable cause) {
-        super(message, cause);
+    public InquiryException(final HttpStatusCode status, final String message, final Throwable cause) {
+        super(status, message, cause);
     }
 }

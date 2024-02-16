@@ -13,4 +13,8 @@ public class TtarumException extends ResponseStatusException {
         super(status, message);
         this.message = message;
     }
+    public TtarumException(final HttpStatusCode status, final String message, final Throwable throwable) {
+        super(status, message, throwable);
+        this.message = message;
+    }
 }

@@ -40,7 +40,7 @@ public class ReviewService {
                 reviewResponseList.stream()
                         .filter(r -> r.getId().equals(ri.getReview().getId()))
                         .findFirst()
-                        .orElseThrow(() -> new ReviewException(HttpStatus.BAD_REQUEST, "Unreachable Exception"))
+                        .orElseThrow(() -> new ReviewException(HttpStatus.INTERNAL_SERVER_ERROR, "Unreachable Exception"))
                         .addImageUrl(ReviewImageResponse.of(ri))
         );
 

@@ -8,11 +8,14 @@ import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
 import com.ttarum.inquiry.dto.response.answer.InquiryAnswerExistResponse;
 import com.ttarum.inquiry.dto.response.answer.InquiryAnswerNotExistResponse;
 import com.ttarum.inquiry.dto.request.InquiryCreationRequest;
-import com.ttarum.inquiry.exception.InquiryException;
+import com.ttarum.inquiry.exception.InquiryForbiddenException;
+import com.ttarum.inquiry.exception.InquiryNotFoundException;
 import com.ttarum.inquiry.repository.InquiryRepository;
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
+import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,8 +86,7 @@ class InquiryServiceTest {
 
         // then
         assertThatThrownBy(() -> inquiryService.getInquirySummaryResponseList(itemId, memberId, pageRequest))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("제품이 존재하지 않습니다.");
+                .isInstanceOf(ItemNotFoundException.class);
     }
 
     @Test
@@ -124,8 +126,7 @@ class InquiryServiceTest {
 
         // then
         assertThatThrownBy(() -> inquiryService.getInquirySummaryResponseList(itemId, pageRequest))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("제품이 존재하지 않습니다.");
+                .isInstanceOf(ItemNotFoundException.class);
     }
 
     @Test
@@ -268,12 +269,11 @@ class InquiryServiceTest {
         long memberId = 1L;
 
         // when
-        when(inquiryRepository.findById(inquiryId)).thenThrow(new InquiryException("해당 문의 글을 찾을 수 없습니다."));
+        when(inquiryRepository.findById(inquiryId)).thenThrow(new InquiryNotFoundException());
 
         // then
         assertThatThrownBy(() -> inquiryService.getInquiryDetailedResponse(inquiryId, memberId))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("해당 문의 글을 찾을 수 없습니다.");
+                .isInstanceOf(InquiryNotFoundException.class);
     }
 
     @Test
@@ -283,12 +283,11 @@ class InquiryServiceTest {
         long inquiryId = 1L;
 
         // when
-        when(inquiryRepository.findById(inquiryId)).thenThrow(new InquiryException("해당 문의 글을 찾을 수 없습니다."));
+        when(inquiryRepository.findById(inquiryId)).thenThrow(new InquiryNotFoundException());
 
         // then
         assertThatThrownBy(() -> inquiryService.getInquiryDetailedResponse(inquiryId))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("해당 문의 글을 찾을 수 없습니다.");
+                .isInstanceOf(InquiryNotFoundException.class);
     }
 
     @Test
@@ -309,8 +308,7 @@ class InquiryServiceTest {
 
         // then
         assertThatThrownBy(() -> inquiryService.getInquiryDetailedResponse(inquiryId))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("해당 문의글을 열람할 권한이 없습니다.");
+                .isInstanceOf(InquiryForbiddenException.class);
     }
 
     @Test
@@ -337,8 +335,7 @@ class InquiryServiceTest {
 
         // then
         assertThatThrownBy(() -> inquiryService.getInquiryDetailedResponse(inquiryId, anotherMemberId))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("해당 문의글을 열람할 권한이 없습니다.");
+                .isInstanceOf(InquiryForbiddenException.class);
     }
 
     @Test
@@ -386,12 +383,11 @@ class InquiryServiceTest {
                 .build();
 
         // when
-        when(itemRepository.findById(itemId)).thenThrow(new InquiryException("해당 제품이 존재하지 않습니다."));
+        when(itemRepository.findById(itemId)).thenThrow(new ItemNotFoundException());
 
         // then
         assertThatThrownBy(() -> inquiryService.postInquiryArticle(request, memberId))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("해당 제품이 존재하지 않습니다.");
+                .isInstanceOf(ItemNotFoundException.class);
     }
 
     @Test
@@ -411,13 +407,12 @@ class InquiryServiceTest {
                 .build();
 
         // when
-        when(memberRepository.findById(memberId)).thenThrow(new InquiryException("해당 회원이 존재하지 않습니다."));
+        when(memberRepository.findById(memberId)).thenThrow(new MemberNotFoundException());
         when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
 
 
         // then
         assertThatThrownBy(() -> inquiryService.postInquiryArticle(request, memberId))
-                .isInstanceOf(InquiryException.class)
-                .hasMessage("해당 회원이 존재하지 않습니다.");
+                .isInstanceOf(MemberNotFoundException.class);
     }
 }

@@ -8,13 +8,13 @@ class JwtUtilTest {
 
     @Test
     void generateAndExtractToken() {
-        JwtUtil jwtUtil = new JwtUtil("secret-key-for-test-010101010101010101010101010");
+        JwtUtil jwtUtil = new JwtUtil("secret-key-for-jwt-01010101010101");
         Long memberId = 1234L;
 
         assertDoesNotThrow(() -> jwtUtil.generateToken(memberId));
         String jws = jwtUtil.generateToken(memberId);
 
-        Long result = jwtUtil.extractMemberId(jws);
+        Long result = Long.parseLong(jwtUtil.extractMemberId(jws));
         assertEquals(memberId, result);
     }
 }

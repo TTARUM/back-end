@@ -7,7 +7,6 @@ import com.ttarum.auth.exception.AuthException;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.repository.NormalMemberRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ public class AuthService {
     private final NormalMemberRepository normalMemberRepository;
     private final JwtUtil jwtUtil;
 
-    @Transactional
     public LoginResponse normalLogin(final NormalLoginRequest dto) {
         Optional<NormalMember> normalMember = normalMemberRepository.findNormalMemberByLoginId(dto.getLoginId());
         if (normalMember.isEmpty()) {

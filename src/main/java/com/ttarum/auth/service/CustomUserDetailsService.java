@@ -1,6 +1,7 @@
 package com.ttarum.auth.service;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.auth.exception.AuthException;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         Member member = memberRepository.findById(Long.parseLong(username))
-                .orElseThrow(() -> new UsernameNotFoundException("Member not found"));
+                .orElseThrow(AuthException::UserNotFound);
         return new CustomUserDetails(member);
     }
 }

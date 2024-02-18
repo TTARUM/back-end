@@ -1,6 +1,7 @@
 package com.ttarum.common.config;
 
 import com.ttarum.auth.componenet.JwtUtil;
+import com.ttarum.auth.filter.ExceptionHandlerFilter;
 import com.ttarum.auth.filter.JwtAuthenticationFilter;
 import com.ttarum.auth.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -40,7 +42,8 @@ public class SecurityConfig {
                 );
 
         http
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

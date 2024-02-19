@@ -1,5 +1,6 @@
 package com.ttarum.member.domain;
 
+import com.ttarum.common.domain.BaseEntity;
 import com.ttarum.item.domain.Item;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +11,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "wish_list")
-public class WishList {
+public class WishList extends BaseEntity {
     @EmbeddedId
     private WishListId id;
 

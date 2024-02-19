@@ -80,6 +80,15 @@ public class MemberService {
         return normalMemberRepository.findNormalMemberByLoginId(loginId).isPresent();
     }
 
+    /**
+     * 특정 제품을 찜 목록에 추가한다.
+     *
+     * @param memberId 사용자의 Id 값
+     * @param itemId   찜 목록에 추가될 제품의 Id 값
+     * @throws DuplicatedWishListException 이미 찜 목록에 제품이 존재하는 경우 발생한다.
+     * @throws MemberNotFoundException     해당 사용자가 존재하지 않으면 발생한다.
+     * @throws ItemNotFoundException       해당 제품이 존재하지 않으면 발생한다.
+     */
     @Transactional
     public void wishItem(final long memberId, final long itemId) {
         checkWishListExistence(memberId, itemId);

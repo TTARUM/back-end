@@ -20,7 +20,7 @@ public class WishList {
     private Member member;
 
     @MapsId("itemId")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
 

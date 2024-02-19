@@ -91,7 +91,7 @@ public class MemberService {
      */
     @Transactional
     public void wishItem(final long memberId, final long itemId) {
-        checkWishListExistence(memberId, itemId);
+        validateDuplicatedWishList(memberId, itemId);
         Member member = getMemberById(memberId);
         Item item = getItemById(itemId);
         WishList wishList = WishList.builder()
@@ -101,7 +101,7 @@ public class MemberService {
         wishListRepository.save(wishList);
     }
 
-    private void checkWishListExistence(final long memberId, final long itemId) {
+    private void validateDuplicatedWishList(final long memberId, final long itemId) {
         Optional<WishList> optionalWishList = wishListRepository.findByMemberIdAndItemId(memberId, itemId);
         if (optionalWishList.isPresent()) {
             throw new DuplicatedWishListException();

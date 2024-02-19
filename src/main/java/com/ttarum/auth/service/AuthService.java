@@ -7,9 +7,7 @@ import com.ttarum.auth.exception.AuthException;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.repository.NormalMemberRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -20,15 +18,14 @@ public class AuthService {
     private final NormalMemberRepository normalMemberRepository;
     private final JwtUtil jwtUtil;
 
-    @Transactional
     public LoginResponse normalLogin(final NormalLoginRequest dto) {
         Optional<NormalMember> normalMember = normalMemberRepository.findNormalMemberByLoginId(dto.getLoginId());
         if (normalMember.isEmpty()) {
-            throw new AuthException(HttpStatus.BAD_REQUEST, "아이디가 존재하지 않습니다.");
+            throw AuthException.UserNotFound();
         }
         // TODO: Use encoded password
         if (!normalMember.get().getPassword().equals(dto.getPassword())) {
-            throw new AuthException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+            throw AuthException.InvalidPassword();
         }
 
         Member member = normalMember.get().getMember();

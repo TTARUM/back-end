@@ -1,6 +1,7 @@
 package com.ttarum.auth.filter;
 
 import com.ttarum.auth.componenet.JwtUtil;
+import com.ttarum.auth.exception.AuthException;
 import com.ttarum.auth.service.CustomUserDetailsService;
 import io.micrometer.common.lang.NonNullApi;
 import jakarta.servlet.FilterChain;
@@ -27,30 +28,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String jwt = getJwtFromRequest(request);
-            if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
-                String username = jwtUtil.extractMemberId(jwt);
-
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, null);
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception ex) {
-            log.error("Failed on set user authentication", ex);
-            throw new RuntimeException(ex.getMessage());
+        String jwt = jwtUtil.getJwtFromRequest(request);
+        if (!StringUtils.hasText(jwt) || !jwtUtil.validateToken(jwt)) {
+            throw AuthException.InvalidToken();
         }
+        String username = jwtUtil.extractMemberId(jwt);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, null);
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
-    }
-
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 }

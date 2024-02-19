@@ -34,7 +34,9 @@ public class MemberControllerImpl implements MemberController {
 
     @Override
     @GetMapping("/wish-item")
-    public ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal final CustomUserDetails user, final Optional<Integer> size, final Optional<Integer> page) {
+    public ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal final CustomUserDetails user,
+                                                        final Optional<Integer> page,
+                                                        final Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_WISH_LIST_SIZE));
         WishListResponse wishListResponse = memberService.getWishListResponse(user.getId(), pageRequest);
         return ResponseEntity.ok(wishListResponse);

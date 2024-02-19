@@ -27,6 +27,6 @@ public interface MemberController {
 
     @GetMapping
     ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal CustomUserDetails user,
-                                                 Optional<Integer> size,
-                                                 Optional<Integer> page);
+                                                 Optional<Integer> page,
+                                                 Optional<Integer> size);
 }

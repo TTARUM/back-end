@@ -2,7 +2,6 @@ package com.ttarum.member.service;
 
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
-import com.ttarum.member.domain.WishList;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -79,8 +77,7 @@ public class MemberService {
 
     public WishListResponse getWishListResponse(final Long memberId, final Pageable pageable) {
         checkMemberExistence(memberId);
-        List<WishList> wishLists = wishListRepository.findByMemberId(memberId, pageable);
-        throw new UnsupportedOperationException(); // TODO
+        return new WishListResponse(wishListRepository.findItemSummaryByMemberId(memberId, pageable));
     }
 
     private void checkMemberExistence(final Long memberId) {

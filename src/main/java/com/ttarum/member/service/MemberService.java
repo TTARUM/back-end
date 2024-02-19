@@ -75,6 +75,14 @@ public class MemberService {
         return normalMemberRepository.findNormalMemberByLoginId(loginId).isPresent();
     }
 
+    /**
+     * 찜 목록 조회 메서드
+     *
+     * @param memberId 사용자의 Id 값
+     * @param pageable pageable
+     * @return 조회된 찜 목록  리스트
+     * @throws MemberNotFoundException 사용자가 존재하지 않을 경우 발생한다.
+     */
     public WishListResponse getWishListResponse(final Long memberId, final Pageable pageable) {
         checkMemberExistence(memberId);
         return new WishListResponse(wishListRepository.findItemSummaryByMemberId(memberId, pageable));

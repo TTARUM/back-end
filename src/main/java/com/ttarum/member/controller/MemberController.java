@@ -27,6 +27,14 @@ public interface MemberController {
     @PostMapping(consumes = "application/json")
     void registerNormalMember(@RequestBody NormalMemberRegister dto);
 
+    /**
+     * 찜 목록 조회 메서드
+     *
+     * @param user 사용자
+     * @param page 페이지
+     * @param size 페이지당 컨텐츠 갯수
+     * @return 찜 목록 리스트
+     */
     @Operation(summary = "찜 목록 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),

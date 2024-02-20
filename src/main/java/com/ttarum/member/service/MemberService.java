@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -19,6 +20,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final NormalMemberRepository normalMemberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
         if (!isValidNickname(member.getNickname())) {
@@ -37,8 +39,8 @@ public class MemberService {
             throw new MemberException(HttpStatus.BAD_REQUEST, "로그인 아이디가 중복되었습니다.");
         }
         Member saved = memberRepository.save(member);
-        // TODO: Before save the password to DB, encrypt it first
         normalMember.setMember(saved);
+        normalMember.encodePassword(passwordEncoder);
         normalMemberRepository.save(normalMember);
     }
 

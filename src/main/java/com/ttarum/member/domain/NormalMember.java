@@ -2,6 +2,7 @@ package com.ttarum.member.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Builder
 @AllArgsConstructor
@@ -28,4 +29,7 @@ public class NormalMember {
     @Column(name = "email", nullable = false, length = 320)
     private String email;
 
+    public void encodePassword(PasswordEncoder encoder) {
+        this.password = encoder.encode(this.password);
+    }
 }

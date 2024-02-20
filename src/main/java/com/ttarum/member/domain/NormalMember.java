@@ -16,7 +16,7 @@ public class NormalMember {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
     private Member member;
 

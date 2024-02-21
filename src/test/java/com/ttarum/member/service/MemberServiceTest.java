@@ -5,11 +5,13 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.repository.CartRepository;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.member.repository.NormalMemberRepository;
 import com.ttarum.member.repository.WishListRepository;
@@ -22,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
 import java.util.List;
@@ -45,6 +48,10 @@ class MemberServiceTest {
     private ItemRepository itemRepository;
     @Mock
     private WishListRepository wishListRepository;
+    @Mock
+    private CartRepository cartRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Test
     @DisplayName("일반 유저 회원가입 - happy path")
@@ -60,6 +67,8 @@ class MemberServiceTest {
                 .password("testPassword123")
                 .email("testEmail@gmail.com")
                 .build();
+
+        when(passwordEncoder.encode(any())).thenReturn(any());
 
         // when
         assertDoesNotThrow(() -> memberService.registerNormalUser(targetMember, targetNormalMember));
@@ -321,5 +330,39 @@ class MemberServiceTest {
         // when & then
         assertThatThrownBy(() -> memberService.getWishListResponse(memberId, pageRequest))
                 .isInstanceOf(MemberNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("장바구니를 조회할 수 있다.")
+    void getCartResponseList() {
+        // given
+        long memberId = 1L;
+        List<CartResponse> cartResponseList = List.of(
+                CartResponse.builder()
+                        .itemId(1L)
+                        .itemName("item1")
+                        .categoryName("category1")
+                        .itemImageUrl("image1")
+                        .price(13000)
+                        .amount(1)
+                        .build(),
+                CartResponse.builder()
+                        .itemId(2L)
+                        .itemName("item2")
+                        .categoryName("category2")
+                        .itemImageUrl("image2")
+                        .price(23000)
+                        .amount(2)
+                        .build()
+        );
+
+        when(cartRepository.getCartResponseListByMemberId(memberId)).thenReturn(cartResponseList);
+
+        // when
+        List<CartResponse> result = memberService.getCartResponseList(memberId);
+
+        // then
+        verify(cartRepository, times(1)).getCartResponseListByMemberId(memberId);
+        assertThat(result).size().isEqualTo(2);
     }
 }

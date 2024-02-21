@@ -13,11 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,11 +28,13 @@ class AuthServiceTest {
 
     @Mock
     private NormalMemberRepository normalMemberRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
         JwtUtil jwtUtil = new JwtUtil("secret-key-for-test-010101010101010101010101010");
-        authService = new AuthService(normalMemberRepository, jwtUtil);
+        authService = new AuthService(normalMemberRepository, jwtUtil, passwordEncoder);
     }
 
     @Test
@@ -51,6 +55,7 @@ class AuthServiceTest {
                 .build();
 
         when(normalMemberRepository.findNormalMemberByLoginId("testLoginId")).thenReturn(Optional.of(targetNormalMember));
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
 
         NormalLoginRequest normalLoginRequest = NormalLoginRequest.builder()
                 .loginId("testLoginId")

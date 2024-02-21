@@ -4,6 +4,8 @@ import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +24,14 @@ public interface MemberController {
     @PostMapping(consumes = "application/json")
     void registerNormalMember(@RequestBody NormalMemberRegister dto);
 
+    @Operation(summary = "장바구니에 제품 추가")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공")
+    })
+    @Parameters(value = {
+            @Parameter(name = "itemId", description = "제품의 Id 값", example = "1", required = true),
+            @Parameter(name = "amount", description = "장바구니에 담을 제품의 수량", example = "1", required = true)
+    })
     @PostMapping
     ResponseEntity<Void> addToCart(@AuthenticationPrincipal CustomUserDetails user, CartAdditionRequest cartAdditionRequest);
 }

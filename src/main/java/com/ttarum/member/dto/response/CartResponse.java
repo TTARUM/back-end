@@ -2,9 +2,11 @@ package com.ttarum.member.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 @AllArgsConstructor
 @Schema(description = "장바구니 조회 dto")
 public class CartResponse {

@@ -24,5 +24,4 @@ public class WishList extends BaseEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
-
 }

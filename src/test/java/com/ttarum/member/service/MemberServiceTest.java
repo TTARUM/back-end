@@ -1,7 +1,11 @@
 package com.ttarum.member.service;
 
+import com.ttarum.item.domain.Item;
+import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
+import com.ttarum.member.domain.WishList;
+import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
@@ -37,6 +41,8 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
     @Mock
     private NormalMemberRepository normalMemberRepository;
+    @Mock
+    private ItemRepository itemRepository;
     @Mock
     private WishListRepository wishListRepository;
 
@@ -188,6 +194,60 @@ class MemberServiceTest {
 
         // then
         assertTrue(exception.getMessage().contains("로그인 아이디가 중복되었습니다."));
+    }
+
+    @Test
+    @DisplayName("제품 찜 하기")
+    void wishItem() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .build();
+        Item item = Item.builder()
+                .id(1L)
+                .build();
+        WishList wishList = WishList.builder()
+                .member(member)
+                .item(item)
+                .build();
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+        when(wishListRepository.save(any(WishList.class))).thenReturn(wishList);
+
+        // when
+        memberService.wishItem(member.getId(), item.getId());
+
+        // then
+        verify(memberRepository, times(1)).findById(1L);
+        verify(itemRepository, times(1)).findById(1L);
+        verify(wishListRepository, times(1)).save(any(WishList.class));
+        assertThat(wishList.getItem().getId()).isEqualTo(item.getId());
+        assertThat(wishList.getMember().getId()).isEqualTo(member.getId());
+    }
+
+    @Test
+    @DisplayName("제품 찜 하기 - 이미 찜 목록에 존재하는 제품을 찜할 경우 예외가 발생한다.")
+    void wishItemFailedByDuplicatedWishList() {
+        // given
+        long memberId = 1L;
+        long itemId = 1L;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Item item = Item.builder()
+                .id(itemId)
+                .build();
+        WishList wishList = WishList.builder()
+                .member(member)
+                .item(item)
+                .build();
+
+        when(wishListRepository.findByMemberIdAndItemId(memberId, itemId)).thenReturn(Optional.of(wishList));
+
+        // when & then
+        assertThatThrownBy(() -> memberService.wishItem(memberId, itemId))
+                .isInstanceOf(DuplicatedWishListException.class);
     }
 
     @Test

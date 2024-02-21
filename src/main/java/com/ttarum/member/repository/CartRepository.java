@@ -12,7 +12,7 @@ import java.util.List;
 public interface CartRepository extends JpaRepository<Cart, CartId> {
 
     @Query("""
-            SELECT new com.ttarum.member.dto.response.CartResponse(i.id, i.name, i.category.name, i.itemImageUrl, i.price)
+            SELECT new com.ttarum.member.dto.response.CartResponse(i.id, i.name, i.category.name, i.itemImageUrl, i.price, c.amount)
             FROM Cart c
             LEFT JOIN FETCH Item i
             ON c.item.id = i.id

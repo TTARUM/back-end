@@ -23,4 +23,7 @@ public class CartResponse {
 
     @Schema(description = "제품의 가격", example = "16500")
     private final int price;
+
+    @Schema(description = "장바구니에 담긴 해당 제품의 개수", example = "7")
+    private final int amount;
 }

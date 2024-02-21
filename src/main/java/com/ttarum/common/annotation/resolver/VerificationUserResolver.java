@@ -1,5 +1,6 @@
 package com.ttarum.common.annotation.resolver;
 
+import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
 import io.micrometer.common.lang.NonNullApi;
 import jakarta.annotation.Nullable;
@@ -10,6 +11,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Objects;
+
 @NonNullApi
 public class VerificationUserResolver implements HandlerMethodArgumentResolver {
 
@@ -17,7 +20,8 @@ public class VerificationUserResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(User.class);
+        VerificationUser annotation = parameter.getParameterAnnotation(VerificationUser.class);
+        return Objects.nonNull(annotation) && parameter.getParameterType().equals(User.class);
     }
 
     @Override

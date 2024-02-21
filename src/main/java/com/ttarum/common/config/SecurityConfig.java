@@ -7,6 +7,7 @@ import com.ttarum.auth.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,6 +42,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
                         .requestMatchers("/api/members/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/items/list").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/inquiries").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/inquiries/list").permitAll()
                         .anyRequest().authenticated()
                 );
 

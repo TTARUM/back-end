@@ -8,6 +8,7 @@ import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.repository.NormalMemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,14 +18,15 @@ import java.util.Optional;
 public class AuthService {
     private final NormalMemberRepository normalMemberRepository;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     public LoginResponse normalLogin(final NormalLoginRequest dto) {
         Optional<NormalMember> normalMember = normalMemberRepository.findNormalMemberByLoginId(dto.getLoginId());
         if (normalMember.isEmpty()) {
             throw AuthException.UserNotFound();
         }
-        // TODO: Use encoded password
-        if (!normalMember.get().getPassword().equals(dto.getPassword())) {
+
+        if (!passwordEncoder.matches(dto.getPassword(), normalMember.get().getPassword())) {
             throw AuthException.InvalidPassword();
         }
 

@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ public class MemberService {
     private final ItemRepository itemRepository;
     private final WishListRepository wishListRepository;
     private final NormalMemberRepository normalMemberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
@@ -51,8 +53,8 @@ public class MemberService {
             throw new MemberException(HttpStatus.BAD_REQUEST, "로그인 아이디가 중복되었습니다.");
         }
         Member saved = memberRepository.save(member);
-        // TODO: Before save the password to DB, encrypt it first
         normalMember.setMember(saved);
+        normalMember.encodePassword(passwordEncoder);
         normalMemberRepository.save(normalMember);
     }
 

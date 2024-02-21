@@ -3,6 +3,7 @@ package com.ttarum.member.controller;
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
+import com.ttarum.member.dto.response.WishListResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -11,9 +12,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Optional;
 
 @Tag(name = "Member", description = "회원")
 public interface MemberController {
@@ -40,6 +44,28 @@ public interface MemberController {
     @Parameter(name = "itemId", required = true, description = "제품의 Id 값", example = "1")
     @PostMapping
     ResponseEntity<Void> wishItem(@AuthenticationPrincipal CustomUserDetails user, @RequestParam long itemId);
+
+    /**
+     * 찜 목록 조회 메서드
+     *
+     * @param user 사용자
+     * @param page 페이지
+     * @param size 페이지당 컨텐츠 갯수
+     * @return 찜 목록 리스트
+     */
+    @Operation(summary = "찜 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @Parameters(value = {
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "size", description = "페이지 당 컨텐츠 갯수 (기본 값 8)", example = "8")
+    })
+    @GetMapping
+    ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal CustomUserDetails user,
+                                                 Optional<Integer> page,
+                                                 Optional<Integer> size);
 
     /**
      * 장바구니에 제품 추가

@@ -1,5 +1,6 @@
 package com.ttarum.common.config;
 
+import com.ttarum.auth.componenet.JwtUtil;
 import com.ttarum.common.filter.UserVerificationFilter;
 import com.ttarum.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,9 @@ import java.util.List;
 public class UserVerificationFilterConfig {
 
     @Bean
-    public FilterRegistrationBean<UserVerificationFilter> userVerificationFilterRegistration(final MemberRepository memberRepository) {
+    public FilterRegistrationBean<UserVerificationFilter> userVerificationFilterRegistration(final MemberRepository memberRepository, final JwtUtil jwtUtil) {
         FilterRegistrationBean<UserVerificationFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setFilter(new UserVerificationFilter(memberRepository));
+        filterRegistrationBean.setFilter(new UserVerificationFilter(memberRepository, jwtUtil));
         filterRegistrationBean.setUrlPatterns(List.of(
                 "/api/items/list",
                 "/api/inquiries/list",

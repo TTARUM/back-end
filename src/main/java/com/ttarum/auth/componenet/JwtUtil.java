@@ -49,6 +49,6 @@ public class JwtUtil {
     }
 
     public String extractMemberId(String token) {
-            return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
     }
 }

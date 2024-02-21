@@ -1,8 +1,10 @@
 package com.ttarum.common.filter;
 
+import com.ttarum.auth.componenet.JwtUtil;
+import com.ttarum.common.dto.user.LoggedInUser;
 import com.ttarum.common.dto.user.UnLoggedInUser;
 import com.ttarum.common.dto.user.User;
-import com.ttarum.common.dto.user.LoggedInUser;
+import com.ttarum.member.domain.Member;
 import com.ttarum.member.repository.MemberRepository;
 import io.micrometer.common.lang.NonNullApi;
 import jakarta.servlet.FilterChain;
@@ -14,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.Optional;
 
 @NonNullApi
 @Slf4j
@@ -23,16 +25,21 @@ public class UserVerificationFilter extends OncePerRequestFilter {
 
     private static final String AUTHENTICATION = "authentication";
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorization = request.getHeader("Authorization");
-        User user;
-        if (Objects.isNull(authorization)) {
-            user = new UnLoggedInUser();
-        } else { // FIXME 로그인한 유저인지 확인할 수 있는 로직 필요(토큰 구현 시 작성)
-            user = LoggedInUser.builder()
-                    .build();
+        User user = new UnLoggedInUser();
+
+        String jwt = jwtUtil.getJwtFromRequest(request);
+        if (jwtUtil.validateToken(jwt)) {
+            String memberId = jwtUtil.extractMemberId(jwt);
+            Optional<Member> m = memberRepository.findById(Long.parseLong(memberId));
+            if (m.isPresent()) {
+                user = LoggedInUser.builder()
+                        .id(m.get().getId())
+                        .build();
+            }
         }
         request.setAttribute(AUTHENTICATION, user);
         filterChain.doFilter(request, response);

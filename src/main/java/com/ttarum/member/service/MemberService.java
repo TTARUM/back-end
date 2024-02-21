@@ -9,6 +9,7 @@ import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
 import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.CartRepository;
@@ -17,7 +18,9 @@ import com.ttarum.member.repository.NormalMemberRepository;
 import com.ttarum.member.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,7 @@ public class MemberService {
     private final WishListRepository wishListRepository;
     private final NormalMemberRepository normalMemberRepository;
     private final CartRepository cartRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
@@ -53,8 +57,8 @@ public class MemberService {
             throw new MemberException(HttpStatus.BAD_REQUEST, "로그인 아이디가 중복되었습니다.");
         }
         Member saved = memberRepository.save(member);
-        // TODO: Before save the password to DB, encrypt it first
         normalMember.setMember(saved);
+        normalMember.encodePassword(passwordEncoder);
         normalMemberRepository.save(normalMember);
     }
 
@@ -120,6 +124,26 @@ public class MemberService {
     private Item getItemById(final long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(ItemNotFoundException::new);
+    }
+
+    /**
+     * 찜 목록 조회 메서드
+     *
+     * @param memberId 사용자의 Id 값
+     * @param pageable pageable
+     * @return 조회된 찜 목록  리스트
+     * @throws MemberNotFoundException 사용자가 존재하지 않을 경우 발생한다.
+     */
+    public WishListResponse getWishListResponse(final Long memberId, final Pageable pageable) {
+        checkMemberExistence(memberId);
+        return new WishListResponse(wishListRepository.findItemSummaryByMemberId(memberId, pageable));
+    }
+
+    private void checkMemberExistence(final Long memberId) {
+        Optional<Member> member = memberRepository.findById(memberId);
+        if (member.isEmpty()) {
+            throw new MemberNotFoundException();
+        }
     }
 
     /**

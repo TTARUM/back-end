@@ -6,12 +6,15 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Cart;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
+import com.ttarum.member.domain.WishList;
+import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.CartRepository;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.member.repository.NormalMemberRepository;
+import com.ttarum.member.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,9 +30,10 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
+    private final WishListRepository wishListRepository;
     private final NormalMemberRepository normalMemberRepository;
     private final CartRepository cartRepository;
-    private final ItemRepository itemRepository;
 
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
@@ -80,6 +84,44 @@ public class MemberService {
         return normalMemberRepository.findNormalMemberByLoginId(loginId).isPresent();
     }
 
+    /**
+     * 특정 제품을 찜 목록에 추가한다.
+     *
+     * @param memberId 사용자의 Id 값
+     * @param itemId   찜 목록에 추가될 제품의 Id 값
+     * @throws DuplicatedWishListException 이미 찜 목록에 제품이 존재하는 경우 발생한다.
+     * @throws MemberNotFoundException     해당 사용자가 존재하지 않으면 발생한다.
+     * @throws ItemNotFoundException       해당 제품이 존재하지 않으면 발생한다.
+     */
+    @Transactional
+    public void wishItem(final long memberId, final long itemId) {
+        validateDuplicatedWishList(memberId, itemId);
+        Member member = getMemberById(memberId);
+        Item item = getItemById(itemId);
+        WishList wishList = WishList.builder()
+                .member(member)
+                .item(item)
+                .build();
+        wishListRepository.save(wishList);
+    }
+
+    private void validateDuplicatedWishList(final long memberId, final long itemId) {
+        Optional<WishList> optionalWishList = wishListRepository.findByMemberIdAndItemId(memberId, itemId);
+        if (optionalWishList.isPresent()) {
+            throw new DuplicatedWishListException();
+        }
+    }
+
+    private Member getMemberById(final long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private Item getItemById(final long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(ItemNotFoundException::new);
+    }
+
     @Transactional
     public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
         Member member = getMemberById(memberId);
@@ -90,22 +132,12 @@ public class MemberService {
             return;
         }
 
-        Item item = getItemById(cartAdditionRequest);
+        Item item = getItemById(cartAdditionRequest.getItemId());
         Cart cart = Cart.builder()
                 .member(member)
                 .item(item)
                 .amount(cartAdditionRequest.getAmount())
                 .build();
         cartRepository.save(cart);
-    }
-
-    private Item getItemById(final CartAdditionRequest cartAdditionRequest) {
-        return itemRepository.findById(cartAdditionRequest.getItemId())
-                .orElseThrow(ItemNotFoundException::new);
-    }
-
-    private Member getMemberById(final Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(MemberNotFoundException::new);
     }
 }

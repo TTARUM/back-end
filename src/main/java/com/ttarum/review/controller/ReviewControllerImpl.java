@@ -46,7 +46,7 @@ public class ReviewControllerImpl implements ReviewController {
     @Override
     public ResponseEntity<Void> updateReview(final Long reviewId,
                                              @RequestBody final ReviewUpdateRequest request,
-                                             final CustomUserDetails user) {
+                                             @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.updateReview(reviewId, request, user.getId());
         return ResponseEntity.ok().build();
     }

@@ -35,9 +35,9 @@ public interface ItemController {
      * 요약된 제품 정보에 대한 검색 메서드
      *
      * @param query 검색어
-     * @param user 로그인한 사용자 여부를 확인하기 위한 객체
-     * @param page 페이지 넘버
-     * @param size 아이템 사이즈
+     * @param user  로그인한 사용자 여부를 확인하기 위한 객체
+     * @param page  페이지 넘버
+     * @param size  아이템 사이즈
      * @return 검색된 제품 목록
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -51,5 +51,8 @@ public interface ItemController {
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9개)", example = "9")
     })
     @GetMapping
-    ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String query, @VerificationUser final User user, final Optional<Integer> page, final Optional<Integer> size);
+    ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String query,
+                                                         @VerificationUser final User user,
+                                                         final Optional<Integer> page,
+                                                         final Optional<Integer> size);
 }

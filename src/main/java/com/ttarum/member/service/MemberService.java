@@ -146,6 +146,12 @@ public class MemberService {
         }
     }
 
+    /**
+     * {@code memberId}를 Id 값으로 가진 사용자의 장바구니 목록을 반환합니다.
+     *
+     * @param memberId 사용자의 Id 값
+     * @return 장바구니에 담긴 제품 목록
+     */
     public List<CartResponse> getCartResponseList(final Long memberId) {
         return cartRepository.getCartResponseListByMemberId(memberId);
     }

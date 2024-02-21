@@ -68,6 +68,12 @@ public interface MemberController {
                                                  Optional<Integer> page,
                                                  Optional<Integer> size);
 
+    /**
+     * 장바구니 조회 메서드
+     *
+     * @param user 사용자
+     * @return 장바구니에 담긴 제품 목록
+     */
     @Operation(summary = "장바구니 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공")

@@ -41,6 +41,13 @@ public interface MemberController {
     @PostMapping
     ResponseEntity<Void> wishItem(@AuthenticationPrincipal CustomUserDetails user, @RequestParam long itemId);
 
+    /**
+     * 장바구니에 제품 추가
+     *
+     * @param user                로그인한 사용자
+     * @param cartAdditionRequest 추가될 제품과 수량이 담긴 객체
+     * @return 빈 응답
+     */
     @Operation(summary = "장바구니에 제품 추가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공")

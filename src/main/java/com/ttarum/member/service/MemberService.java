@@ -122,6 +122,14 @@ public class MemberService {
                 .orElseThrow(ItemNotFoundException::new);
     }
 
+    /**
+     * 특정 사용자의 장바구니에 제품을 추가한다.
+     *
+     * @param memberId            특정 사용자의 Id 값
+     * @param cartAdditionRequest 장바구니에 추가될 제품의 이름과 수량이 담긴 객체
+     * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생한다.
+     * @throws ItemNotFoundException   해당 제품이 존재하지 않으면 발생한다.
+     */
     @Transactional
     public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
         Member member = getMemberById(memberId);

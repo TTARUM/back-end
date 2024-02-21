@@ -68,6 +68,10 @@ public interface MemberController {
                                                  Optional<Integer> page,
                                                  Optional<Integer> size);
 
+    @Operation(summary = "장바구니 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공")
+    })
     @GetMapping
     ResponseEntity<List<CartResponse>> getCartList(@AuthenticationPrincipal CustomUserDetails user);
 }

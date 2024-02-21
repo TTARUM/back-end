@@ -23,5 +23,4 @@ public class WishList {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
-
 }

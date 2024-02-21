@@ -2,6 +2,7 @@ package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.NormalMemberRegister;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "Member", description = "회원")
@@ -65,4 +67,7 @@ public interface MemberController {
     ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal CustomUserDetails user,
                                                  Optional<Integer> page,
                                                  Optional<Integer> size);
+
+    @GetMapping
+    ResponseEntity<List<CartResponse>> getCartList(@AuthenticationPrincipal CustomUserDetails user);
 }

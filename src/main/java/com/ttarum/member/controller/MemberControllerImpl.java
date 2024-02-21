@@ -2,6 +2,7 @@ package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.NormalMemberRegister;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -49,5 +51,12 @@ public class MemberControllerImpl implements MemberController {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_WISH_LIST_SIZE));
         WishListResponse wishListResponse = memberService.getWishListResponse(user.getId(), pageRequest);
         return ResponseEntity.ok(wishListResponse);
+    }
+
+    @Override
+    @GetMapping("/carts")
+    public ResponseEntity<List<CartResponse>> getCartList(@AuthenticationPrincipal final CustomUserDetails user) {
+        List<CartResponse> cartResponseList = memberService.getCartResponseList(user.getId());
+        return ResponseEntity.ok(cartResponseList);
     }
 }

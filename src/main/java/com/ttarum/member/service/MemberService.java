@@ -6,10 +6,12 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.repository.CartRepository;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.member.repository.NormalMemberRepository;
 import com.ttarum.member.repository.WishListRepository;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -34,6 +37,7 @@ public class MemberService {
     private final WishListRepository wishListRepository;
     private final NormalMemberRepository normalMemberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CartRepository cartRepository;
 
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
@@ -140,5 +144,9 @@ public class MemberService {
         if (member.isEmpty()) {
             throw new MemberNotFoundException();
         }
+    }
+
+    public List<CartResponse> getCartResponseList(final Long memberId) {
+        return cartRepository.getCartResponseListByMemberId(memberId);
     }
 }

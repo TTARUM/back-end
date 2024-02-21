@@ -1,5 +1,6 @@
 package com.ttarum.member.domain;
 
+import com.ttarum.common.domain.BaseEntity;
 import com.ttarum.item.domain.Item;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +11,7 @@ import lombok.*;
 @Getter
 @Entity
 @Table(name = "wish_list")
-public class WishList {
+public class WishList extends BaseEntity {
     @EmbeddedId
     private WishListId id;
 
@@ -20,7 +21,7 @@ public class WishList {
     private Member member;
 
     @MapsId("itemId")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
 }

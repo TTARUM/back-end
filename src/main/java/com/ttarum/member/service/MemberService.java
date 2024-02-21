@@ -7,6 +7,7 @@ import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
 import com.ttarum.member.exception.DuplicatedWishListException;
+import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
@@ -14,6 +15,7 @@ import com.ttarum.member.repository.NormalMemberRepository;
 import com.ttarum.member.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,5 +118,25 @@ public class MemberService {
     private Item getItemById(final long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(ItemNotFoundException::new);
+    }
+
+    /**
+     * 찜 목록 조회 메서드
+     *
+     * @param memberId 사용자의 Id 값
+     * @param pageable pageable
+     * @return 조회된 찜 목록  리스트
+     * @throws MemberNotFoundException 사용자가 존재하지 않을 경우 발생한다.
+     */
+    public WishListResponse getWishListResponse(final Long memberId, final Pageable pageable) {
+        checkMemberExistence(memberId);
+        return new WishListResponse(wishListRepository.findItemSummaryByMemberId(memberId, pageable));
+    }
+
+    private void checkMemberExistence(final Long memberId) {
+        Optional<Member> member = memberRepository.findById(memberId);
+        if (member.isEmpty()) {
+            throw new MemberNotFoundException();
+        }
     }
 }

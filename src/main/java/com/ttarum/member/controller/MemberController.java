@@ -3,6 +3,7 @@ package com.ttarum.member.controller;
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "Member", description = "회원")
@@ -84,4 +86,17 @@ public interface MemberController {
     })
     @PostMapping
     ResponseEntity<Void> addToCart(@AuthenticationPrincipal CustomUserDetails user, CartAdditionRequest cartAdditionRequest);
+
+    /**
+     * 장바구니 조회 메서드
+     *
+     * @param user 사용자
+     * @return 장바구니에 담긴 제품 목록
+     */
+    @Operation(summary = "장바구니 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공")
+    })
+    @GetMapping
+    ResponseEntity<List<CartResponse>> getCartList(@AuthenticationPrincipal CustomUserDetails user);
 }

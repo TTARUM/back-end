@@ -7,6 +7,7 @@ import com.ttarum.member.domain.Cart;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -171,5 +173,15 @@ public class MemberService {
                 .amount(cartAdditionRequest.getAmount())
                 .build();
         cartRepository.save(cart);
+    }
+
+    /**
+     * {@code memberId}를 Id 값으로 가진 사용자의 장바구니 목록을 반환합니다.
+     *
+     * @param memberId 사용자의 Id 값
+     * @return 장바구니에 담긴 제품 목록
+     */
+    public List<CartResponse> getCartResponseList(final Long memberId) {
+        return cartRepository.getCartResponseListByMemberId(memberId);
     }
 }

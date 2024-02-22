@@ -24,4 +24,10 @@ public class Cart {
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
 
+    @Column(name = "amount", nullable = false, columnDefinition = "int")
+    private int amount;
+
+    public void addAmount(final int amount) {
+        this.amount += amount;
+    }
 }

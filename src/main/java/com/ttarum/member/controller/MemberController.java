@@ -1,6 +1,7 @@
 package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.WishListResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,4 +66,22 @@ public interface MemberController {
     ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal CustomUserDetails user,
                                                  Optional<Integer> page,
                                                  Optional<Integer> size);
+
+    /**
+     * 장바구니에 제품 추가
+     *
+     * @param user                로그인한 사용자
+     * @param cartAdditionRequest 추가될 제품과 수량이 담긴 객체
+     * @return 빈 응답
+     */
+    @Operation(summary = "장바구니에 제품 추가")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공")
+    })
+    @Parameters(value = {
+            @Parameter(name = "itemId", description = "제품의 Id 값", example = "1", required = true),
+            @Parameter(name = "amount", description = "장바구니에 담을 제품의 수량", example = "1", required = true)
+    })
+    @PostMapping
+    ResponseEntity<Void> addToCart(@AuthenticationPrincipal CustomUserDetails user, CartAdditionRequest cartAdditionRequest);
 }

@@ -1,6 +1,7 @@
 package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.service.MemberService;
@@ -49,5 +50,12 @@ public class MemberControllerImpl implements MemberController {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_WISH_LIST_SIZE));
         WishListResponse wishListResponse = memberService.getWishListResponse(user.getId(), pageRequest);
         return ResponseEntity.ok(wishListResponse);
+    }
+
+    @Override
+    @PostMapping("/carts")
+    public ResponseEntity<Void> addToCart(@AuthenticationPrincipal final CustomUserDetails user, final CartAdditionRequest cartAdditionRequest) {
+        memberService.addToCart(user.getId(), cartAdditionRequest);
+        return ResponseEntity.ok().build();
     }
 }

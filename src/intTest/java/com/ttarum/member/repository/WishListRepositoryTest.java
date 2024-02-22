@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
-public class WishListRepositoryTest {
+class WishListRepositoryTest {
 
     @Autowired
     WishListRepository wishListRepository;

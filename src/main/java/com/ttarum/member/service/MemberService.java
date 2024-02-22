@@ -3,11 +3,13 @@ package com.ttarum.member.service;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.member.domain.Cart;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.exception.DuplicatedWishListException;
+import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
@@ -36,8 +38,8 @@ public class MemberService {
     private final ItemRepository itemRepository;
     private final WishListRepository wishListRepository;
     private final NormalMemberRepository normalMemberRepository;
-    private final PasswordEncoder passwordEncoder;
     private final CartRepository cartRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
@@ -144,6 +146,33 @@ public class MemberService {
         if (member.isEmpty()) {
             throw new MemberNotFoundException();
         }
+    }
+
+    /**
+     * 특정 사용자의 장바구니에 제품을 추가한다.
+     *
+     * @param memberId            특정 사용자의 Id 값
+     * @param cartAdditionRequest 장바구니에 추가될 제품의 이름과 수량이 담긴 객체
+     * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생한다.
+     * @throws ItemNotFoundException   해당 제품이 존재하지 않으면 발생한다.
+     */
+    @Transactional
+    public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
+        Member member = getMemberById(memberId);
+        Optional<Cart> optionalCart = cartRepository.findByMemberIdAndItemId(memberId, cartAdditionRequest.getItemId());
+        if (optionalCart.isPresent()) {
+            Cart cart = optionalCart.get();
+            cart.addAmount(cartAdditionRequest.getAmount());
+            return;
+        }
+
+        Item item = getItemById(cartAdditionRequest.getItemId());
+        Cart cart = Cart.builder()
+                .member(member)
+                .item(item)
+                .amount(cartAdditionRequest.getAmount())
+                .build();
+        cartRepository.save(cart);
     }
 
     /**

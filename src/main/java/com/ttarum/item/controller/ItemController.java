@@ -22,7 +22,7 @@ import java.util.Optional;
 @Tag(name = "item", description = "제품")
 public interface ItemController {
 
-    @Operation(summary = "특정 제품의 상세목록")
+    @Operation(summary = "특정 제품의 상세정보 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "존재하지 않는 제품")

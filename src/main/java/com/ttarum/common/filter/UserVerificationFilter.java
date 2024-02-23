@@ -2,7 +2,7 @@ package com.ttarum.common.filter;
 
 import com.ttarum.auth.componenet.JwtUtil;
 import com.ttarum.common.dto.user.LoggedInUser;
-import com.ttarum.common.dto.user.UnLoggedInUser;
+import com.ttarum.common.dto.user.UnloggedInUser;
 import com.ttarum.common.dto.user.User;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.repository.MemberRepository;
@@ -29,7 +29,7 @@ public class UserVerificationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        User user = new UnLoggedInUser();
+        User user = new UnloggedInUser();
 
         String jwt = jwtUtil.getJwtFromRequest(request);
         if (jwtUtil.validateToken(jwt)) {

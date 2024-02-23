@@ -13,10 +13,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.util.Objects;
 
+import static com.ttarum.common.filter.UserVerificationFilter.AUTHENTICATION;
+
 @NonNullApi
 public class VerificationUserResolver implements HandlerMethodArgumentResolver {
-
-    private static final String AUTHENTICATION = "authentication";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {

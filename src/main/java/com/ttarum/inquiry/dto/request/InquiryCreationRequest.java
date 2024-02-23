@@ -15,7 +15,7 @@ public class InquiryCreationRequest {
     private final boolean isSecret;
     private final long itemId;
 
-    public Inquiry transferToInquiry() {
+    public Inquiry toInquiryEntity() {
         Inquiry inquiry = Inquiry.builder()
                 .title(this.title)
                 .content(this.content)

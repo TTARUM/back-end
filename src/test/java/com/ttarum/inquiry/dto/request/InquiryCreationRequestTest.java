@@ -20,7 +20,7 @@ class InquiryCreationRequestTest {
                 .build();
 
         // when
-        Inquiry inquiry = inquiryCreationRequest.transferToInquiry();
+        Inquiry inquiry = inquiryCreationRequest.toInquiryEntity();
 
         // then
         assertThat(inquiry.getTitle()).isEqualTo(inquiryCreationRequest.getTitle());
@@ -41,7 +41,7 @@ class InquiryCreationRequestTest {
         // when
 
         // then
-        assertThatThrownBy(inquiryCreationRequest::transferToInquiry)
+        assertThatThrownBy(inquiryCreationRequest::toInquiryEntity)
                 .isInstanceOf(InquiryException.class)
                 .hasMessage("제목이 비어있습니다.");
     }
@@ -59,7 +59,7 @@ class InquiryCreationRequestTest {
         // when
 
         // then
-        assertThatThrownBy(inquiryCreationRequest::transferToInquiry)
+        assertThatThrownBy(inquiryCreationRequest::toInquiryEntity)
                 .isInstanceOf(InquiryException.class)
                 .hasMessage("제목이 비어있습니다.");
     }
@@ -77,7 +77,7 @@ class InquiryCreationRequestTest {
         // when
 
         // then
-        assertThatThrownBy(inquiryCreationRequest::transferToInquiry)
+        assertThatThrownBy(inquiryCreationRequest::toInquiryEntity)
                 .isInstanceOf(InquiryException.class)
                 .hasMessage("내용이 비어있습니다.");
     }
@@ -95,7 +95,7 @@ class InquiryCreationRequestTest {
         // when
 
         // then
-        assertThatThrownBy(inquiryCreationRequest::transferToInquiry)
+        assertThatThrownBy(inquiryCreationRequest::toInquiryEntity)
                 .isInstanceOf(InquiryException.class)
                 .hasMessage("내용이 비어있습니다.");
     }

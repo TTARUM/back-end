@@ -4,6 +4,7 @@ import com.ttarum.common.domain.UpdatableEntity;
 import com.ttarum.item.domain.Item;
 import com.ttarum.member.domain.Member;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
+import com.ttarum.review.validator.ReviewValidator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "review")
 public class Review extends UpdatableEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, columnDefinition = "int")
@@ -48,7 +50,13 @@ public class Review extends UpdatableEntity {
         isDeleted = true;
     }
 
-    public void update(final ReviewUpdateRequest request) {
+    public void update(final ReviewUpdateRequest request, final ReviewValidator validator) {
         this.content = request.getContent();
+        this.star = request.getRating();
+        validate(validator);
+    }
+
+    public void validate(final ReviewValidator validator) {
+        validator.validateRating(this.star);
     }
 }

@@ -10,4 +10,5 @@ import lombok.Getter;
 public class ReviewUpdateRequest {
 
     private final String content;
+    private final short rating;
 }

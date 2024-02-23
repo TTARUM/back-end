@@ -88,7 +88,8 @@ public interface MemberController {
     })
     @Parameters(value = {
             @Parameter(name = "itemId", description = "제품의 Id 값", example = "1", required = true),
-            @Parameter(name = "amount", description = "장바구니에 담을 제품의 수량", example = "1", required = true)
+            @Parameter(name = "amount", description = "장바구니에 담을 제품의 수량", example = "1", required = true),
+            @Parameter(name = "cartAdditionRequest", hidden = true)
     })
     @PostMapping
     ResponseEntity<Void> addToCart(@AuthenticationPrincipal CustomUserDetails user, CartAdditionRequest cartAdditionRequest);

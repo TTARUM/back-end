@@ -54,7 +54,7 @@ public interface ReviewController {
     @Operation(summary = "특정 리뷰 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "제거 성공"),
-            @ApiResponse(responseCode = "400", description = "존재하지 않은 리뷰의 경우")
+            @ApiResponse(responseCode = "400", description = "제거 실패")
     })
     @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
     @DeleteMapping
@@ -74,8 +74,7 @@ public interface ReviewController {
             @ApiResponse(responseCode = "400", description = "유효하지 않은 리뷰")
     })
     @Parameters(value = {
-            @Parameter(name = "reviewId", description = "리뷰의 Id값", example = "1"),
-            @Parameter(name = "user", hidden = true)
+            @Parameter(name = "reviewId", description = "리뷰의 Id값", example = "1", required = true)
     })
     @PutMapping
     ResponseEntity<Void> updateReview(Long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);

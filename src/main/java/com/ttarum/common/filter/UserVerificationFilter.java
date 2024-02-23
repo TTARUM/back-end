@@ -18,6 +18,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
+/**
+ * {@link HttpServletRequest}에 JWT 토큰이 있을 경우 애트리뷰트에 {@link User}를 저장합니다.
+ */
 @NonNullApi
 @Slf4j
 @RequiredArgsConstructor

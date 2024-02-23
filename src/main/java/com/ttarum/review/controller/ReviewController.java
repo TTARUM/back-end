@@ -22,7 +22,7 @@ public interface ReviewController {
     /**
      * 특정 제품에 대한 리뷰 조회
      *
-     * @param itemId 특정 제품의 ID
+     * @param itemId 특정 제품의 Id 값
      * @param page   페이지 넘버
      * @param size   페이지당 반환되는 리뷰의 개수
      * @return 리뷰 목록
@@ -45,11 +45,11 @@ public interface ReviewController {
                                                                final Optional<Integer> size);
 
     /**
-     * 리뷰 제거
+     * 특정 리뷰 제거
      *
-     * @param reviewId 제거할 리뷰의 ID
-     * @param user     로그인한 유저
-     * @return
+     * @param reviewId 제거할 리뷰의 Id 값
+     * @param user     로그인한 회원
+     * @return 빈 응답
      */
     @Operation(summary = "특정 리뷰 제거")
     @ApiResponses(value = {
@@ -61,11 +61,11 @@ public interface ReviewController {
     ResponseEntity<Object> deleteReview(@RequestParam final long reviewId, @AuthenticationPrincipal final CustomUserDetails user);
 
     /**
-     * 리뷰를 업데이트한다.
+     * 리뷰 업데이트
      *
-     * @param reviewId 업데이트할 리뷰의 ID
+     * @param reviewId 업데이트할 리뷰의 Id 값
      * @param request  업데이트될 정보가 담긴 객체
-     * @param user     로그인한 유저
+     * @param user     로그인한 회원
      * @return 빈 응답
      */
     @Operation(summary = "리뷰 업데이트")

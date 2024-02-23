@@ -75,9 +75,7 @@ public class InquiryControllerImpl implements InquiryController {
         long inquiryId = inquiryService.postInquiryArticle(request, user.getId());
 
         if (Objects.nonNull(images)) {
-            for (MultipartFile image : images) {
-                inquiryImageService.saveImage(inquiryId, image);
-            }
+            inquiryImageService.saveImageList(inquiryId, images);
         }
 
         return ResponseEntity.ok(new InquiryCreationResponse(inquiryId));

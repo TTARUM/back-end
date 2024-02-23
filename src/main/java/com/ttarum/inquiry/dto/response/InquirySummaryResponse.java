@@ -11,14 +11,14 @@ import java.time.Instant;
 @Builder
 public class InquirySummaryResponse {
 
-    private static final String SECRET_INQUIRY_TITLE = "비밀글입니다.";
+    public static final String SECRET_INQUIRY_TITLE = "비밀글입니다.";
 
     private final Long id;
-    private String title;
+    private final String title;
     private final boolean isSecretInquiry;
     private final boolean isThisOwnInquiry;
     private final boolean hasAnswer;
-    private final String memberName; // O 백엔드에서 이름 모자이크
+    private final String memberName;
     private final Instant createdAt;
 
     public InquirySummaryResponse(final Long id,
@@ -32,10 +32,24 @@ public class InquirySummaryResponse {
         this.isSecretInquiry = isSecretInquiry;
         this.isThisOwnInquiry = isThisOwnInquiry;
         this.hasAnswer = hasAnswer;
-        this.memberName = memberName;
+        this.memberName = concealName(memberName);
         this.createdAt = createdAt;
         if (isThisOwnInquiry || !isSecretInquiry) {
             this.title = title;
+        } else {
+            this.title = SECRET_INQUIRY_TITLE;
         }
+    }
+
+    private String concealName(final String memberName) {
+        if (memberName.length() < 2) {
+            return "*";
+        }
+        if (memberName.length() == 2) {
+            return memberName.charAt(0) + "*";
+        }
+        return memberName.charAt(0) +
+                "*".repeat(memberName.length() - 2) +
+                memberName.charAt(memberName.length() - 1);
     }
 }

@@ -22,4 +22,6 @@ public class Address {
     @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
     private Member member;
 
+    @Column(name = "is_recent", nullable = false, columnDefinition = "boolean default false")
+    private boolean isRecent;
 }

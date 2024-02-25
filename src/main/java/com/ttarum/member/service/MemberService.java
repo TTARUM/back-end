@@ -3,20 +3,15 @@ package com.ttarum.member.service;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
-import com.ttarum.member.domain.Cart;
-import com.ttarum.member.domain.Member;
-import com.ttarum.member.domain.NormalMember;
-import com.ttarum.member.domain.WishList;
+import com.ttarum.member.domain.*;
+import com.ttarum.member.dto.request.AddressAdditionRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
-import com.ttarum.member.repository.CartRepository;
-import com.ttarum.member.repository.MemberRepository;
-import com.ttarum.member.repository.NormalMemberRepository;
-import com.ttarum.member.repository.WishListRepository;
+import com.ttarum.member.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +35,7 @@ public class MemberService {
     private final NormalMemberRepository normalMemberRepository;
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AddressRepository addressRepository;
 
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
@@ -183,5 +179,24 @@ public class MemberService {
      */
     public List<CartResponse> getCartResponseList(final Long memberId) {
         return cartRepository.getCartResponseListByMemberId(memberId);
+    }
+
+    /**
+     * 사용자의 주소를 추가한다.
+     *
+     * @param memberId 사용자의 Id 값
+     * @param request  주소 추가 요청 객체
+     * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생한다.
+     */
+    @Transactional
+    public void addAddress(final Long memberId, final AddressAdditionRequest request) {
+        Member member = getMemberById(memberId);
+
+        Address address = Address.builder()
+                .member(member)
+                .address(request.getAddress())
+                .build();
+
+        addressRepository.save(address);
     }
 }

@@ -10,6 +10,8 @@ import com.ttarum.inquiry.dto.response.answer.InquiryAnswerNotExistResponse;
 import com.ttarum.inquiry.dto.request.InquiryCreationRequest;
 import com.ttarum.inquiry.exception.InquiryForbiddenException;
 import com.ttarum.inquiry.exception.InquiryNotFoundException;
+import com.ttarum.inquiry.repository.InquiryAnswerRepository;
+import com.ttarum.inquiry.repository.InquiryImageRepository;
 import com.ttarum.inquiry.repository.InquiryRepository;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
@@ -40,6 +42,10 @@ class InquiryServiceTest {
 
     @Mock
     InquiryRepository inquiryRepository;
+    @Mock
+    InquiryImageRepository inquiryImageRepository;
+    @Mock
+    InquiryAnswerRepository inquiryAnswerRepository;
     @Mock
     MemberRepository memberRepository;
     @Mock
@@ -146,7 +152,7 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId, memberId);
 
         // then
@@ -181,8 +187,8 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
-        when(inquiryRepository.findAnswerByInquiryId(inquiryId)).thenReturn(Optional.of(inquiryAnswer));
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryAnswerRepository.findAnswerByInquiryId(inquiryId)).thenReturn(Optional.of(inquiryAnswer));
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId, memberId);
 
         // then
@@ -216,8 +222,8 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
-        when(inquiryRepository.findAnswerByInquiryId(inquiryId)).thenReturn(Optional.of(inquiryAnswer));
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryAnswerRepository.findAnswerByInquiryId(inquiryId)).thenReturn(Optional.of(inquiryAnswer));
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId);
 
         // then
@@ -247,7 +253,7 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId);
 
         // then

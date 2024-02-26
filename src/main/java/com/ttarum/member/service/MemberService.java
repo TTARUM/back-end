@@ -162,12 +162,8 @@ public class MemberService {
     @Transactional
     public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
         Member member = getMemberById(memberId);
-        CartId cartId = CartId.builder()
-                .memberId(memberId)
-                .itemId(cartAdditionRequest.getItemId())
-                .build();
 
-        Optional<Cart> optionalCart = cartRepository.findById(cartId);
+        Optional<Cart> optionalCart = cartRepository.findById(new CartId(memberId, cartAdditionRequest.getItemId()));
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
             cart.addAmount(cartAdditionRequest.getAmount());

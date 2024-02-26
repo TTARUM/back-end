@@ -7,6 +7,7 @@ import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
+import com.ttarum.member.domain.WishListId;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -254,7 +255,7 @@ class MemberServiceTest {
                 .item(item)
                 .build();
 
-        when(wishListRepository.findByMemberIdAndItemId(memberId, itemId)).thenReturn(Optional.of(wishList));
+        when(wishListRepository.findById(new WishListId(memberId, itemId))).thenReturn(Optional.of(wishList));
 
         // when & then
         assertThatThrownBy(() -> memberService.wishItem(memberId, itemId))

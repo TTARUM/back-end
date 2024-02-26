@@ -1,7 +1,7 @@
 package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
-import com.ttarum.member.dto.request.AddressAdditionRequest;
+import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.CartResponse;
@@ -66,8 +66,8 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @PostMapping("/address")
-    public ResponseEntity<Void> addAddress(@AuthenticationPrincipal final CustomUserDetails user, final AddressAdditionRequest addressAdditionRequest) {
-        memberService.addAddress(user.getId(), addressAdditionRequest);
+    public ResponseEntity<Void> addAddress(@AuthenticationPrincipal final CustomUserDetails user, final AddressUpsertRequest addressUpsertRequest) {
+        memberService.addAddress(user.getId(), addressUpsertRequest);
         return ResponseEntity.ok().build();
     }
 }

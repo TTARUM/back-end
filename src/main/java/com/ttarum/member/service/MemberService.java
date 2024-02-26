@@ -4,7 +4,7 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
-import com.ttarum.member.dto.request.AddressAdditionRequest;
+import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -198,7 +198,7 @@ public class MemberService {
      * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생한다.
      */
     @Transactional
-    public void addAddress(final Long memberId, final AddressAdditionRequest request) {
+    public void addAddress(final Long memberId, final AddressUpsertRequest request) {
         Member member = getMemberById(memberId);
 
         Address address = Address.builder()

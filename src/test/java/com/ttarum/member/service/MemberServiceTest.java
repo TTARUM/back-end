@@ -5,7 +5,7 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
-import com.ttarum.member.dto.request.AddressAdditionRequest;
+import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -372,7 +372,7 @@ class MemberServiceTest {
     void addAddress() {
         Long memberId = 1L;
         Member dummyMember = Member.builder().build();
-        AddressAdditionRequest request = new AddressAdditionRequest("test address");
+        AddressUpsertRequest request = new AddressUpsertRequest("test address");
 
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.of(dummyMember));

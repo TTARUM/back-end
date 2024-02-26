@@ -29,4 +29,8 @@ public class Address {
     @CreatedDate
     @Column(name = "last_used_at", nullable = false)
     private Instant lastUsedAt;
+
+    public void updateLastUsedAt() {
+        this.lastUsedAt = Instant.now();
+    }
 }

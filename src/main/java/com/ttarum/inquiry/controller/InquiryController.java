@@ -31,7 +31,7 @@ public interface InquiryController {
     /**
      * 특정 제품의 문의글 조회
      *
-     * @param itemId 특정 제품의 ID
+     * @param itemId 특정 제품의 Id 값
      * @param user   로그인한 사용자 여부를 확인하기 위한 객체
      * @param page   페이지 넘버
      * @param size   페이지 당 조회할 문의글 수
@@ -57,7 +57,7 @@ public interface InquiryController {
     /**
      * 문의글 조회
      *
-     * @param inquiryId 조회할 문의글의 ID
+     * @param inquiryId 조회할 문의글의 Id 값
      * @param user      로그인한 사용자 여부를 확인하기 위한 객체
      * @return 문의글
      */
@@ -78,8 +78,8 @@ public interface InquiryController {
      *
      * @param request 등록할 문의글의 데이터가 담긴 객체
      * @param images  이미지 파일들
-     * @param user    로그인한 사용자
-     * @return 등록된 문의글의 ID
+     * @param user    로그인한 회원
+     * @return 등록된 문의글의 Id 값
      */
     @Operation(summary = "문의글 등록")
     @ApiResponses(value = {

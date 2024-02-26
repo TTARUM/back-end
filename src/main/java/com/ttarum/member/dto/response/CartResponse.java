@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-@Schema(description = "장바구니 조회 dto")
+@Schema(description = "장바구니 조회 DTO")
 public class CartResponse {
 
     @Schema(description = "제품의 Id 값", example = "1")

@@ -25,6 +25,12 @@ public class S3Component {
                 .build();
     }
 
+    /**
+     * {@code imageBytes}를 AWS S3에 업로드한 후 해당 URL을 반환합니다.
+     *
+     * @param imageBytes {@code imageBytes}
+     * @return 업로드된 이미지의 URL
+     */
     public URL uploadImage(byte[] imageBytes) {
         String key = UUID.randomUUID().toString();
 

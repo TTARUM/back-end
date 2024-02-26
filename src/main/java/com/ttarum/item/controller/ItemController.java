@@ -22,6 +22,12 @@ import java.util.Optional;
 @Tag(name = "item", description = "제품")
 public interface ItemController {
 
+    /**
+     * 특정 제품의 상세정보 조회 메서드
+     *
+     * @param id 제품의 Id 값
+     * @return 제품의 상세정보
+     */
     @Operation(summary = "특정 제품의 상세정보 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),

@@ -12,6 +12,13 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    /**
+     * {@link Long itemId}가 Id 값인 제품의 모든 {@link Review}를 {@link ReviewResponse} 리스트로 반환합니다.
+     *
+     * @param itemId   제품의 Id 값
+     * @param pageable pageable
+     * @return {@link ReviewResponse} 리스트
+     */
     @Query(value = """
             SELECT r.id AS id,
             m.nickname AS nickname,
@@ -23,6 +30,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                         """, nativeQuery = true)
     List<ReviewResponse> findReviewResponseByItemId(@Param("itemId") Long itemId, Pageable pageable);
 
+    /**
+     * {@link Review}의 Id 값 리스트를 받아 해당 {@link Review}들의 {@link ReviewImage}들을 리스트로 반환합니다.
+     *
+     * @param reviewIds {@link Review}의 {@link List Id 값 리스트}
+     * @return {@link ReviewImage} 리스트
+     */
     @Query("""
             SELECT ri
             FROM ReviewImage ri

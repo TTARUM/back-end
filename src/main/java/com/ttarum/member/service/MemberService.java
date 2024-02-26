@@ -115,7 +115,7 @@ public class MemberService {
     }
 
     private void validateDuplicatedWishList(final long memberId, final long itemId) {
-        Optional<WishList> optionalWishList = wishListRepository.findByMemberIdAndItemId(memberId, itemId);
+        Optional<WishList> optionalWishList = wishListRepository.findById(new WishListId(memberId, itemId));
         if (optionalWishList.isPresent()) {
             throw new DuplicatedWishListException();
         }

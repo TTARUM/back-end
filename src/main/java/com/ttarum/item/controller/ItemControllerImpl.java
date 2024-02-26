@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -33,19 +32,19 @@ public class ItemControllerImpl implements ItemController {
 
     @Override
     @GetMapping("/list")
-    public ResponseEntity<List<ItemSummaryResponse>> getSummary(
+    public ResponseEntity<ItemSummaryResponse> getSummary(
             @RequestParam(required = false) final String query,
             @VerificationUser final User user,
             @RequestParam final Optional<Integer> page,
             @RequestParam final Optional<Integer> size
     ) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(9));
-        List<ItemSummaryResponse> itemSummaryList;
+        ItemSummaryResponse response;
         if (user.isLoggedIn()) {
-            itemSummaryList = itemService.getItemSummaryList(query, pageRequest, user.getId());
+            response = itemService.getItemSummaryList(query, pageRequest, user.getId());
         } else {
-            itemSummaryList = itemService.getItemSummaryList(query, pageRequest);
+            response = itemService.getItemSummaryList(query, pageRequest);
         }
-        return ResponseEntity.ok(itemSummaryList);
+        return ResponseEntity.ok(response);
     }
 }

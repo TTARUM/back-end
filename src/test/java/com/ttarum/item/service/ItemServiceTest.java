@@ -2,6 +2,7 @@ package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemDetailResponse;
+import com.ttarum.item.dto.response.ItemSummary;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
@@ -65,24 +66,25 @@ class ItemServiceTest {
     @DisplayName("아이템 이름으로 아이템을 조회할 수 있다.")
     void getItemSummary() {
         // given
-        ItemSummaryResponse element = new ItemSummaryResponse(1, "sample", "sample", 13000, 2.3, "/Home/image", false, Instant.now(), 1);
-        List<ItemSummaryResponse> list = List.of(element);
+        ItemSummary element = new ItemSummary(1, "sample", "sample", 13000, 2.3, "/Home/image", false, Instant.now(), 1);
+        List<ItemSummary> list = List.of(element);
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
         when(itemRepository.getItemSummaryListByName("sample", pageRequest)).thenReturn(list);
-        List<ItemSummaryResponse> response = itemService.getItemSummaryList("sample", pageRequest);
+        ItemSummaryResponse response = itemService.getItemSummaryList("sample", pageRequest);
+        List<ItemSummary> summaryList = response.getItemSummaryResponseList();
 
         // then
-        assertThat(response).hasSize(1);
-        assertThat(response.get(0).getId()).isEqualTo(element.getId());
-        assertThat(response.get(0).getName()).isEqualTo(element.getName());
-        assertThat(response.get(0).getPrice()).isEqualTo(element.getPrice());
-        assertThat(response.get(0).getRating()).isEqualTo(element.getRating());
-        assertThat(response.get(0).getImageUrl()).isEqualTo(element.getImageUrl());
-        assertThat(response.get(0).getCategoryName()).isEqualTo(element.getCategoryName());
-        assertThat(response.get(0).getCreatedAt()).isEqualTo(element.getCreatedAt());
-        assertThat(response.get(0).getSalesVolume()).isEqualTo(element.getSalesVolume());
+        assertThat(summaryList).hasSize(1);
+        assertThat(summaryList.get(0).getId()).isEqualTo(element.getId());
+        assertThat(summaryList.get(0).getName()).isEqualTo(element.getName());
+        assertThat(summaryList.get(0).getPrice()).isEqualTo(element.getPrice());
+        assertThat(summaryList.get(0).getRating()).isEqualTo(element.getRating());
+        assertThat(summaryList.get(0).getImageUrl()).isEqualTo(element.getImageUrl());
+        assertThat(summaryList.get(0).getCategoryName()).isEqualTo(element.getCategoryName());
+        assertThat(summaryList.get(0).getCreatedAt()).isEqualTo(element.getCreatedAt());
+        assertThat(summaryList.get(0).getSalesVolume()).isEqualTo(element.getSalesVolume());
     }
 
     @Test
@@ -93,10 +95,11 @@ class ItemServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        List<ItemSummaryResponse> response = itemService.getItemSummaryList(name, pageRequest);
+        ItemSummaryResponse response = itemService.getItemSummaryList(name, pageRequest);
+        List<ItemSummary> summaryList = response.getItemSummaryResponseList();
 
         // then
-        assertThat(response).isEmpty();
+        assertThat(summaryList).isEmpty();
     }
 
     @Test
@@ -107,9 +110,10 @@ class ItemServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         // when
-        List<ItemSummaryResponse> response = itemService.getItemSummaryList(name, pageRequest);
+        ItemSummaryResponse response = itemService.getItemSummaryList(name, pageRequest);
+        List<ItemSummary> summaryList = response.getItemSummaryResponseList();
 
         // then
-        assertThat(response).isEmpty();
+        assertThat(summaryList).isEmpty();
     }
 }

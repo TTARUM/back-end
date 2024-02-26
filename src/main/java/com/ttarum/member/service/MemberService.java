@@ -209,6 +209,15 @@ public class MemberService {
         addressRepository.save(address);
     }
 
+    private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(AddressException::NotFound);
+        if (!Objects.equals(memberId, address.getMember().getId())) {
+            throw AddressException.NoOwner();
+        }
+        return address;
+    }
+
     /**
      * 특정 사용자의 배송지를 업데이트한다.
      *
@@ -218,11 +227,7 @@ public class MemberService {
      */
     @Transactional
     public void updateAddress(final Long memberId, final Long addressId, final AddressUpsertRequest request) {
-        Address address = addressRepository.findById(addressId)
-                .orElseThrow(AddressException::NotFound);
-        if (!Objects.equals(memberId, address.getMember().getId())) {
-            throw AddressException.NoOwner();
-        }
+        Address address = getValidAddress(memberId, addressId);
         address.setAddress(request.getAddress());
         addressRepository.save(address);
     }
@@ -235,11 +240,7 @@ public class MemberService {
      */
     @Transactional
     public void updateLastUsedAt(final Long memberId, final Long addressId) {
-        Address address = addressRepository.findById(addressId)
-                .orElseThrow(AddressException::NotFound);
-        if (!Objects.equals(memberId, address.getMember().getId())) {
-            throw AddressException.NoOwner();
-        }
+        Address address = getValidAddress(memberId, addressId);
         address.updateLastUsedAt();
         addressRepository.save(address);
     }

@@ -26,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserVerificationFilter extends OncePerRequestFilter {
 
-    private static final String AUTHENTICATION = "authentication";
+    public static final String AUTHENTICATION = "authentication";
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
 

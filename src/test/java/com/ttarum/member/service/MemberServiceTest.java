@@ -5,16 +5,14 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
+import com.ttarum.member.dto.request.AddressAdditionRequest;
 import com.ttarum.member.dto.response.CartResponse;
-import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
-import com.ttarum.member.repository.CartRepository;
-import com.ttarum.member.repository.MemberRepository;
-import com.ttarum.member.repository.NormalMemberRepository;
-import com.ttarum.member.repository.WishListRepository;
+import com.ttarum.member.repository.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +28,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -52,6 +51,8 @@ class MemberServiceTest {
     private CartRepository cartRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private AddressRepository addressRepository;
 
     @Test
     @DisplayName("일반 유저 회원가입 - happy path")
@@ -364,5 +365,20 @@ class MemberServiceTest {
         // then
         verify(cartRepository, times(1)).getCartResponseListByMemberId(memberId);
         assertThat(result).size().isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("주소 추가 - happy path")
+    void addAddress() {
+        Long memberId = 1L;
+        Member dummyMember = Member.builder().build();
+        AddressAdditionRequest request = new AddressAdditionRequest("test address");
+
+        when(memberRepository.findById(memberId))
+                .thenReturn(Optional.of(dummyMember));
+
+        memberService.addAddress(memberId, request);
+
+        verify(addressRepository).save(any());
     }
 }

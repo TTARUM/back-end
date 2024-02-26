@@ -2,10 +2,12 @@ package com.ttarum.member.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.member.domain.Address;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
-import com.ttarum.member.dto.request.AddressAdditionRequest;
+import com.ttarum.member.dto.request.AddressUpsertRequest;
+import com.ttarum.member.domain.WishListId;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -253,7 +255,7 @@ class MemberServiceTest {
                 .item(item)
                 .build();
 
-        when(wishListRepository.findByMemberIdAndItemId(memberId, itemId)).thenReturn(Optional.of(wishList));
+        when(wishListRepository.findById(new WishListId(memberId, itemId))).thenReturn(Optional.of(wishList));
 
         // when & then
         assertThatThrownBy(() -> memberService.wishItem(memberId, itemId))
@@ -368,17 +370,71 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("주소 추가 - happy path")
+    @DisplayName("배송지 추가 - happy path")
     void addAddress() {
+        // given
         Long memberId = 1L;
         Member dummyMember = Member.builder().build();
-        AddressAdditionRequest request = new AddressAdditionRequest("test address");
 
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.of(dummyMember));
 
-        memberService.addAddress(memberId, request);
+        // when
+        memberService.addAddress(memberId, new AddressUpsertRequest("test address"));
 
-        verify(addressRepository).save(any());
+        // then
+        verify(addressRepository).save(
+                Address.builder()
+                        .member(dummyMember)
+                        .address("test address")
+                        .build()
+        );
+    }
+
+    @Test
+    @DisplayName("배송지 수정 - happy path")
+    void updateAddress() {
+        // given
+        Long memberId = 1L;
+        Long addressId = 999L;
+        Member testMember = Member.builder().id(memberId).build();
+        Address previousAddress = Address.builder().member(testMember).build();
+
+        when(addressRepository.findById(addressId))
+                .thenReturn(Optional.of(previousAddress));
+        // when
+        memberService.updateAddress(memberId, addressId, new AddressUpsertRequest("new address"));
+
+        // then
+        verify(addressRepository).save(
+                Address.builder()
+                        .member(testMember)
+                        .address("new address")
+                        .build()
+                );
+    }
+
+    @Test
+    @DisplayName("배송지 최근 사용 일자 업데이트 - happy path")
+    void updateLastUsedAt() {
+        // given
+        Long memberId = 1L;
+        Long addressId = 999L;
+        Member testMember = Member.builder().id(memberId).build();
+        Address previousAddress = Address.builder().member(testMember).build();
+
+        when(addressRepository.findById(addressId))
+                .thenReturn(Optional.of(previousAddress));
+        // when
+        memberService.updateLastUsedAt(memberId, addressId);
+
+        // then
+        verify(addressRepository).save(
+                Address.builder()
+                        .member(testMember)
+                        .address("new address")
+                        .lastUsedAt(any())
+                        .build()
+        );
     }
 }

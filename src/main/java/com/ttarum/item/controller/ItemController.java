@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "item", description = "제품")
@@ -57,7 +56,7 @@ public interface ItemController {
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9개)", example = "9")
     })
     @GetMapping
-    ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String query,
+    ResponseEntity<ItemSummaryResponse> getSummary(@RequestParam(required = false) final String query,
                                                          @VerificationUser final Optional<User> user,
                                                          final Optional<Integer> page,
                                                          final Optional<Integer> size);

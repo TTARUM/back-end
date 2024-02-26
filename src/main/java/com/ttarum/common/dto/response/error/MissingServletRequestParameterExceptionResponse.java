@@ -1,5 +1,6 @@
 package com.ttarum.common.dto.response.error;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import java.time.Instant;
 
 @Getter
+@Schema(description = "요청에 필요한 파라미터 누락 시 응답 DTO")
 public class MissingServletRequestParameterExceptionResponse extends ErrorResponse {
 
     @Builder

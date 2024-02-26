@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Tag(name = "auth", description = "로그인")
 public interface AuthController {
 
+    /**
+     * 로그인 메서드
+     * 회원의 로그인 데이터를 받아 로그인에 성공하면 토큰과 함께 회원의 정보를 담은 데이터를 반환합니다.
+     *
+     * @param dto 회원의 로그인 데이터
+     * @return 회원의 정보와 토큰이 담긴 객체
+     */
     @Operation(summary = "일반 로그인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),

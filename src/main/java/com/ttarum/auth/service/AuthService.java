@@ -20,6 +20,14 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 일반 로그인 메서드
+     * 로그인에 성공하면 토큰과 함께 로그인한 회원의 정보를 담은 객체를 반환합니다.
+     *
+     * @param dto 로그인에 필요한 데이터가 담긴 객체
+     * @return 회원의 정보와 토큰이 담긴 객체
+     * @throws AuthException 해당 회원이 존재하지 않을 경우, 비밀번호가 틀린 경우 발생합니다.
+     */
     public LoginResponse normalLogin(final NormalLoginRequest dto) {
         Optional<NormalMember> normalMember = normalMemberRepository.findNormalMemberByLoginId(dto.getLoginId());
         if (normalMember.isEmpty()) {

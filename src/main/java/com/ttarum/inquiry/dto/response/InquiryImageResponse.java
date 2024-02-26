@@ -1,5 +1,6 @@
 package com.ttarum.inquiry.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,8 +8,10 @@ import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
+@Schema(description = "문의글 이미지 DTO")
 public class InquiryImageResponse {
 
+    @Schema(description = "이미지 URL", example = "ttarum.inquiry_image.url")
     private final String imageUrl;
 
     @Override

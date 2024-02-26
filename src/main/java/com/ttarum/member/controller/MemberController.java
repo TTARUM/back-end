@@ -1,7 +1,7 @@
 package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
-import com.ttarum.member.dto.request.AddressAdditionRequest;
+import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.CartResponse;
@@ -109,16 +109,32 @@ public interface MemberController {
     ResponseEntity<List<CartResponse>> getCartList(@AuthenticationPrincipal CustomUserDetails user);
 
     /**
-     * 주소 추가
+     * 배송지 추가
      *
      * @param user                      로그인한 사용자
-     * @param addressAdditionRequest    추가될 주소 정보
+     * @param addressUpsertRequest      추가될 주소 정보
      * @return 빈 응답
      */
-    @Operation(summary = "주소 추가")
+    @Operation(summary = "배송지 추가")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공")
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping
-    ResponseEntity<Void> addAddress(@AuthenticationPrincipal CustomUserDetails user, AddressAdditionRequest addressAdditionRequest);
+    ResponseEntity<Void> addAddress(@AuthenticationPrincipal CustomUserDetails user, AddressUpsertRequest addressUpsertRequest);
+
+    /**
+     * 배송지 수정
+     *
+     * @param user                      로그인한 사용자
+     * @param addressUpsertRequest      추가될 주소 정보
+     * @return 빈 응답
+     */
+    @Operation(summary = "배송지 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @PostMapping
+    ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, AddressUpsertRequest addressUpsertRequest);
 }

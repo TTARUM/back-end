@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatusCode;
 
 public class AddressException extends TtarumException {
 
-    private static final String NOT_FOUND_MESSAGE = "해당 Address ID로 주소를 찾을 수 없습니다.";
-    private static final String NO_OWNER_MESSAGE = "해당 주소의 소유자가 아닙니다.";
+    private static final String NOT_FOUND_MESSAGE = "해당 Address ID로 배송지를 찾을 수 없습니다.";
+    private static final String NO_OWNER_MESSAGE = "해당 배송지의 소유자가 아닙니다.";
 
     public static AddressException NotFound() {
         return new AddressException(HttpStatus.BAD_REQUEST, NOT_FOUND_MESSAGE);

@@ -16,5 +16,5 @@ public interface InquiryImageRepository extends JpaRepository<InquiryImage, Long
      * @return {@link String fileUrl} 리스트
      */
     @Query("SELECT ii.fileUrl FROM InquiryImage ii WHERE ii.inquiry.id = :inquiryId")
-    List<String> findInquiryImageByInquiryId(@Param("inquiryId") long inquiryId);
+    List<String> findImageUrlsByInquiryId(@Param("inquiryId") long inquiryId);
 }

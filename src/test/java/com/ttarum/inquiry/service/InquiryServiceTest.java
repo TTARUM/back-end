@@ -152,7 +152,7 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryImageRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId, memberId);
 
         // then
@@ -187,7 +187,7 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryImageRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
         when(inquiryAnswerRepository.findAnswerByInquiryId(inquiryId)).thenReturn(Optional.of(inquiryAnswer));
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId, memberId);
 
@@ -222,7 +222,7 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryImageRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
         when(inquiryAnswerRepository.findAnswerByInquiryId(inquiryId)).thenReturn(Optional.of(inquiryAnswer));
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId);
 
@@ -253,7 +253,7 @@ class InquiryServiceTest {
 
         // when
         when(inquiryRepository.findById(inquiryId)).thenReturn(Optional.of(inquiry));
-        when(inquiryImageRepository.findInquiryImageByInquiryId(inquiryId)).thenReturn(imageUrls);
+        when(inquiryImageRepository.findImageUrlsByInquiryId(inquiryId)).thenReturn(imageUrls);
         InquiryDetailedResponse inquiryDetailedResponse = inquiryService.getInquiryDetailedResponse(inquiryId);
 
         // then

@@ -103,7 +103,7 @@ public class InquiryService {
         }
         InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
-        List<String> imageUrls = inquiryImageRepository.findInquiryImageByInquiryId(inquiryId);
+        List<String> imageUrls = inquiryImageRepository.findImageUrlsByInquiryId(inquiryId);
         for (String imageUrl : imageUrls) {
             response.addImageUrl(imageUrl);
         }
@@ -148,7 +148,7 @@ public class InquiryService {
         }
         InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
-        List<String> imageUrls = inquiryImageRepository.findInquiryImageByInquiryId(inquiryId);
+        List<String> imageUrls = inquiryImageRepository.findImageUrlsByInquiryId(inquiryId);
         for (String imageUrl : imageUrls) {
             response.addImageUrl(imageUrl);
         }

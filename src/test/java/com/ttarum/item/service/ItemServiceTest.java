@@ -1,6 +1,7 @@
 package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
@@ -42,14 +43,13 @@ class ItemServiceTest {
                 .build();
         doReturn(Optional.of(item)).when(itemRepository).findById(1L);
 
-        Item foundItem = itemService.getItem(1L);
+        ItemDetailResponse itemDetail = itemService.getItemDetail(1L);
 
-        assertThat(foundItem.getId()).isEqualTo(item.getId());
-        assertThat(foundItem.getName()).isEqualTo(item.getName());
-        assertThat(foundItem.getDescription()).isEqualTo(item.getDescription());
-        assertThat(foundItem.getPrice()).isEqualTo(item.getPrice());
-        assertThat(foundItem.getItemImageUrl()).isEqualTo(item.getItemImageUrl());
-        assertThat(foundItem.getItemDescriptionImageUrl()).isEqualTo(item.getItemDescriptionImageUrl());
+        assertThat(itemDetail.getName()).isEqualTo(item.getName());
+        assertThat(itemDetail.getDescription()).isEqualTo(item.getDescription());
+        assertThat(itemDetail.getPrice()).isEqualTo(item.getPrice());
+        assertThat(itemDetail.getImageUrl()).isEqualTo(item.getItemImageUrl());
+        assertThat(itemDetail.getDescriptionImageUrl()).isEqualTo(item.getItemDescriptionImageUrl());
     }
 
     @Test
@@ -57,7 +57,7 @@ class ItemServiceTest {
     void getItemFailureByInvalidId() {
         doReturn(Optional.empty()).when(itemRepository).findById(0L);
 
-        assertThatThrownBy(() -> itemService.getItem(0L))
+        assertThatThrownBy(() -> itemService.getItemDetail(0L))
                 .isInstanceOf(ItemNotFoundException.class);
     }
 

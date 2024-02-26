@@ -11,6 +11,7 @@ import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.exception.ReviewException;
 import com.ttarum.review.exception.ReviewNotFoundException;
 import com.ttarum.review.repository.ReviewRepository;
+import com.ttarum.review.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
+    private final ReviewValidator reviewValidator;
 
     /**
      * 특정 제품의 리뷰들을 반환합니다.
@@ -107,7 +109,7 @@ public class ReviewService {
             throw new ReviewException(HttpStatus.BAD_REQUEST, "삭제된 리뷰는 수정이 불가능합니다.");
         }
         validateWriter(review, memberId);
-        review.update(request);
+        review.update(request, reviewValidator);
     }
 
     private void validateWriter(final Review review, final Long memberId) {

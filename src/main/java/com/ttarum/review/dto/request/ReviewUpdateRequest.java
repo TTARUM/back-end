@@ -13,4 +13,5 @@ public class ReviewUpdateRequest {
 
     @Schema(description = "업데이트할 리뷰의 내용")
     private final String content;
+    private final short rating;
 }

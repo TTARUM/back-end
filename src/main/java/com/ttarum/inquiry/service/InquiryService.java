@@ -11,6 +11,7 @@ import com.ttarum.inquiry.exception.InquiryException;
 import com.ttarum.inquiry.dto.request.InquiryCreationRequest;
 import com.ttarum.inquiry.exception.InquiryForbiddenException;
 import com.ttarum.inquiry.exception.InquiryNotFoundException;
+import com.ttarum.inquiry.repository.InquiryImageRepository;
 import com.ttarum.inquiry.repository.InquiryRepository;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
@@ -34,6 +35,7 @@ import java.util.Optional;
 public class InquiryService {
 
     private final InquiryRepository inquiryRepository;
+    private final InquiryImageRepository inquiryImageRepository;
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
 
@@ -99,7 +101,7 @@ public class InquiryService {
         }
         InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
-        List<String> imageUrls = inquiryRepository.findInquiryImageByInquiryId(inquiryId);
+        List<String> imageUrls = inquiryImageRepository.findInquiryImageByInquiryId(inquiryId);
         for (String imageUrl : imageUrls) {
             response.addImageUrl(imageUrl);
         }
@@ -144,7 +146,7 @@ public class InquiryService {
         }
         InquiryDetailedResponse response = InquiryDetailedResponse.of(inquiry, inquiryAnswerResponse);
 
-        List<String> imageUrls = inquiryRepository.findInquiryImageByInquiryId(inquiryId);
+        List<String> imageUrls = inquiryImageRepository.findInquiryImageByInquiryId(inquiryId);
         for (String imageUrl : imageUrls) {
             response.addImageUrl(imageUrl);
         }

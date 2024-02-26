@@ -3,7 +3,6 @@ package com.ttarum.inquiry.repository;
 import com.ttarum.inquiry.domain.Inquiry;
 import com.ttarum.inquiry.domain.InquiryAnswer;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
-import com.ttarum.inquiry.domain.InquiryImage;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -63,15 +62,6 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     List<InquirySummaryResponse> findInquirySummaryByItemId(@Param("itemId") long itemId, Pageable pageable);
 
     /**
-     * {@link Long inquiryId}가 Id 값인 문의글의 {@link InquiryImage}들의 {@link String fileUrl} 리스트를 반환합니다.
-     *
-     * @param inquiryId 문의글의 Id 값
-     * @return {@link String fileUrl} 리스트
-     */
-    @Query("SELECT ii.fileUrl FROM InquiryImage ii WHERE ii.inquiry.id = :inquiryId")
-    List<String> findInquiryImageByInquiryId(@Param("inquiryId") long inquiryId);
-
-    /**
      * {@link Long inquiryId}가 Id 값인 문의글의 답변을 반환합니다.
      *
      * @param inquiryId 문의글의 Id 값
@@ -79,5 +69,4 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
      */
     @Query("SELECT ia FROM InquiryAnswer ia WHERE ia.inquiry.id = :inquiryId")
     Optional<InquiryAnswer> findAnswerByInquiryId(@Param("inquiryId") long inquiryId);
-
 }

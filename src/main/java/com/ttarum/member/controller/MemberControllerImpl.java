@@ -70,4 +70,10 @@ public class MemberControllerImpl implements MemberController {
         memberService.addAddress(user.getId(), addressUpsertRequest);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/address/{addressId}")
+    public ResponseEntity<Void> updateAddress(@AuthenticationPrincipal final CustomUserDetails user, @PathVariable final Long addressId, final AddressUpsertRequest addressUpsertRequest) {
+        memberService.updateAddress(user.getId(), addressId, addressUpsertRequest);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -2,6 +2,9 @@ package com.ttarum.member.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.Instant;
 
 @Builder
 @AllArgsConstructor
@@ -23,6 +26,7 @@ public class Address {
     @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
     private Member member;
 
-    @Column(name = "is_recent", nullable = false, columnDefinition = "boolean default false")
-    private boolean isRecent;
+    @CreatedDate
+    @Column(name = "last_used_at", nullable = false)
+    private Instant lastUsedAt;
 }

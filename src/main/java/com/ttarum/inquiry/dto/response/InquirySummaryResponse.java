@@ -31,7 +31,7 @@ public class InquirySummaryResponse {
     private final boolean hasAnswer;
 
     @Schema(description = "회원의 이름", example = "홍*동")
-    private final String memberName; // O 백엔드에서 이름 모자이크
+    private final String memberName;
 
     @Schema(description = "문의글 생성일", example = "2024-02-23T04:32:49.584863Z")
     private final Instant createdAt;
@@ -47,10 +47,24 @@ public class InquirySummaryResponse {
         this.isSecretInquiry = isSecretInquiry;
         this.isThisOwnInquiry = isThisOwnInquiry;
         this.hasAnswer = hasAnswer;
-        this.memberName = memberName;
+        this.memberName = concealName(memberName);
         this.createdAt = createdAt;
         if (isThisOwnInquiry || !isSecretInquiry) {
             this.title = title;
+        } else {
+            this.title = SECRET_INQUIRY_TITLE;
         }
+    }
+
+    private String concealName(final String memberName) {
+        if (memberName.length() < 2) {
+            return "*";
+        }
+        if (memberName.length() == 2) {
+            return memberName.charAt(0) + "*";
+        }
+        return memberName.charAt(0) +
+                "*".repeat(memberName.length() - 2) +
+                memberName.charAt(memberName.length() - 1);
     }
 }

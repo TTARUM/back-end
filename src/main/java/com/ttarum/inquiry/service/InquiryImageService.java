@@ -30,10 +30,10 @@ public class InquiryImageService {
     private final ImageService imageService;
 
     /**
-     * 문의글의 이미지를 저장한다.
-     * {@code saveImage} 메서드를 호출하여 저장한다.
+     * 문의글의 이미지를 저장합니다.
+     * {@link #saveImage(long, MultipartFile) saveImage} 메서드를 호출하여 저장합니다.
      *
-     * @param inquiryId 이미지가 저장될 문의글의 ID
+     * @param inquiryId 이미지가 저장될 문의글의 Id 값
      * @param imageList 저장할 이미지 파일 리스트
      */
     @Transactional
@@ -42,11 +42,11 @@ public class InquiryImageService {
     }
 
     /**
-     * 문의글의 이미지를 저장한다.
+     * 문의글의 이미지를 저장합니다.
      *
-     * @param inquiryId 이미지가 저장될 문의글의 ID
+     * @param inquiryId 이미지가 저장될 문의글의 Id 값
      * @param image     저장할 이미지 파일
-     * @throws InquiryNotFoundException 문의글이 존재하지 않는 경우 발생한다.
+     * @throws InquiryNotFoundException 문의글이 존재하지 않는 경우 발생합니다.
      * @throws InquiryImageException    파일이 존재하지 않는 경우, 이미지 파일이 아닌 경우 발생하는 예외
      */
     @Transactional

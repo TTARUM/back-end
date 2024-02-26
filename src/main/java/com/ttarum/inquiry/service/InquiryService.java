@@ -40,10 +40,10 @@ public class InquiryService {
     /**
      * 특정 제품의 요약된 문의글 조회
      * 로그인한 경우 해당 메서드를 호출합니다.
-     * 로그인한 회원의 ID를 이용해 자신의 문의글인지 여부를 확인할 수 있습니다.
+     * 로그인한 회원의 Id 값을 이용해 자신의 문의글인지 여부를 확인할 수 있습니다.
      *
-     * @param itemId   특정 제품의 ID
-     * @param memberId 로그인한 회원의 ID
+     * @param itemId   특정 제품의 Id 값
+     * @param memberId 로그인한 회원의 Id 값
      * @param pageable 페이지
      * @return 요약된 문의글 리스트
      * @throws InquiryException 제품이 존재하지 않을 경우 발생하는 예외
@@ -65,7 +65,7 @@ public class InquiryService {
      * 로그인하지 않은 경우 해당 메서드를 호출합니다.
      * 로그인하지 않았으므로 자신의 문의글인지 확인할 수 없습니다.
      *
-     * @param itemId   특정 제품의 ID
+     * @param itemId   특정 제품의 Id 값
      * @param pageable 페이지
      * @return 요약된 문의글 리스트
      * @throws InquiryException 제품이 존재하지 않을 경우 발생하는 예외
@@ -76,13 +76,13 @@ public class InquiryService {
     }
 
     /**
-     * 문의글의 ID값을 이용해 문의글을 조회합니다.
+     * 문의글의 Id 값을 이용해 문의글을 조회합니다.
      * 로그인한 경우 해당 메서드를 호출합니다.
-     * 로그인한 회원의 ID 값을 이용해 조회할 수 있는지 확인합니다.
+     * 로그인한 회원의 Id 값을 이용해 조회할 수 있는지 확인합니다.
      * 비밀글의 경우 로그인한 회원의 문의글이 아닐 경우 예외가 발생합니다.
      *
-     * @param inquiryId 조회할 문의글의 ID
-     * @param memberId  로그인한 회원의 ID
+     * @param inquiryId 조회할 문의글의 Id 값
+     * @param memberId  로그인한 회원의 Id 값
      * @return 문의글의 정보가 담긴 객체
      * @throws InquiryException 문의글이 존재하지 않을 경우, 접근할 수 없는 문의글의 경우 발생하는 예외
      */
@@ -123,11 +123,11 @@ public class InquiryService {
     }
 
     /**
-     * 문의글의 ID값을 이용해 문의글을 조회합니다.
+     * 문의글의 Id 값을 이용해 문의글을 조회합니다.
      * 로그인하지 않은 경우 해당 메서드를 호출합니다.
      * 비밀글의 경우 예외가 발생합니다.
      *
-     * @param inquiryId 조회할 문의글의 ID
+     * @param inquiryId 조회할 문의글의 Id 값
      * @return 문의글의 정보가 담긴 객체
      * @throws InquiryException 문의글이 존재하지 않을 경우, 접근할 수 없는 문의글의 경우 발생하는 예외
      */
@@ -161,9 +161,9 @@ public class InquiryService {
      * 문의글 등록 메서드
      *
      * @param request  등록할 문의글의 데이터가 담긴 객체
-     * @param memberId 등록할 회원의 ID
-     * @return 등록된 문의글의 ID
-     * @throws InquiryException 유효하지 않은 회원의 ID, 존재하지 않는 제품에 등록하려는 경우, 제목이나 내용이 비어있을 경우 발생하는 예외
+     * @param memberId 등록할 회원의 Id 값
+     * @return 등록된 문의글의 Id 값
+     * @throws InquiryException 유효하지 않은 회원의 Id 값, 존재하지 않는 제품에 등록하려는 경우, 제목이나 내용이 비어있을 경우 발생하는 예외
      */
     @Transactional
     public long postInquiryArticle(final InquiryCreationRequest request, final long memberId) {

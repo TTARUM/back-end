@@ -15,6 +15,11 @@ import java.util.Objects;
 
 import static com.ttarum.common.filter.UserVerificationFilter.AUTHENTICATION;
 
+/**
+ * {@link VerificationUser} 애노테이션과 함께 {@link User}를 파라미터로 받을 경우
+ * {@link HttpServletRequest}에서 authentication 애트리뷰트를 꺼내 해당 {@link User}에 매핑합니다.
+ */
+
 @NonNullApi
 public class VerificationUserResolver implements HandlerMethodArgumentResolver {
 

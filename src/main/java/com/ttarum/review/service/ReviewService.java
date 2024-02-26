@@ -11,6 +11,7 @@ import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.exception.ReviewException;
 import com.ttarum.review.exception.ReviewNotFoundException;
 import com.ttarum.review.repository.ReviewRepository;
+import com.ttarum.review.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,16 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
+    private final ReviewValidator reviewValidator;
 
+    /**
+     * 특정 제품의 리뷰들을 반환합니다.
+     *
+     * @param itemId   특정 제품의 Id 값
+     * @param pageable pageable
+     * @return 특정 제품의 리뷰 리스트
+     * @throws ItemNotFoundException 특정 제품이 존재하지 않을 경우 발생합니다.
+     */
     public List<ReviewResponse> getReviewResponseList(final Long itemId, final Pageable pageable) {
         checkItemExistence(itemId);
         List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByItemId(itemId, pageable);
@@ -60,6 +70,15 @@ public class ReviewService {
         }
     }
 
+    /**
+     * {@link Long reviewId}가 Id 값인 리뷰를 제거합니다.
+     * {@link Long memberId}가 Id 값인 회원의 리뷰인 경우에만 제거됩니다.
+     *
+     * @param reviewId 제거할 리뷰의 Id 값
+     * @param memberId 회원의 Id 값
+     * @throws ReviewNotFoundException {@link Long reviewId}가 Id 값인 리뷰가 없을 경우 발생합니다.
+     * @throws ReviewException         회원의 리뷰가 아닌 경우 발생합니다.
+     */
     @Transactional
     public void deleteReview(final Long reviewId, final Long memberId) {
         Review review = getReviewById(reviewId);
@@ -72,6 +91,17 @@ public class ReviewService {
                 .orElseThrow(ReviewNotFoundException::new);
     }
 
+    /**
+     * {@link Long reviewId}가 Id 값인 리뷰를 업데이트합니다.
+     * {@link Long memberId}가 Id 값인 회원만 업데이트할 수 있으며, 삭제된 리뷰의 경우 업데이트가 불가능합니다.
+     * 리뷰의 이미지는 업데이트가 불가능합니다.
+     *
+     * @param reviewId 업데이트할 리뷰의 Id 값
+     * @param request  업데이트할 데이터가 담긴 객체
+     * @param memberId 회원의 Id 값
+     * @throws ReviewNotFoundException {@link Long reviewId}가 Id 값인 리뷰가 없을 경우 발생합니다.
+     * @throws ReviewException         삭제된 리뷰의 업데이트를 시도할 경우, {@link Long memberId}가 Id 값인 회원이 작성한 리뷰가 아닌 경우 발생합니다.
+     */
     @Transactional
     public void updateReview(final Long reviewId, final ReviewUpdateRequest request, final Long memberId) {
         Review review = getReviewById(reviewId);
@@ -79,7 +109,7 @@ public class ReviewService {
             throw new ReviewException(HttpStatus.BAD_REQUEST, "삭제된 리뷰는 수정이 불가능합니다.");
         }
         validateWriter(review, memberId);
-        review.update(request);
+        review.update(request, reviewValidator);
     }
 
     private void validateWriter(final Review review, final Long memberId) {

@@ -1,6 +1,7 @@
 package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.member.dto.request.AddressAdditionRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.CartResponse;
@@ -23,6 +24,12 @@ import java.util.Optional;
 
 @Tag(name = "Member", description = "회원")
 public interface MemberController {
+
+    /**
+     * 회원가입 메서드
+     *
+     * @param dto 회원가입에 필요한 데이터가 담긴 객체
+     */
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),
@@ -34,7 +41,7 @@ public interface MemberController {
     /**
      * 제품 찜 메서드
      *
-     * @param user   사용자
+     * @param user   로그인한 회원
      * @param itemId 찜 목록에 추가할 제품의 Id 값
      * @return 빈 응답
      */
@@ -50,9 +57,9 @@ public interface MemberController {
     /**
      * 찜 목록 조회 메서드
      *
-     * @param user 사용자
+     * @param user 로그인한 회원
      * @param page 페이지
-     * @param size 페이지당 컨텐츠 갯수
+     * @param size 페이지당 찜한 제품 개수
      * @return 찜 목록 리스트
      */
     @Operation(summary = "찜 목록 조회")
@@ -62,7 +69,7 @@ public interface MemberController {
     })
     @Parameters(value = {
             @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
-            @Parameter(name = "size", description = "페이지 당 컨텐츠 갯수 (기본 값 8)", example = "8")
+            @Parameter(name = "size", description = "페이지 당 찜한 제품 개수 (기본 값 8)", example = "8")
     })
     @GetMapping
     ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal CustomUserDetails user,
@@ -72,7 +79,7 @@ public interface MemberController {
     /**
      * 장바구니에 제품 추가
      *
-     * @param user                로그인한 사용자
+     * @param user                로그인한 회원
      * @param cartAdditionRequest 추가될 제품과 수량이 담긴 객체
      * @return 빈 응답
      */
@@ -82,7 +89,8 @@ public interface MemberController {
     })
     @Parameters(value = {
             @Parameter(name = "itemId", description = "제품의 Id 값", example = "1", required = true),
-            @Parameter(name = "amount", description = "장바구니에 담을 제품의 수량", example = "1", required = true)
+            @Parameter(name = "amount", description = "장바구니에 담을 제품의 수량", example = "1", required = true),
+            @Parameter(name = "cartAdditionRequest", hidden = true)
     })
     @PostMapping
     ResponseEntity<Void> addToCart(@AuthenticationPrincipal CustomUserDetails user, CartAdditionRequest cartAdditionRequest);
@@ -90,7 +98,7 @@ public interface MemberController {
     /**
      * 장바구니 조회 메서드
      *
-     * @param user 사용자
+     * @param user 로그인한 회원
      * @return 장바구니에 담긴 제품 목록
      */
     @Operation(summary = "장바구니 조회")
@@ -99,4 +107,18 @@ public interface MemberController {
     })
     @GetMapping
     ResponseEntity<List<CartResponse>> getCartList(@AuthenticationPrincipal CustomUserDetails user);
+
+    /**
+     * 주소 추가
+     *
+     * @param user                      로그인한 사용자
+     * @param addressAdditionRequest    추가될 주소 정보
+     * @return 빈 응답
+     */
+    @Operation(summary = "주소 추가")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공")
+    })
+    @PostMapping
+    ResponseEntity<Void> addAddress(@AuthenticationPrincipal CustomUserDetails user, AddressAdditionRequest addressAdditionRequest);
 }

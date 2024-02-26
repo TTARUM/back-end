@@ -11,11 +11,13 @@ import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.exception.ReviewException;
 import com.ttarum.review.exception.ReviewNotFoundException;
 import com.ttarum.review.repository.ReviewRepository;
+import com.ttarum.review.validator.ReviewValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
+
+    @Spy
+    ReviewValidator reviewValidator;
 
     @Mock
     ReviewRepository reviewRepository;
@@ -149,12 +154,14 @@ class ReviewServiceTest {
                 .build();
         Review review = Review.builder()
                 .id(1L)
-                .content("content before updated")
+                .content("content before updating")
                 .member(member)
+                .star(Integer.valueOf(1).shortValue())
                 .isDeleted(false)
                 .build();
         ReviewUpdateRequest request = ReviewUpdateRequest.builder()
-                .content("content after updated")
+                .content("content after updating")
+                .rating(Integer.valueOf(3).shortValue())
                 .build();
 
         // when
@@ -163,6 +170,7 @@ class ReviewServiceTest {
 
         // then
         assertThat(review.getContent()).isEqualTo(request.getContent());
+        assertThat(review.getStar()).isEqualTo(request.getRating());
         verify(reviewRepository, times(1)).findById(anyLong());
     }
 

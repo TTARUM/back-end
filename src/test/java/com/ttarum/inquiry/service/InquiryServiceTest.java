@@ -70,7 +70,7 @@ class InquiryServiceTest {
         assertThat(response.getId()).isEqualTo(inquiryId);
         assertThat(response.getTitle()).isEqualTo("title");
         assertThat(response.getCreatedAt()).isEqualTo(instant);
-        assertThat(response.getMemberName()).isEqualTo("memberName");
+        assertThat(response.getMemberName()).isEqualTo("m********e");
     }
 
     @Test
@@ -111,7 +111,7 @@ class InquiryServiceTest {
         assertThat(response.getId()).isEqualTo(inquiryId);
         assertThat(response.getTitle()).isEqualTo("title");
         assertThat(response.getCreatedAt()).isEqualTo(instant);
-        assertThat(response.getMemberName()).isEqualTo("memberName");
+        assertThat(response.getMemberName()).isEqualTo("m********e");
     }
 
     @Test

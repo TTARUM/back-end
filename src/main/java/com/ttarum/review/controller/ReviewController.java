@@ -22,7 +22,7 @@ public interface ReviewController {
     /**
      * 특정 제품에 대한 리뷰 조회
      *
-     * @param itemId 특정 제품의 ID
+     * @param itemId 특정 제품의 Id 값
      * @param page   페이지 넘버
      * @param size   페이지당 반환되는 리뷰의 개수
      * @return 리뷰 목록
@@ -45,27 +45,27 @@ public interface ReviewController {
                                                                final Optional<Integer> size);
 
     /**
-     * 리뷰 제거
+     * 특정 리뷰 제거
      *
-     * @param reviewId 제거할 리뷰의 ID
-     * @param user     로그인한 유저
-     * @return
+     * @param reviewId 제거할 리뷰의 Id 값
+     * @param user     로그인한 회원
+     * @return 빈 응답
      */
     @Operation(summary = "특정 리뷰 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "제거 성공"),
-            @ApiResponse(responseCode = "400", description = "존재하지 않은 리뷰의 경우")
+            @ApiResponse(responseCode = "400", description = "제거 실패")
     })
     @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
     @DeleteMapping
     ResponseEntity<Object> deleteReview(@RequestParam final long reviewId, @AuthenticationPrincipal final CustomUserDetails user);
 
     /**
-     * 리뷰를 업데이트한다.
+     * 리뷰 업데이트
      *
-     * @param reviewId 업데이트할 리뷰의 ID
+     * @param reviewId 업데이트할 리뷰의 Id 값
      * @param request  업데이트될 정보가 담긴 객체
-     * @param user     로그인한 유저
+     * @param user     로그인한 회원
      * @return 빈 응답
      */
     @Operation(summary = "리뷰 업데이트")
@@ -74,8 +74,7 @@ public interface ReviewController {
             @ApiResponse(responseCode = "400", description = "유효하지 않은 리뷰")
     })
     @Parameters(value = {
-            @Parameter(name = "reviewId", description = "리뷰의 Id값", example = "1"),
-            @Parameter(name = "user", hidden = true)
+            @Parameter(name = "reviewId", description = "리뷰의 Id값", example = "1", required = true)
     })
     @PutMapping
     ResponseEntity<Void> updateReview(Long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);

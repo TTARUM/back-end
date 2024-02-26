@@ -4,7 +4,7 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
-import com.ttarum.member.dto.request.AddressUpsertRequest;
+import com.ttarum.member.dto.request.AddressAdditionRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -39,6 +39,13 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
 
+    /**
+     * 일반 회원의 회원가입 메서드
+     *
+     * @param member       회원
+     * @param normalMember 일반 회원
+     * @throws MemberException 유효성 검사에 실패한 경우 발생합니다.
+     */
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
         if (!isValidNickname(member.getNickname())) {
@@ -89,13 +96,13 @@ public class MemberService {
     }
 
     /**
-     * 특정 제품을 찜 목록에 추가한다.
+     * 특정 제품을 찜 목록에 추가합니다.
      *
-     * @param memberId 사용자의 Id 값
+     * @param memberId 회원의 Id 값
      * @param itemId   찜 목록에 추가될 제품의 Id 값
-     * @throws DuplicatedWishListException 이미 찜 목록에 제품이 존재하는 경우 발생한다.
-     * @throws MemberNotFoundException     해당 사용자가 존재하지 않으면 발생한다.
-     * @throws ItemNotFoundException       해당 제품이 존재하지 않으면 발생한다.
+     * @throws DuplicatedWishListException 이미 찜 목록에 제품이 존재하는 경우 발생합니다.
+     * @throws MemberNotFoundException     해당 회원이 존재하지 않으면 발생합니다.
+     * @throws ItemNotFoundException       해당 제품이 존재하지 않으면 발생합니다.
      */
     @Transactional
     public void wishItem(final long memberId, final long itemId) {
@@ -127,11 +134,11 @@ public class MemberService {
     }
 
     /**
-     * 찜 목록 조회 메서드
+     * {@link Long memberId}를 Id 값으로 가진 회원의 찜 목록을 반환합니다.
      *
-     * @param memberId 사용자의 Id 값
+     * @param memberId 회원의 Id 값
      * @param pageable pageable
-     * @return 조회된 찜 목록  리스트
+     * @return 조회된 찜 목록 리스트
      * @throws MemberNotFoundException 사용자가 존재하지 않을 경우 발생한다.
      */
     public WishListResponse getWishListResponse(final Long memberId, final Pageable pageable) {
@@ -147,12 +154,12 @@ public class MemberService {
     }
 
     /**
-     * 특정 사용자의 장바구니에 제품을 추가한다.
+     * {@link Long memberId}를 Id 값으로 가진 회원의 장바구니에 제품을 추가합니다.
      *
-     * @param memberId            특정 사용자의 Id 값
+     * @param memberId            특정 회원의 Id 값
      * @param cartAdditionRequest 장바구니에 추가될 제품의 이름과 수량이 담긴 객체
-     * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생한다.
-     * @throws ItemNotFoundException   해당 제품이 존재하지 않으면 발생한다.
+     * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생합니다.
+     * @throws ItemNotFoundException   해당 제품이 존재하지 않으면 발생합니다.
      */
     @Transactional
     public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
@@ -174,13 +181,32 @@ public class MemberService {
     }
 
     /**
-     * {@code memberId}를 Id 값으로 가진 사용자의 장바구니 목록을 반환합니다.
+     * {@link Long memberId}를 Id 값으로 가진 회원의 장바구니 목록을 반환합니다.
      *
-     * @param memberId 사용자의 Id 값
+     * @param memberId 회원의 Id 값
      * @return 장바구니에 담긴 제품 목록
      */
     public List<CartResponse> getCartResponseList(final Long memberId) {
         return cartRepository.getCartResponseListByMemberId(memberId);
+    }
+
+    /**
+     * 사용자의 주소를 추가한다.
+     *
+     * @param memberId 사용자의 Id 값
+     * @param request  주소 추가 요청 객체
+     * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생한다.
+     */
+    @Transactional
+    public void addAddress(final Long memberId, final AddressAdditionRequest request) {
+        Member member = getMemberById(memberId);
+
+        Address address = Address.builder()
+                .member(member)
+                .address(request.getAddress())
+                .build();
+
+        addressRepository.save(address);
     }
 
     /**

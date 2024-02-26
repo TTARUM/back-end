@@ -2,7 +2,6 @@ package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
-import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.service.ItemService;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
-import static com.ttarum.item.controller.utils.ItemConverter.*;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -30,9 +27,8 @@ public class ItemControllerImpl implements ItemController {
 
     @Override
     @GetMapping
-    public ResponseEntity<ItemDetailResponse> getDetail(final Long itemId) {
-        Item item = itemService.getItem(itemId);
-        return ResponseEntity.ok(convertToDetailResponse(item));
+    public ResponseEntity<ItemDetailResponse> getDetail(final Long id) {
+        return ResponseEntity.ok(itemService.getItemDetail(id));
     }
 
     @Override

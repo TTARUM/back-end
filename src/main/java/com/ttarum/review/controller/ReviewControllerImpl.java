@@ -36,7 +36,7 @@ public class ReviewControllerImpl implements ReviewController {
 
     @DeleteMapping
     @Override
-    public ResponseEntity<Object> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
+    public ResponseEntity<Void> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
                                                @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.deleteReview(reviewId, user.getId());
         return ResponseEntity.ok().build();

@@ -13,7 +13,7 @@ import java.time.Instant;
 @Schema(description = "문의글 미리보기 DTO")
 public class InquirySummaryResponse {
 
-    private static final String SECRET_INQUIRY_TITLE = "비밀글입니다.";
+    public static final String SECRET_INQUIRY_TITLE = "비밀글입니다.";
 
     @Schema(description = "문의글 Id 값", example = "1")
     private final Long id;

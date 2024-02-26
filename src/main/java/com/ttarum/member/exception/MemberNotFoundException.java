@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatusCode;
 
 public class MemberNotFoundException extends TtarumException {
 
-    private static final String DEFAULT_MESSAGE = "";
+    private static final String DEFAULT_MESSAGE = "해당 회원이 존재하지 않습니다.";
 
     public MemberNotFoundException() {
         super(HttpStatus.NOT_FOUND, DEFAULT_MESSAGE);

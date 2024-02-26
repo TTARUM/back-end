@@ -211,9 +211,9 @@ public class MemberService {
 
     private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(AddressException::NotFound);
+                .orElseThrow(AddressException::notFound);
         if (!Objects.equals(memberId, address.getMember().getId())) {
-            throw AddressException.NoOwner();
+            throw AddressException.noOwner();
         }
         return address;
     }

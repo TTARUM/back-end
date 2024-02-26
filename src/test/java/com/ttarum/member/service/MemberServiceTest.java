@@ -2,6 +2,7 @@ package com.ttarum.member.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.member.domain.Address;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.domain.NormalMember;
 import com.ttarum.member.domain.WishList;
@@ -368,17 +369,71 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("주소 추가 - happy path")
+    @DisplayName("배송지 추가 - happy path")
     void addAddress() {
+        // given
         Long memberId = 1L;
         Member dummyMember = Member.builder().build();
-        AddressUpsertRequest request = new AddressUpsertRequest("test address");
 
         when(memberRepository.findById(memberId))
                 .thenReturn(Optional.of(dummyMember));
 
-        memberService.addAddress(memberId, request);
+        // when
+        memberService.addAddress(memberId, new AddressUpsertRequest("test address"));
 
-        verify(addressRepository).save(any());
+        // then
+        verify(addressRepository).save(
+                Address.builder()
+                        .member(dummyMember)
+                        .address("test address")
+                        .build()
+        );
+    }
+
+    @Test
+    @DisplayName("배송지 수정 - happy path")
+    void updateAddress() {
+        // given
+        Long memberId = 1L;
+        Long addressId = 999L;
+        Member testMember = Member.builder().id(memberId).build();
+        Address previousAddress = Address.builder().member(testMember).build();
+
+        when(addressRepository.findById(addressId))
+                .thenReturn(Optional.of(previousAddress));
+        // when
+        memberService.updateAddress(memberId, addressId, new AddressUpsertRequest("new address"));
+
+        // then
+        verify(addressRepository).save(
+                Address.builder()
+                        .member(testMember)
+                        .address("new address")
+                        .build()
+                );
+    }
+
+    @Test
+    @DisplayName("배송지 최근 사용 일자 업데이트 - happy path")
+    void updateLastUsedAt() {
+        // given
+        Long memberId = 1L;
+        Long addressId = 999L;
+        Member testMember = Member.builder().id(memberId).build();
+        Address previousAddress = Address.builder().member(testMember).build();
+
+        when(addressRepository.findById(addressId))
+                .thenReturn(Optional.of(previousAddress));
+        // when
+        memberService.updateLastUsedAt(memberId, addressId);
+
+        // then
+        verify(addressRepository).save(
+                Address.builder()
+                        .member(testMember)
+                        .address("new address")
+                        .lastUsedAt(any())
+                        .build()
+        );
     }
 }

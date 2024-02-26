@@ -11,6 +11,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Entity
+@EqualsAndHashCode
 @Table(name = "address")
 public class Address {
     @Id

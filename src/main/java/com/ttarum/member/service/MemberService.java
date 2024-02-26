@@ -245,4 +245,9 @@ public class MemberService {
         address.updateLastUsedAt();
         addressRepository.save(address);
     }
+
+    @Transactional
+    public void deleteFromCart(final Long memberId, final Long itemId) {
+        cartRepository.deleteById(new CartId(memberId, itemId));
+    }
 }

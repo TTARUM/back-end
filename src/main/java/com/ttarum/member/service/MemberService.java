@@ -244,4 +244,16 @@ public class MemberService {
         address.updateLastUsedAt();
         addressRepository.save(address);
     }
+
+    /**
+     * 특정 사용자의 배송지를 삭제한다.
+     *
+     * @param memberId  사용자의 Id 값
+     * @param addressId 배송지의 Id 값
+     */
+    @Transactional
+    public void deleteAddress(final Long memberId, final Long addressId) {
+        Address address = getValidAddress(memberId, addressId);
+        addressRepository.delete(address);
+    }
 }

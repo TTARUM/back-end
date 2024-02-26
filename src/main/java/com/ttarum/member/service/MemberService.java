@@ -226,4 +226,21 @@ public class MemberService {
         address.setAddress(request.getAddress());
         addressRepository.save(address);
     }
+
+    /**
+     * 특정 사용자 배송지의 최근 사용 일자를 업데이트한다.
+     *
+     * @param memberId  사용자의 Id 값
+     * @param addressId 배송지의 Id 값
+     */
+    @Transactional
+    public void updateLastUsedAt(final Long memberId, final Long addressId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(AddressException::NotFound);
+        if (!Objects.equals(memberId, address.getMember().getId())) {
+            throw AddressException.NoOwner();
+        }
+        address.updateLastUsedAt();
+        addressRepository.save(address);
+    }
 }

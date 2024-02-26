@@ -30,8 +30,8 @@ public class ItemControllerImpl implements ItemController {
 
     @Override
     @GetMapping
-    public ResponseEntity<ItemDetailResponse> getDetail(final Long id) {
-        Item item = itemService.getItem(id);
+    public ResponseEntity<ItemDetailResponse> getDetail(final Long itemId) {
+        Item item = itemService.getItem(itemId);
         return ResponseEntity.ok(convertToDetailResponse(item));
     }
 

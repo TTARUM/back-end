@@ -25,7 +25,7 @@ public interface ItemController {
     /**
      * 특정 제품의 상세정보 조회 메서드
      *
-     * @param id 제품의 Id 값
+     * @param itemId 제품의 Id 값
      * @return 제품의 상세정보
      */
     @Operation(summary = "특정 제품의 상세정보 조회")
@@ -35,7 +35,7 @@ public interface ItemController {
     })
     @Parameter(name = "id", description = "제품의 아이디", example = "1", required = true)
     @GetMapping
-    ResponseEntity<ItemDetailResponse> getDetail(final Long id);
+    ResponseEntity<ItemDetailResponse> getDetail(final Long itemId);
 
     /**
      * 요약된 제품 정보에 대한 검색 메서드

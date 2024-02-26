@@ -4,11 +4,12 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
-import com.ttarum.member.dto.request.AddressAdditionRequest;
-import com.ttarum.member.dto.response.CartResponse;
-import com.ttarum.member.exception.DuplicatedWishListException;
+import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.exception.AddressException;
+import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.*;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -196,7 +198,7 @@ public class MemberService {
      * @throws MemberNotFoundException 해당 사용자가 존재하지 않으면 발생한다.
      */
     @Transactional
-    public void addAddress(final Long memberId, final AddressAdditionRequest request) {
+    public void addAddress(final Long memberId, final AddressUpsertRequest request) {
         Member member = getMemberById(memberId);
 
         Address address = Address.builder()
@@ -204,6 +206,42 @@ public class MemberService {
                 .address(request.getAddress())
                 .build();
 
+        addressRepository.save(address);
+    }
+
+    private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(AddressException::notFound);
+        if (!Objects.equals(memberId, address.getMember().getId())) {
+            throw AddressException.noOwner();
+        }
+        return address;
+    }
+
+    /**
+     * 특정 사용자의 배송지를 업데이트한다.
+     *
+     * @param memberId  사용자의 Id 값
+     * @param addressId 배송지의 Id 값
+     * @param request   업데이트할 배송지의 정보가 담긴 객체
+     */
+    @Transactional
+    public void updateAddress(final Long memberId, final Long addressId, final AddressUpsertRequest request) {
+        Address address = getValidAddress(memberId, addressId);
+        address.setAddress(request.getAddress());
+        addressRepository.save(address);
+    }
+
+    /**
+     * 특정 사용자 배송지의 최근 사용 일자를 업데이트한다.
+     *
+     * @param memberId  사용자의 Id 값
+     * @param addressId 배송지의 Id 값
+     */
+    @Transactional
+    public void updateLastUsedAt(final Long memberId, final Long addressId) {
+        Address address = getValidAddress(memberId, addressId);
+        address.updateLastUsedAt();
         addressRepository.save(address);
     }
 }

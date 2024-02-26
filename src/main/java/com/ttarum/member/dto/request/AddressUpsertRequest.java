@@ -6,8 +6,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-@Schema(name = "AddressAdditionRequest", description = "배송지 추가 요청 DTO")
-public class AddressAdditionRequest {
+@Schema(name = "AddressUpsertRequest", description = "배송지 추가/수정 요청 DTO")
+public class AddressUpsertRequest {
     @Schema(description = "배송지 주소", example = "서울시 강남구 역삼동 123-456")
     private final String address;
 }

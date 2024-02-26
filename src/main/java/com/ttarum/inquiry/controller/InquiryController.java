@@ -61,7 +61,7 @@ public interface InquiryController {
      * @param user      로그인한 사용자 여부를 확인하기 위한 객체
      * @return 문의글
      */
-    @Operation(summary = "문의 글 조회")
+    @Operation(summary = "문의글 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "조회 실패")

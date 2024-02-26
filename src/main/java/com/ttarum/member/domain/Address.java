@@ -15,6 +15,7 @@ public class Address {
     @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
+    @Setter
     @Column(name = "address", nullable = false, length = 100)
     private String address;
 

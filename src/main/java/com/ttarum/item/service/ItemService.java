@@ -1,6 +1,7 @@
 package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
@@ -20,8 +21,22 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
-    public Item getItem(final Long id) {
-        return getItemById(id);
+    /**
+     * 제품의 상세정보를 반환합니다.
+     *
+     * @param itemId 제품의 Id 값
+     * @return 제품의 상세정보가 담긴 {@link ItemDetailResponse}
+     * @throws ItemNotFoundException 제품이 존재하지 않을 경우 발생합니다.
+     */
+    public ItemDetailResponse getItemDetail(final Long itemId) {
+        Item item = getItemById(itemId);
+        return ItemDetailResponse.builder()
+                .name(item.getName())
+                .description(item.getDescription())
+                .price(item.getPrice())
+                .imageUrl(item.getItemImageUrl())
+                .descriptionImageUrl(item.getItemDescriptionImageUrl())
+                .build();
     }
 
 

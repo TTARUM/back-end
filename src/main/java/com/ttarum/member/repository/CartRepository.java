@@ -7,13 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
 import java.util.List;
 
 public interface CartRepository extends JpaRepository<Cart, CartId> {
-
-    @Query("SELECT c FROM Cart c WHERE c.member.id = :memberId AND c.item.id = :itemId")
-    Optional<Cart> findByMemberIdAndItemId(@Param("memberId") long memberId, @Param("itemId") long itemId);
 
     /**
      * {@link Long memberId}가 Id 값인 회원의 모든 {@link Cart}를 {@link CartResponse} 리스트로 반환합니다.

@@ -2,6 +2,7 @@ package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemDetailResponse;
+import com.ttarum.item.dto.response.ItemSummary;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
@@ -48,8 +49,9 @@ public class ItemService {
      * @param pageable 페이징을 위한 정보가 담겨있는 객체
      * @return 검색된 제품 목록
      */
-    public List<ItemSummaryResponse> getItemSummaryList(final String query, final Pageable pageable) {
-        return itemRepository.getItemSummaryListByName(query, pageable);
+    public ItemSummaryResponse getItemSummaryList(final String query, final Pageable pageable) {
+        List<ItemSummary> summaryList = itemRepository.getItemSummaryListByName(query, pageable);
+        return new ItemSummaryResponse(summaryList);
     }
 
     /**
@@ -63,8 +65,9 @@ public class ItemService {
      * @param userId   로그인한 회원의 Id 값
      * @return 검색된 제품 목록
      */
-    public List<ItemSummaryResponse> getItemSummaryList(final String query, final Pageable pageable, final Long userId) {
-        return itemRepository.getItemSummaryListByName(query, pageable, userId);
+    public ItemSummaryResponse getItemSummaryList(final String query, final Pageable pageable, final Long userId) {
+        List<ItemSummary> summaryList = itemRepository.getItemSummaryListByName(query, pageable, userId);
+        return new ItemSummaryResponse(summaryList);
     }
 
     private Item getItemById(final Long id) {

@@ -117,7 +117,7 @@ public class MemberService {
     }
 
     private void validateDuplicatedWishList(final long memberId, final long itemId) {
-        Optional<WishList> optionalWishList = wishListRepository.findByMemberIdAndItemId(memberId, itemId);
+        Optional<WishList> optionalWishList = wishListRepository.findById(new WishListId(memberId, itemId));
         if (optionalWishList.isPresent()) {
             throw new DuplicatedWishListException();
         }
@@ -164,7 +164,8 @@ public class MemberService {
     @Transactional
     public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
         Member member = getMemberById(memberId);
-        Optional<Cart> optionalCart = cartRepository.findByMemberIdAndItemId(memberId, cartAdditionRequest.getItemId());
+
+        Optional<Cart> optionalCart = cartRepository.findById(new CartId(memberId, cartAdditionRequest.getItemId()));
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
             cart.addAmount(cartAdditionRequest.getAmount());

@@ -8,13 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
 import java.util.List;
 
 public interface WishListRepository extends JpaRepository<WishList, WishListId> {
-
-    @Query("SELECT wl FROM WishList wl WHERE wl.item.id = :itemId AND wl.member.id = :memberId")
-    Optional<WishList> findByMemberIdAndItemId(@Param("memberId") long memberId, @Param("itemId") long itemId);
 
     /**
      * {@link Long memberId}가 Id 값인 회원의 {@link WishList}를 {@link ItemSummaryResponseForWishList} 리스트로 반환합니다.

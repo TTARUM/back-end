@@ -3,20 +3,16 @@ package com.ttarum.member.service;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
-import com.ttarum.member.domain.Cart;
-import com.ttarum.member.domain.Member;
-import com.ttarum.member.domain.NormalMember;
-import com.ttarum.member.domain.WishList;
-import com.ttarum.member.dto.response.CartResponse;
-import com.ttarum.member.exception.DuplicatedWishListException;
+import com.ttarum.member.domain.*;
+import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.exception.AddressException;
+import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
-import com.ttarum.member.repository.CartRepository;
-import com.ttarum.member.repository.MemberRepository;
-import com.ttarum.member.repository.NormalMemberRepository;
-import com.ttarum.member.repository.WishListRepository;
+import com.ttarum.member.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -40,6 +37,7 @@ public class MemberService {
     private final NormalMemberRepository normalMemberRepository;
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AddressRepository addressRepository;
 
     @Transactional
     public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
@@ -183,5 +181,23 @@ public class MemberService {
      */
     public List<CartResponse> getCartResponseList(final Long memberId) {
         return cartRepository.getCartResponseListByMemberId(memberId);
+    }
+
+    /**
+     * 특정 사용자의 배송지를 업데이트한다.
+     *
+     * @param memberId  사용자의 Id 값
+     * @param addressId 배송지의 Id 값
+     * @param request   업데이트할 배송지의 정보가 담긴 객체
+     */
+    @Transactional
+    public void updateAddress(final Long memberId, final Long addressId, final AddressUpsertRequest request) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(AddressException::NotFound);
+        if (!Objects.equals(memberId, address.getMember().getId())) {
+            throw AddressException.NoOwner();
+        }
+        address.setAddress(request.getAddress());
+        addressRepository.save(address);
     }
 }

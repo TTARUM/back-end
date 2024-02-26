@@ -24,7 +24,7 @@ public class InquiryCreationRequest {
     @Schema(description = "문의글이 작성될 제품의 Id 값", example = "1")
     private final long itemId;
 
-    public Inquiry transferToInquiry() {
+    public Inquiry toInquiryEntity() {
         Inquiry inquiry = Inquiry.builder()
                 .title(this.title)
                 .content(this.content)

@@ -167,7 +167,7 @@ public class InquiryService {
      */
     @Transactional
     public long postInquiryArticle(final InquiryCreationRequest request, final long memberId) {
-        Inquiry inquiry = request.transferToInquiry();
+        Inquiry inquiry = request.toInquiryEntity();
         Item item = getItemById(request);
         Member member = getMemberById(memberId);
         inquiry.setMember(member);

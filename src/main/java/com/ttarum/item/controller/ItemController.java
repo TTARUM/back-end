@@ -58,7 +58,7 @@ public interface ItemController {
     })
     @GetMapping
     ResponseEntity<List<ItemSummaryResponse>> getSummary(@RequestParam(required = false) final String query,
-                                                         @VerificationUser final User user,
+                                                         @VerificationUser final Optional<User> user,
                                                          final Optional<Integer> page,
                                                          final Optional<Integer> size);
 }

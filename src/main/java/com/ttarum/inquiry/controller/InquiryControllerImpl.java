@@ -41,13 +41,13 @@ public class InquiryControllerImpl implements InquiryController {
     @GetMapping("/list")
     @Override
     public ResponseEntity<List<InquirySummaryResponse>> getInquirySummaryResponse(final long itemId,
-                                                                                  @VerificationUser final User user,
+                                                                                  @VerificationUser final Optional<User> user,
                                                                                   Optional<Integer> page,
                                                                                   Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(INQUIRY_DEFAULT_SIZE_PER_PAGE));
         List<InquirySummaryResponse> list;
-        if (user.isLoggedIn()) {
-            list = inquiryService.getInquirySummaryResponseList(itemId, user.getId(), pageRequest);
+        if (user.isPresent()) {
+            list = inquiryService.getInquirySummaryResponseList(itemId, user.get().getId(), pageRequest);
         } else {
             list = inquiryService.getInquirySummaryResponseList(itemId, pageRequest);
         }
@@ -56,10 +56,10 @@ public class InquiryControllerImpl implements InquiryController {
 
     @GetMapping
     @Override
-    public ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(final long inquiryId, final User user) {
+    public ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(final long inquiryId, @VerificationUser final Optional<User> user) {
         InquiryDetailedResponse response;
-        if (user.isLoggedIn()) {
-            response = inquiryService.getInquiryDetailedResponse(inquiryId, user.getId());
+        if (user.isPresent()) {
+            response = inquiryService.getInquiryDetailedResponse(inquiryId, user.get().getId());
         } else {
             response = inquiryService.getInquiryDetailedResponse(inquiryId);
         }

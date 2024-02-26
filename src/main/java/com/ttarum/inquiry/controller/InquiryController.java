@@ -50,7 +50,7 @@ public interface InquiryController {
     })
     @GetMapping("/list")
     ResponseEntity<List<InquirySummaryResponse>> getInquirySummaryResponse(long itemId,
-                                                                           @VerificationUser User user,
+                                                                           @VerificationUser Optional<User> user,
                                                                            Optional<Integer> page,
                                                                            Optional<Integer> size);
 
@@ -71,7 +71,7 @@ public interface InquiryController {
             @Parameter(name = "user", hidden = true)
     })
     @GetMapping
-    ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(long inquiryId, @VerificationUser User user);
+    ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(long inquiryId, @VerificationUser Optional<User> user);
 
     /**
      * 문의글 등록 메서드

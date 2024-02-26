@@ -35,14 +35,14 @@ public class ItemControllerImpl implements ItemController {
     @GetMapping("/list")
     public ResponseEntity<List<ItemSummaryResponse>> getSummary(
             @RequestParam(required = false) final String query,
-            @VerificationUser final User user,
+            @VerificationUser final Optional<User> user,
             @RequestParam final Optional<Integer> page,
             @RequestParam final Optional<Integer> size
     ) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(9));
         List<ItemSummaryResponse> itemSummaryList;
-        if (user.isLoggedIn()) {
-            itemSummaryList = itemService.getItemSummaryList(query, pageRequest, user.getId());
+        if (user.isPresent()) {
+            itemSummaryList = itemService.getItemSummaryList(query, pageRequest, user.get().getId());
         } else {
             itemSummaryList = itemService.getItemSummaryList(query, pageRequest);
         }

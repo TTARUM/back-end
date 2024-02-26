@@ -22,6 +22,7 @@ import java.util.Optional;
 @RequestMapping("/api/items")
 public class ItemControllerImpl implements ItemController {
 
+    private static final int ITEM_DEFAULT_SIZE_PER_PAGE = 9;
     private final ItemService itemService;
 
     @Override
@@ -38,7 +39,7 @@ public class ItemControllerImpl implements ItemController {
             @RequestParam final Optional<Integer> page,
             @RequestParam final Optional<Integer> size
     ) {
-        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(9));
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_DEFAULT_SIZE_PER_PAGE));
         ItemSummaryResponse response;
         if (user.isLoggedIn()) {
             response = itemService.getItemSummaryList(query, pageRequest, user.getId());

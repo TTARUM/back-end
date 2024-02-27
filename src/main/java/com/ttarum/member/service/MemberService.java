@@ -247,7 +247,7 @@ public class MemberService {
     @Transactional
     public void updateItemAmountInCart(final long memberId, final CartUpdateRequest cartUpdateRequest) {
         Cart cart = getCartById(new CartId(memberId, cartUpdateRequest.getItemId()));
-        cart.updateAmount(cart.getAmount());
+        cart.updateAmount(cartUpdateRequest.getAmount());
     }
 
     private Cart getCartById(final CartId cartId) {

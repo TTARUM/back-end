@@ -76,4 +76,10 @@ public class MemberControllerImpl implements MemberController {
         memberService.updateAddress(user.getId(), addressId, addressUpsertRequest);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/address/{addressId}")
+    public ResponseEntity<Void> deleteAddress(@AuthenticationPrincipal final CustomUserDetails user, @PathVariable final Long addressId) {
+        memberService.deleteAddress(user.getId(), addressId);
+        return ResponseEntity.ok().build();
+    }
 }

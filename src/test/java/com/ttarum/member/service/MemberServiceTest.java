@@ -437,4 +437,22 @@ class MemberServiceTest {
                         .build()
         );
     }
+
+    @Test
+    @DisplayName("배송지 삭제 - happy path")
+    void deleteAddress() {
+        // given
+        Long memberId = 1L;
+        Long addressId = 999L;
+        Member testMember = Member.builder().id(memberId).build();
+        Address targetAddress = Address.builder().member(testMember).build();
+
+        when(addressRepository.findById(addressId))
+                .thenReturn(Optional.of(targetAddress));
+        // when
+        memberService.deleteAddress(memberId, addressId);
+
+        // then
+        verify(addressRepository).delete(targetAddress);
+    }
 }

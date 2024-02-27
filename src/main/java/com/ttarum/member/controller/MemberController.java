@@ -134,4 +134,7 @@ public interface MemberController {
     })
     @PostMapping
     ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId, AddressUpsertRequest addressUpsertRequest);
+
+    @DeleteMapping
+    ResponseEntity<Void> deleteFromCart(Long itemId, @AuthenticationPrincipal CustomUserDetails user);
 }

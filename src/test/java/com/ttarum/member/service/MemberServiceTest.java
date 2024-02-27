@@ -2,15 +2,13 @@ package com.ttarum.member.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
-import com.ttarum.member.domain.Address;
-import com.ttarum.member.domain.Member;
-import com.ttarum.member.domain.NormalMember;
-import com.ttarum.member.domain.WishList;
+import com.ttarum.member.domain.*;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
-import com.ttarum.member.domain.WishListId;
+import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.exception.CartNotFoundException;
 import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
@@ -436,5 +434,47 @@ class MemberServiceTest {
                         .lastUsedAt(any())
                         .build()
         );
+    }
+
+    @Test
+    @DisplayName("장바구니에 있는 제품의 수량을 변경할 수 있다.")
+    void updateItemAmountInCart() {
+        // given
+        long memberId = 1;
+        long itemId = 1;
+        int amount = 3;
+        CartUpdateRequest cartUpdateRequest = new CartUpdateRequest(itemId, amount);
+        Cart cart = Cart.builder()
+                .member(Member.builder().id(memberId).build())
+                .item(Item.builder().id(itemId).build())
+                .amount(1)
+                .build();
+
+        when(cartRepository.findById(new CartId(memberId, itemId))).thenReturn(Optional.of(cart));
+
+        // when
+        memberService.updateItemAmountInCart(memberId, cartUpdateRequest);
+
+        // then
+        verify(cartRepository, times(1)).findById(any());
+        assertThat(cart.getAmount()).isEqualTo(amount);
+        assertThat(cart.getMember().getId()).isEqualTo(memberId);
+        assertThat(cart.getItem().getId()).isEqualTo(itemId);
+    }
+
+    @Test
+    @DisplayName("장바구니에 없는 제품의 수량을 변경하는 경우 예외가 발생한다.")
+    void updateItemAmountInCartFailedByInvalidItem() {
+        // given
+        long memberId = 1;
+        long itemId = 1;
+        int amount = 3;
+        CartUpdateRequest cartUpdateRequest = new CartUpdateRequest(itemId, amount);
+
+        when(cartRepository.findById(new CartId(memberId, itemId))).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> memberService.updateItemAmountInCart(memberId, cartUpdateRequest))
+                .isInstanceOf(CartNotFoundException.class);
     }
 }

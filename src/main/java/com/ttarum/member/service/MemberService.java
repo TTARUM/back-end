@@ -6,12 +6,10 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
-import com.ttarum.member.exception.AddressException;
-import com.ttarum.member.exception.DuplicatedWishListException;
-import com.ttarum.member.exception.MemberException;
-import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.exception.*;
 import com.ttarum.member.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -244,5 +242,16 @@ public class MemberService {
         Address address = getValidAddress(memberId, addressId);
         address.updateLastUsedAt();
         addressRepository.save(address);
+    }
+
+    @Transactional
+    public void updateItemAmountInCart(final long memberId, final CartUpdateRequest cartUpdateRequest) {
+        Cart cart = getCartById(new CartId(memberId, cartUpdateRequest.getItemId()));
+        cart.updateAmount(cart.getAmount());
+    }
+
+    private Cart getCartById(final CartId cartId) {
+        return cartRepository.findById(cartId)
+                .orElseThrow(CartNotFoundException::new);
     }
 }

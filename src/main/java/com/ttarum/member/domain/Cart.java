@@ -30,4 +30,8 @@ public class Cart {
     public void addAmount(final int amount) {
         this.amount += amount;
     }
+
+    public void updateAmount(final int amount) {
+        this.amount = amount;
+    }
 }

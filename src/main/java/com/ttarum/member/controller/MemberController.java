@@ -3,6 +3,7 @@ package com.ttarum.member.controller;
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -134,4 +135,7 @@ public interface MemberController {
     })
     @PostMapping
     ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId, AddressUpsertRequest addressUpsertRequest);
+
+    @PutMapping
+    ResponseEntity<Void> updateItemAmountInCart(@AuthenticationPrincipal CustomUserDetails user, CartUpdateRequest cartUpdateRequest);
 }

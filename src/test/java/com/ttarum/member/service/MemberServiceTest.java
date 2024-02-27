@@ -2,12 +2,8 @@ package com.ttarum.member.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
-import com.ttarum.member.domain.Address;
-import com.ttarum.member.domain.Member;
-import com.ttarum.member.domain.NormalMember;
-import com.ttarum.member.domain.WishList;
+import com.ttarum.member.domain.*;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
-import com.ttarum.member.domain.WishListId;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -454,5 +450,21 @@ class MemberServiceTest {
 
         // then
         verify(addressRepository).delete(targetAddress);
+    }
+
+    @Test
+    @DisplayName("장바구니에서 제품을 제거할 수 있다.")
+    void deleteFromCart() {
+        // given
+        long memberId = 1;
+        long itemId = 1;
+
+        doNothing().when(cartRepository).deleteById(any());
+
+        // when
+        memberService.deleteFromCart(memberId, itemId);
+
+        // then
+        verify(cartRepository, times(1)).deleteById(any());
     }
 }

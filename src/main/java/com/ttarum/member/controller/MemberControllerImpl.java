@@ -82,4 +82,11 @@ public class MemberControllerImpl implements MemberController {
         memberService.deleteAddress(user.getId(), addressId);
         return ResponseEntity.ok().build();
     }
+
+    @Override
+    @DeleteMapping("/carts")
+    public ResponseEntity<Void> deleteFromCart(@RequestParam final long itemId, @AuthenticationPrincipal final CustomUserDetails user) {
+        memberService.deleteFromCart(user.getId(), itemId);
+        return ResponseEntity.ok().build();
+    }
 }

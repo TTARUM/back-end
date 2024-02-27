@@ -136,6 +136,21 @@ public interface MemberController {
     ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId, AddressUpsertRequest addressUpsertRequest);
 
     /**
+     * 배송지 삭제
+     *
+     * @param user                      로그인한 사용자
+     * @param addressId                 삭제할 주소의 Id 값
+     * @return 빈 응답
+     */
+    @Operation(summary = "배송지 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @DeleteMapping
+    ResponseEntity<Void> deleteAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId);
+
+    /**
      * 장바구니에서 제품 제거
      *
      * @param itemId 제거할 제품의 Id 값

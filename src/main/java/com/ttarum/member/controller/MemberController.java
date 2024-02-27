@@ -149,5 +149,5 @@ public interface MemberController {
     })
     @Parameter(name = "itemId", description = "제거할 제품의 Id", example = "1")
     @DeleteMapping
-    ResponseEntity<Void> deleteFromCart(Long itemId, @AuthenticationPrincipal CustomUserDetails user);
+    ResponseEntity<Void> deleteFromCart(@RequestParam long itemId, @AuthenticationPrincipal CustomUserDetails user);
 }

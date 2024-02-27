@@ -79,7 +79,7 @@ public class MemberControllerImpl implements MemberController {
 
     @Override
     @DeleteMapping("/carts")
-    public ResponseEntity<Void> deleteFromCart(final Long itemId, @AuthenticationPrincipal final CustomUserDetails user) {
+    public ResponseEntity<Void> deleteFromCart(@RequestParam final long itemId, @AuthenticationPrincipal final CustomUserDetails user) {
         memberService.deleteFromCart(user.getId(), itemId);
         return ResponseEntity.ok().build();
     }

@@ -253,7 +253,7 @@ public class MemberService {
      * @param itemId   제품의 Id 값
      */
     @Transactional
-    public void deleteFromCart(final Long memberId, final Long itemId) {
+    public void deleteFromCart(final long memberId, final long itemId) {
         cartRepository.deleteById(new CartId(memberId, itemId));
     }
 }

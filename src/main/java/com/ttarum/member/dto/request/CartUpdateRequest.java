@@ -8,5 +8,5 @@ import lombok.Getter;
 public class CartUpdateRequest {
 
     private final long itemId;
-    private final long amount;
+    private final int amount;
 }

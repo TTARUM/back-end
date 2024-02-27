@@ -244,6 +244,12 @@ public class MemberService {
         addressRepository.save(address);
     }
 
+    /**
+     * 특정 회원의 장바구니에 담긴 제품의 수량을 변경한다.
+     *
+     * @param memberId          사용자의 Id 값
+     * @param cartUpdateRequest 변경할 제품의 데이터가 담긴 객체
+     */
     @Transactional
     public void updateItemAmountInCart(final long memberId, final CartUpdateRequest cartUpdateRequest) {
         Cart cart = getCartById(new CartId(memberId, cartUpdateRequest.getItemId()));

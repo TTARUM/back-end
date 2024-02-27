@@ -109,8 +109,8 @@ public interface MemberController {
     /**
      * 배송지 추가
      *
-     * @param user                      로그인한 사용자
-     * @param addressUpsertRequest      추가될 주소 정보
+     * @param user                 로그인한 사용자
+     * @param addressUpsertRequest 추가될 주소 정보
      * @return 빈 응답
      */
     @Operation(summary = "배송지 추가")
@@ -124,8 +124,8 @@ public interface MemberController {
     /**
      * 배송지 수정
      *
-     * @param user                      로그인한 사용자
-     * @param addressUpsertRequest      추가될 주소 정보
+     * @param user                 로그인한 사용자
+     * @param addressUpsertRequest 추가될 주소 정보
      * @return 빈 응답
      */
     @Operation(summary = "배송지 수정")
@@ -136,6 +136,23 @@ public interface MemberController {
     @PostMapping
     ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId, AddressUpsertRequest addressUpsertRequest);
 
+    /**
+     * 장바구니 수량 업데이트
+     *
+     * @param user              로그인한 사용자
+     * @param cartUpdateRequest 수정될 제품 정보
+     * @return 빈 응답
+     */
+    @Operation(summary = "장바구니 수량 업데이트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "업데이트 성공"),
+            @ApiResponse(responseCode = "400", description = "업데이트 실패")
+    })
+    @Parameters(value = {
+            @Parameter(name = "itemId", description = "제품의 Id 값", example = "1"),
+            @Parameter(name = "amount", description = "수정할 제품의 양", example = "3"),
+            @Parameter(name = "cartUpdateRequest", hidden = true)
+    })
     @PutMapping
     ResponseEntity<Void> updateItemAmountInCart(@AuthenticationPrincipal CustomUserDetails user, CartUpdateRequest cartUpdateRequest);
 }

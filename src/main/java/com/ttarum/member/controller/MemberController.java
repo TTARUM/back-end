@@ -108,8 +108,8 @@ public interface MemberController {
     /**
      * 배송지 추가
      *
-     * @param user                      로그인한 사용자
-     * @param addressUpsertRequest      추가될 주소 정보
+     * @param user                 로그인한 사용자
+     * @param addressUpsertRequest 추가될 주소 정보
      * @return 빈 응답
      */
     @Operation(summary = "배송지 추가")
@@ -123,8 +123,8 @@ public interface MemberController {
     /**
      * 배송지 수정
      *
-     * @param user                      로그인한 사용자
-     * @param addressUpsertRequest      추가될 주소 정보
+     * @param user                 로그인한 사용자
+     * @param addressUpsertRequest 추가될 주소 정보
      * @return 빈 응답
      */
     @Operation(summary = "배송지 수정")
@@ -135,6 +135,19 @@ public interface MemberController {
     @PostMapping
     ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId, AddressUpsertRequest addressUpsertRequest);
 
+    /**
+     * 장바구니에서 제품 제거
+     *
+     * @param itemId 제거할 제품의 Id 값
+     * @param user   로그인한 회원
+     * @return 빈 응답
+     */
+    @Operation(summary = "장바구니에서 제품 제거")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "제거 성공"),
+            @ApiResponse(responseCode = "400", description = "제거 실패")
+    })
+    @Parameter(name = "itemId", description = "제거할 제품의 Id", example = "1")
     @DeleteMapping
     ResponseEntity<Void> deleteFromCart(Long itemId, @AuthenticationPrincipal CustomUserDetails user);
 }

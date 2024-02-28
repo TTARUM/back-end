@@ -4,8 +4,14 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
+import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.repository.MemberRepository;
+import com.ttarum.order.domain.Order;
+import com.ttarum.order.exception.OrderNotFoundException;
+import com.ttarum.order.repository.OrderRepository;
 import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
+import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.exception.ReviewException;
@@ -42,6 +48,12 @@ class ReviewServiceTest {
 
     @Mock
     ItemRepository itemRepository;
+
+    @Mock
+    MemberRepository memberRepository;
+
+    @Mock
+    OrderRepository orderRepository;
 
     @InjectMocks
     ReviewService reviewService;
@@ -256,5 +268,142 @@ class ReviewServiceTest {
         assertThatThrownBy(() -> reviewService.updateReview(reviewId, request, memberId))
                 .isInstanceOf(ReviewException.class)
                 .hasMessage("삭제된 리뷰는 수정이 불가능합니다.");
+    }
+
+    @Test
+    @DisplayName("리뷰 작성")
+    void createReview() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .build();
+        Order order = Order.builder()
+                .id(1L)
+                .build();
+        Item item = Item.builder()
+                .id(1L)
+                .build();
+        ReviewCreationRequest request = ReviewCreationRequest.builder()
+                .orderId(order.getId())
+                .itemId(item.getId())
+                .title("title")
+                .content("content")
+                .rating(Integer.valueOf(1).shortValue())
+                .build();
+        Review result = Review.builder()
+                .id(1L)
+                .member(member)
+                .order(order)
+                .item(item)
+                .title(request.getTitle())
+                .content(request.getContent())
+                .star(request.getRating())
+                .build();
+
+        when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(reviewRepository.save(any(Review.class))).thenReturn(result);
+
+        // when
+        long reviewId = reviewService.createReview(member.getId(), request);
+
+        // then
+        verify(memberRepository, times(1)).findById(anyLong());
+        verify(orderRepository, times(1)).findById(anyLong());
+        verify(itemRepository, times(1)).findById(anyLong());
+        assertThat(reviewId).isEqualTo(result.getId());
+    }
+
+    @Test
+    @DisplayName("리뷰 작성 - 회원이 존재하지 않을 경우 예외가 발생한다.")
+    void createReviewFailByInvalidMember() {
+        // given
+        long memberId = 1;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Order order = Order.builder()
+                .id(1L)
+                .build();
+        Item item = Item.builder()
+                .id(1L)
+                .build();
+        ReviewCreationRequest request = ReviewCreationRequest.builder()
+                .orderId(order.getId())
+                .itemId(item.getId())
+                .title("title")
+                .content("content")
+                .rating(Integer.valueOf(1).shortValue())
+                .build();
+
+        when(memberRepository.findById(member.getId())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.createReview(memberId, request))
+                .isInstanceOf(MemberNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("리뷰 작성 - 주문이 존재하지 않을 경우 예외가 발생한다.")
+    void createReviewFailByInvalidOrder() {
+        // given
+        long memberId = 1;
+        long orderId = 1;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Order order = Order.builder()
+                .id(orderId)
+                .build();
+        Item item = Item.builder()
+                .id(1L)
+                .build();
+        ReviewCreationRequest request = ReviewCreationRequest.builder()
+                .orderId(order.getId())
+                .itemId(item.getId())
+                .title("title")
+                .content("content")
+                .rating(Integer.valueOf(1).shortValue())
+                .build();
+
+        when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.createReview(memberId, request))
+                .isInstanceOf(OrderNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("리뷰 작성 - 제품이 존재하지 않을 경우 예외가 발생한다.")
+    void createReviewFailByInvalidItem() {
+        // given
+        long memberId = 1;
+        long itemId = 1;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Order order = Order.builder()
+                .id(1L)
+                .build();
+        Item item = Item.builder()
+                .id(itemId)
+                .build();
+        ReviewCreationRequest request = ReviewCreationRequest.builder()
+                .orderId(order.getId())
+                .itemId(item.getId())
+                .title("title")
+                .content("content")
+                .rating(Integer.valueOf(1).shortValue())
+                .build();
+
+        when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
+        when(itemRepository.findById(order.getId())).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.createReview(memberId, request))
+                .isInstanceOf(ItemNotFoundException.class);
     }
 }

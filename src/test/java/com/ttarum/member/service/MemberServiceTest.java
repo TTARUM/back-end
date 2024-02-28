@@ -207,6 +207,29 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("회원 탈퇴 - happy path")
+    void deleteMember() {
+        // given
+        long memberId = 1L;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+
+        // when
+        memberService.withdraw(memberId);
+
+        // then
+        verify(memberRepository, times(1)).save(
+                Member.builder()
+                        .id(memberId)
+                        .isDeleted(true)
+                        .build()
+        );
+    }
+
+    @Test
     @DisplayName("제품 찜 하기")
     void wishItem() {
         // given

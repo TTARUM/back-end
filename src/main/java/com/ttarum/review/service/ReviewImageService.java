@@ -28,6 +28,12 @@ public class ReviewImageService {
     private final ReviewRepository reviewRepository;
     private final ReviewImageRepository reviewImageRepository;
 
+    /**
+     * 리뷰의 이미지를 저장한다.
+     *
+     * @param reviewId          리뷰의 Id 값
+     * @param multipartFileList 저장될 이미지 리스트
+     */
     @Transactional
     public void saveImageList(final long reviewId, final List<MultipartFile> multipartFileList) {
         try {

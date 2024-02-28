@@ -127,6 +127,13 @@ public class ReviewService {
         }
     }
 
+    /**
+     * 리뷰를 생성하고 저장한다.
+     *
+     * @param memberId              리뷰를 작성한 회원의 Id 값
+     * @param reviewCreationRequest 작성할 리뷰의 데이터
+     * @return 생성된 리뷰의 Id 값
+     */
     @Transactional
     public long createReview(final Long memberId, final ReviewCreationRequest reviewCreationRequest) {
         Member member = getMemberById(memberId);

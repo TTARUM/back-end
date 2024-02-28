@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -82,7 +83,20 @@ public interface ReviewController {
     @PutMapping
     ResponseEntity<Void> updateReview(Long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
 
-    @PostMapping
+    /**
+     * 리뷰 작성
+     *
+     * @param user              로그인한 사용자
+     * @param multipartFileList 이미지 파일 리스트
+     * @param request           생성될 리뷰의 데이터
+     * @return 생성된 리뷰의 Id 값
+     */
+    @Operation(summary = "리뷰 작성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "리뷰 작성 성공"),
+            @ApiResponse(responseCode = "400", description = "리뷰 작성 실패")
+    })
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<ReviewCreationResponse> createReview(@AuthenticationPrincipal CustomUserDetails user, @RequestPart(name = "images") List<MultipartFile> multipartFileList, @RequestPart(name = "reviewCreationRequest") ReviewCreationRequest request);
 
 }

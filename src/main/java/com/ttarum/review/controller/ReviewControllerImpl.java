@@ -10,8 +10,10 @@ import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,7 +59,8 @@ public class ReviewControllerImpl implements ReviewController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping
+    @Transactional
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Override
     public ResponseEntity<ReviewCreationResponse> createReview(@AuthenticationPrincipal final CustomUserDetails user,
                                                                @RequestPart(name = "images", required = false) final List<MultipartFile> multipartFileList,

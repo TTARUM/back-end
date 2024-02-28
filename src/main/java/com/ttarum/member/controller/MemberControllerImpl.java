@@ -31,8 +31,9 @@ public class MemberControllerImpl implements MemberController {
 
     @Override
     @PostMapping("/register")
-    public void registerNormalMember(NormalMemberRegister dto) {
+    public ResponseEntity<Void> registerNormalMember(NormalMemberRegister dto) {
         memberService.registerNormalUser(dto.toMemberEntity(), dto.toNormalMemberEntity());
+        return ResponseEntity.ok().build();
     }
 
     @Override

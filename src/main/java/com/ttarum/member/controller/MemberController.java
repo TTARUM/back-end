@@ -27,6 +27,7 @@ public interface MemberController {
      * 회원가입 메서드
      *
      * @param dto 회원가입에 필요한 데이터가 담긴 객체
+     * @return 빈 응답
      */
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
@@ -34,7 +35,7 @@ public interface MemberController {
             @ApiResponse(responseCode = "400", description = "회원가입 실패")
     })
     @PostMapping(consumes = "application/json")
-    void registerNormalMember(@RequestBody NormalMemberRegister dto);
+    ResponseEntity<Void> registerNormalMember(@RequestBody NormalMemberRegister dto);
 
     /**
      * 회원 탈퇴 메서드

@@ -34,25 +34,25 @@ public class ReviewControllerImpl implements ReviewController {
 
     @GetMapping
     @Override
-    public ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
-                                                                      @RequestParam final Optional<Integer> page,
-                                                                      @RequestParam final Optional<Integer> size) {
+    public ResponseEntity<List<ReviewResponse>> getReviewResponseList(@RequestParam final long itemId,
+                                                                      final Optional<Integer> page,
+                                                                      final Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(PAGE_DEFAULT_SIZE));
         List<ReviewResponse> list = reviewService.getReviewResponseList(itemId, pageRequest);
         return ResponseEntity.ok(list);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{reviewId}")
     @Override
-    public ResponseEntity<Void> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
+    public ResponseEntity<Void> deleteReview(@PathVariable final long reviewId,
                                              @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.deleteReview(reviewId, user.getId());
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping
+    @PutMapping("/{reviewId}")
     @Override
-    public ResponseEntity<Void> updateReview(final Long reviewId,
+    public ResponseEntity<Void> updateReview(@PathVariable final long reviewId,
                                              @RequestBody final ReviewUpdateRequest request,
                                              @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.updateReview(reviewId, request, user.getId());

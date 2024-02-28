@@ -11,7 +11,8 @@ import lombok.Getter;
 @Schema(description = "리뷰 업데이트 DTO")
 public class ReviewUpdateRequest {
 
-    @Schema(description = "업데이트할 리뷰의 내용")
+    @Schema(description = "리뷰의 변경될 내용")
     private final String content;
+    @Schema(description = "리뷰의 변경될 평점")
     private final short rating;
 }

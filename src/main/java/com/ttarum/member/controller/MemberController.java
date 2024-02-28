@@ -139,8 +139,8 @@ public interface MemberController {
     /**
      * 배송지 삭제
      *
-     * @param user                      로그인한 사용자
-     * @param addressId                 삭제할 주소의 Id 값
+     * @param user      로그인한 사용자
+     * @param addressId 삭제할 주소의 Id 값
      * @return 빈 응답
      */
     @Operation(summary = "배송지 삭제")
@@ -165,11 +165,12 @@ public interface MemberController {
     })
     @Parameter(name = "itemId", description = "제거할 제품의 Id", example = "1")
     @DeleteMapping
-    ResponseEntity<Void> deleteFromCart(@RequestParam long itemId, @AuthenticationPrincipal CustomUserDetails user);
+    ResponseEntity<Void> deleteFromCart(@PathVariable long itemId, @AuthenticationPrincipal CustomUserDetails user);
 
     /**
      * 장바구니 수량 업데이트
      *
+     * @param itemId            변경될 제품의 Id 값
      * @param user              로그인한 사용자
      * @param cartUpdateRequest 수정될 제품 정보
      * @return 빈 응답
@@ -185,5 +186,5 @@ public interface MemberController {
             @Parameter(name = "cartUpdateRequest", hidden = true)
     })
     @PutMapping
-    ResponseEntity<Void> updateItemAmountInCart(@AuthenticationPrincipal CustomUserDetails user, CartUpdateRequest cartUpdateRequest);
+    ResponseEntity<Void> updateItemAmountInCart(@PathVariable long itemId, @AuthenticationPrincipal CustomUserDetails user, CartUpdateRequest cartUpdateRequest);
 }

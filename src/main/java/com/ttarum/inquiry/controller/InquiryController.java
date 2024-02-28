@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +30,7 @@ import java.util.Optional;
 public interface InquiryController {
 
     /**
-     * 특정 제품의 문의글 조회
+     * 특정 제품의 문의글 리스트 조회
      *
      * @param itemId 특정 제품의 Id 값
      * @param user   로그인한 사용자 여부를 확인하기 위한 객체
@@ -37,7 +38,7 @@ public interface InquiryController {
      * @param size   페이지 당 조회할 문의글 수
      * @return 조회된 문의글 리스트
      */
-    @Operation(summary = "특정 제품의 문의글 조회")
+    @Operation(summary = "특정 제품의 문의글 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "제품이 존재하지 않을 경우")
@@ -48,7 +49,7 @@ public interface InquiryController {
             @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
             @Parameter(name = "size", description = "한 페이지 당 조회할 문의 수 (기본 값 10개)", example = "1")
     })
-    @GetMapping("/list")
+    @GetMapping
     ResponseEntity<List<InquirySummaryResponse>> getInquirySummaryResponse(long itemId,
                                                                            @VerificationUser Optional<User> user,
                                                                            Optional<Integer> page,
@@ -71,7 +72,7 @@ public interface InquiryController {
             @Parameter(name = "user", hidden = true)
     })
     @GetMapping
-    ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(long inquiryId, @VerificationUser Optional<User> user);
+    ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(@PathVariable long inquiryId, @VerificationUser Optional<User> user);
 
     /**
      * 문의글 등록 메서드

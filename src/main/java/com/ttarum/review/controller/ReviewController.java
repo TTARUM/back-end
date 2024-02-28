@@ -44,9 +44,9 @@ public interface ReviewController {
 
     })
     @GetMapping
-    ResponseEntity<List<ReviewResponse>> getReviewResponseList(final Long itemId,
-                                                               final Optional<Integer> page,
-                                                               final Optional<Integer> size);
+    ResponseEntity<List<ReviewResponse>> getReviewResponseList(@RequestParam long itemId,
+                                                               Optional<Integer> page,
+                                                               Optional<Integer> size);
 
     /**
      * 특정 리뷰 제거
@@ -62,7 +62,7 @@ public interface ReviewController {
     })
     @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
     @DeleteMapping
-    ResponseEntity<Void> deleteReview(@RequestParam final long reviewId, @AuthenticationPrincipal final CustomUserDetails user);
+    ResponseEntity<Void> deleteReview(@PathVariable long reviewId, @AuthenticationPrincipal CustomUserDetails user);
 
     /**
      * 리뷰 업데이트
@@ -81,7 +81,7 @@ public interface ReviewController {
             @Parameter(name = "reviewId", description = "리뷰의 Id값", example = "1", required = true)
     })
     @PutMapping
-    ResponseEntity<Void> updateReview(Long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
+    ResponseEntity<Void> updateReview(@PathVariable long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
 
     /**
      * 리뷰 작성

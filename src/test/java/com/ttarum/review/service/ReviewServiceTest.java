@@ -14,6 +14,7 @@ import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.exception.DuplicatedReviewException;
 import com.ttarum.review.exception.ReviewException;
 import com.ttarum.review.exception.ReviewNotFoundException;
 import com.ttarum.review.repository.ReviewRepository;
@@ -405,5 +406,37 @@ class ReviewServiceTest {
         // when & then
         assertThatThrownBy(() -> reviewService.createReview(memberId, request))
                 .isInstanceOf(ItemNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("리뷰 작성 - 이미 등록된 리뷰가 있을 경우 예외가 발생한다.")
+    void createReviewFailByDuplicatedReview() {
+        // given
+        long memberId = 1;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        Order order = Order.builder()
+                .id(1L)
+                .build();
+        Item item = Item.builder()
+                .id(1L)
+                .build();
+        ReviewCreationRequest request = ReviewCreationRequest.builder()
+                .orderId(order.getId())
+                .itemId(item.getId())
+                .title("title")
+                .content("content")
+                .rating(Integer.valueOf(1).shortValue())
+                .build();
+
+        when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
+        when(orderRepository.findById(order.getId())).thenReturn(Optional.of(order));
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        when(reviewRepository.findReviewByOrderIdAndItemId(order.getId(), item.getId())).thenReturn(Optional.of(Review.builder().build()));
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.createReview(memberId, request))
+                .isInstanceOf(DuplicatedReviewException.class);
     }
 }

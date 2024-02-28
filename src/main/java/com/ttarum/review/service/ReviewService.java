@@ -15,6 +15,7 @@ import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewImageResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.exception.DuplicatedReviewException;
 import com.ttarum.review.exception.ReviewException;
 import com.ttarum.review.exception.ReviewNotFoundException;
 import com.ttarum.review.repository.ReviewRepository;
@@ -129,20 +130,33 @@ public class ReviewService {
 
     /**
      * 리뷰를 생성하고 저장한다.
+     * 리뷰가 이미 존재하면 {@link DuplicatedReviewException}이 발생한다.
      *
      * @param memberId              리뷰를 작성한 회원의 Id 값
      * @param reviewCreationRequest 작성할 리뷰의 데이터
      * @return 생성된 리뷰의 Id 값
+     * @throws MemberNotFoundException   회원이 존재하지 않을 경우 발생
+     * @throws OrderNotFoundException    주문이 존재하지 않을 경우 발생
+     * @throws ItemNotFoundException     제품이 존재하지 않을 경우 발생
+     * @throws DuplicatedReviewException 리뷰가 이미 존재하면 발생
      */
     @Transactional
     public long createReview(final Long memberId, final ReviewCreationRequest reviewCreationRequest) {
         Member member = getMemberById(memberId);
         Order order = getOrderById(reviewCreationRequest.getOrderId());
         Item item = getItemById(reviewCreationRequest.getItemId());
+        validateDuplicatedReviewExistence(reviewCreationRequest.getOrderId(), reviewCreationRequest.getItemId());
 
         Review review = reviewCreationRequest.toReviewEntity();
         review.setInitialForeignEntity(member, order, item);
         return reviewRepository.save(review).getId();
+    }
+
+    private void validateDuplicatedReviewExistence(final long orderId, final long itemId) {
+        Optional<Review> optionalReview = reviewRepository.findReviewByOrderIdAndItemId(orderId, itemId);
+        if (optionalReview.isPresent()) {
+            throw new DuplicatedReviewException();
+        }
     }
 
     private Member getMemberById(final Long memberId) {

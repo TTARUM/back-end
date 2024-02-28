@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -42,4 +43,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             WHERE ri.review.id IN (:reviewIds)
             """)
     List<ReviewImage> findReviewImageByReviewId(@Param("reviewIds") List<Long> reviewIds);
+
+    @Query("SELECT r FROM Review r WHERE r.order.id = :orderId AND r.item.id = :itemId")
+    Optional<Review> findReviewByOrderIdAndItemId(@Param("orderId") long orderId, @Param("itemId")  long itemId);
 }

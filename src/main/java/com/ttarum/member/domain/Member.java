@@ -2,10 +2,7 @@ package com.ttarum.member.domain;
 
 import com.ttarum.common.domain.UpdatableEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +34,7 @@ public class Member extends UpdatableEntity {
     @OneToMany(mappedBy = "member")
     private List<Address> addressList = new ArrayList<>();
 
+    @Setter
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 

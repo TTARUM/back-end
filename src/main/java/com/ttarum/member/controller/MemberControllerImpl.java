@@ -78,6 +78,19 @@ public class MemberControllerImpl implements MemberController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/address/{addressId}")
+    public ResponseEntity<Void> deleteAddress(@AuthenticationPrincipal final CustomUserDetails user, @PathVariable final Long addressId) {
+        memberService.deleteAddress(user.getId(), addressId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @DeleteMapping("/carts")
+    public ResponseEntity<Void> deleteFromCart(@RequestParam final long itemId, @AuthenticationPrincipal final CustomUserDetails user) {
+        memberService.deleteFromCart(user.getId(), itemId);
+        return ResponseEntity.ok().build();
+    }
+
     @Override
     @PutMapping("/carts")
     public ResponseEntity<Void> updateItemAmountInCart(@AuthenticationPrincipal final CustomUserDetails user, final CartUpdateRequest cartUpdateRequest) {

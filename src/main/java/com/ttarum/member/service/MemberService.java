@@ -245,6 +245,29 @@ public class MemberService {
     }
 
     /**
+     * 특정 사용자의 배송지를 삭제한다.
+     *
+     * @param memberId  사용자의 Id 값
+     * @param addressId 배송지의 Id 값
+     */
+    @Transactional
+    public void deleteAddress(final Long memberId, final Long addressId) {
+        Address address = getValidAddress(memberId, addressId);
+        addressRepository.delete(address);
+    }
+
+    /**
+     * 특정 회원의 장바구니에서 특정 제품을 제거한다.
+     *
+     * @param memberId 회원의 Id 값
+     * @param itemId   제품의 Id 값
+     */
+    @Transactional
+    public void deleteFromCart(final long memberId, final long itemId) {
+        cartRepository.deleteById(new CartId(memberId, itemId));
+    }
+
+    /**
      * 특정 회원의 장바구니에 담긴 제품의 수량을 변경한다.
      *
      * @param memberId          사용자의 Id 값

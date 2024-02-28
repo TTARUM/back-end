@@ -437,6 +437,40 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("배송지 삭제 - happy path")
+    void deleteAddress() {
+        // given
+        Long memberId = 1L;
+        Long addressId = 999L;
+        Member testMember = Member.builder().id(memberId).build();
+        Address targetAddress = Address.builder().member(testMember).build();
+
+        when(addressRepository.findById(addressId))
+                .thenReturn(Optional.of(targetAddress));
+        // when
+        memberService.deleteAddress(memberId, addressId);
+
+        // then
+        verify(addressRepository).delete(targetAddress);
+    }
+
+    @Test
+    @DisplayName("장바구니에서 제품을 제거할 수 있다.")
+    void deleteFromCart() {
+        // given
+        long memberId = 1;
+        long itemId = 1;
+
+        doNothing().when(cartRepository).deleteById(any());
+
+        // when
+        memberService.deleteFromCart(memberId, itemId);
+
+        // then
+        verify(cartRepository, times(1)).deleteById(any());
+    }
+
+    @Test
     @DisplayName("장바구니에 있는 제품의 수량을 변경할 수 있다.")
     void updateItemAmountInCart() {
         // given

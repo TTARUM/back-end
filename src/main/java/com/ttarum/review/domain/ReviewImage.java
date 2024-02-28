@@ -25,4 +25,11 @@ public class ReviewImage {
     @Column(name = "`order`", nullable = false)
     private Integer order;
 
+    public static ReviewImage of(final String fileUrl, final Review review, final int order) {
+        return ReviewImage.builder()
+                .fileUrl(fileUrl)
+                .review(review)
+                .order(order)
+                .build();
+    }
 }

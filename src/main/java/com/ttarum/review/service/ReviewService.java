@@ -3,8 +3,15 @@ package com.ttarum.review.service;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
+import com.ttarum.member.domain.Member;
+import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.repository.MemberRepository;
+import com.ttarum.order.domain.Order;
+import com.ttarum.order.exception.OrderNotFoundException;
+import com.ttarum.order.repository.OrderRepository;
 import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
+import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewImageResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
@@ -31,6 +38,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ItemRepository itemRepository;
     private final ReviewValidator reviewValidator;
+    private final MemberRepository memberRepository;
+    private final OrderRepository orderRepository;
 
     /**
      * 특정 제품의 리뷰들을 반환합니다.
@@ -116,5 +125,31 @@ public class ReviewService {
         if (!review.getMember().getId().equals(memberId)) {
             throw new ReviewException(HttpStatus.FORBIDDEN, "사용자의 리뷰가 아닙니다.");
         }
+    }
+
+    @Transactional
+    public long createReview(final Long memberId, final ReviewCreationRequest reviewCreationRequest) {
+        Member member = getMemberById(memberId);
+        Order order = getOrderById(reviewCreationRequest.getOrderId());
+        Item item = getItemById(reviewCreationRequest.getItemId());
+
+        Review review = reviewCreationRequest.toReviewEntity();
+        review.setInitialForeignEntity(member, order, item);
+        return reviewRepository.save(review).getId();
+    }
+
+    private Member getMemberById(final Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private Order getOrderById(final long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(OrderNotFoundException::new);
+    }
+
+    private Item getItemById(final long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(ItemNotFoundException::new);
     }
 }

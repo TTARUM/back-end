@@ -22,17 +22,14 @@ public class Review extends UpdatableEntity {
     @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
     private Member member;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "order_id", nullable = false, columnDefinition = "int")
     private Order order;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
     private Item item;
@@ -66,5 +63,11 @@ public class Review extends UpdatableEntity {
 
     public void validate(final ReviewValidator validator) {
         validator.validateRating(this.star);
+    }
+
+    public void setInitialForeignEntity(final Member member, final Order order, final Item item) {
+        this.member = member;
+        this.order = order;
+        this.item = item;
     }
 }

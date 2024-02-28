@@ -1,7 +1,9 @@
 package com.ttarum.review.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
+import com.ttarum.review.dto.response.ReviewCreationResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -78,5 +81,8 @@ public interface ReviewController {
     })
     @PutMapping
     ResponseEntity<Void> updateReview(Long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
+
+    @PostMapping
+    ResponseEntity<ReviewCreationResponse> createReview(@AuthenticationPrincipal CustomUserDetails user, @RequestPart(name = "images") List<MultipartFile> multipartFileList, @RequestPart(name = "reviewCreationRequest") ReviewCreationRequest request);
 
 }

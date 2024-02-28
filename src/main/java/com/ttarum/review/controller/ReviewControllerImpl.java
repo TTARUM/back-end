@@ -1,17 +1,24 @@
 package com.ttarum.review.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
+import com.ttarum.review.dto.response.ReviewCreationResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.service.ReviewImageService;
 import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -23,6 +30,7 @@ public class ReviewControllerImpl implements ReviewController {
     private static final int PAGE_DEFAULT_SIZE = 10;
 
     private final ReviewService reviewService;
+    private final ReviewImageService reviewImageService;
 
     @GetMapping
     @Override
@@ -37,7 +45,7 @@ public class ReviewControllerImpl implements ReviewController {
     @DeleteMapping
     @Override
     public ResponseEntity<Void> deleteReview(@RequestParam(name = "reviewId") final long reviewId,
-                                               @AuthenticationPrincipal final CustomUserDetails user) {
+                                             @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.deleteReview(reviewId, user.getId());
         return ResponseEntity.ok().build();
     }
@@ -49,5 +57,18 @@ public class ReviewControllerImpl implements ReviewController {
                                              @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.updateReview(reviewId, request, user.getId());
         return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Override
+    public ResponseEntity<ReviewCreationResponse> createReview(@AuthenticationPrincipal final CustomUserDetails user,
+                                                               @RequestPart(name = "images", required = false) final List<MultipartFile> multipartFileList,
+                                                               @RequestPart(name = "reviewCreationRequest") final ReviewCreationRequest reviewCreationRequest) {
+        long reviewId = reviewService.createReview(user.getId(), reviewCreationRequest);
+        if (Objects.nonNull(multipartFileList) && !multipartFileList.isEmpty()) {
+            reviewImageService.saveImageList(reviewId, multipartFileList);
+        }
+        return ResponseEntity.ok(new ReviewCreationResponse(reviewId));
     }
 }

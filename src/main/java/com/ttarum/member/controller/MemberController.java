@@ -37,6 +37,20 @@ public interface MemberController {
     void registerNormalMember(@RequestBody NormalMemberRegister dto);
 
     /**
+     * 회원 탈퇴 메서드
+     *
+     * @param user 로그인한 회원
+     * @return 빈 응답
+     */
+    @Operation(summary = "회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "탈퇴 실패")
+    })
+    @DeleteMapping
+    ResponseEntity<Void> withdrawMember(@AuthenticationPrincipal CustomUserDetails user);
+
+    /**
      * 제품 찜 메서드
      *
      * @param user   로그인한 회원

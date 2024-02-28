@@ -36,6 +36,13 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @Override
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Void> withdrawMember(@AuthenticationPrincipal final CustomUserDetails user) {
+        memberService.withdraw(user.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
     @PostMapping("/wish-item")
     public ResponseEntity<Void> wishItem(@AuthenticationPrincipal final CustomUserDetails user, @RequestParam final long itemId) {
         memberService.wishItem(user.getId(), itemId);

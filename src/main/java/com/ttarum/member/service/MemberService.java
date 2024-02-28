@@ -6,12 +6,10 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
-import com.ttarum.member.exception.AddressException;
-import com.ttarum.member.exception.DuplicatedWishListException;
-import com.ttarum.member.exception.MemberException;
-import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.exception.*;
 import com.ttarum.member.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -267,5 +265,22 @@ public class MemberService {
     @Transactional
     public void deleteFromCart(final long memberId, final long itemId) {
         cartRepository.deleteById(new CartId(memberId, itemId));
+    }
+
+    /**
+     * 특정 회원의 장바구니에 담긴 제품의 수량을 변경한다.
+     *
+     * @param memberId          사용자의 Id 값
+     * @param cartUpdateRequest 변경할 제품의 데이터가 담긴 객체
+     */
+    @Transactional
+    public void updateItemAmountInCart(final long memberId, final CartUpdateRequest cartUpdateRequest) {
+        Cart cart = getCartById(new CartId(memberId, cartUpdateRequest.getItemId()));
+        cart.updateAmount(cartUpdateRequest.getAmount());
+    }
+
+    private Cart getCartById(final CartId cartId) {
+        return cartRepository.findById(cartId)
+                .orElseThrow(CartNotFoundException::new);
     }
 }

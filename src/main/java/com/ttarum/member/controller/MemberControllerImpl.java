@@ -3,6 +3,7 @@ package com.ttarum.member.controller;
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
@@ -87,6 +88,13 @@ public class MemberControllerImpl implements MemberController {
     @DeleteMapping("/carts")
     public ResponseEntity<Void> deleteFromCart(@RequestParam final long itemId, @AuthenticationPrincipal final CustomUserDetails user) {
         memberService.deleteFromCart(user.getId(), itemId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @PutMapping("/carts")
+    public ResponseEntity<Void> updateItemAmountInCart(@AuthenticationPrincipal final CustomUserDetails user, final CartUpdateRequest cartUpdateRequest) {
+        memberService.updateItemAmountInCart(user.getId(), cartUpdateRequest);
         return ResponseEntity.ok().build();
     }
 }

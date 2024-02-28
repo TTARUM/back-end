@@ -1,8 +1,8 @@
 package com.ttarum.review.domain;
 
 import com.ttarum.common.domain.UpdatableEntity;
-import com.ttarum.item.domain.Item;
 import com.ttarum.member.domain.Member;
+import com.ttarum.order.domain.Order;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.validator.ReviewValidator;
 import jakarta.persistence.*;
@@ -29,8 +29,8 @@ public class Review extends UpdatableEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "item_id", nullable = false, columnDefinition = "int")
-    private Item item;
+    @JoinColumn(name = "order_id", nullable = false, columnDefinition = "int")
+    private Order order;
 
     @Column(name = "content", nullable = false, length = 500)
     private String content;

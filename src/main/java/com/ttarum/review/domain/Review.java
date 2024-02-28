@@ -32,6 +32,9 @@ public class Review extends UpdatableEntity {
     @JoinColumn(name = "order_id", nullable = false, columnDefinition = "int")
     private Order order;
 
+    @Column(name = "title", nullable = false)
+    private String title;
+
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 

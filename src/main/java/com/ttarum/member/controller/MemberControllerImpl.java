@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,14 @@ public class MemberControllerImpl implements MemberController {
     @PostMapping("/register")
     public void registerNormalMember(NormalMemberRegister dto) {
         memberService.registerNormalUser(dto.toMemberEntity(), dto.toNormalMemberEntity());
+    }
+
+    @Override
+    @PostMapping("/profile-image")
+    public ResponseEntity<Void> updateProfileImage(@AuthenticationPrincipal final CustomUserDetails user,
+                                                   @RequestPart(name = "image") final MultipartFile image) {
+        memberService.updateProfileImage(user.getId(), image);
+        return ResponseEntity.ok().build();
     }
 
     @Override

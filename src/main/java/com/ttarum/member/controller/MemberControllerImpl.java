@@ -93,16 +93,16 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @Override
-    @DeleteMapping("/carts")
-    public ResponseEntity<Void> deleteFromCart(@RequestParam final long itemId, @AuthenticationPrincipal final CustomUserDetails user) {
+    @DeleteMapping("/carts/{itemId}")
+    public ResponseEntity<Void> deleteFromCart(@PathVariable final long itemId, @AuthenticationPrincipal final CustomUserDetails user) {
         memberService.deleteFromCart(user.getId(), itemId);
         return ResponseEntity.ok().build();
     }
 
     @Override
-    @PutMapping("/carts")
-    public ResponseEntity<Void> updateItemAmountInCart(@AuthenticationPrincipal final CustomUserDetails user, final CartUpdateRequest cartUpdateRequest) {
-        memberService.updateItemAmountInCart(user.getId(), cartUpdateRequest);
+    @PutMapping("/carts/{itemId}")
+    public ResponseEntity<Void> updateItemAmountInCart(@PathVariable final long itemId, @AuthenticationPrincipal final CustomUserDetails user, final CartUpdateRequest cartUpdateRequest) {
+        memberService.updateItemAmountInCart(user.getId(), itemId, cartUpdateRequest);
         return ResponseEntity.ok().build();
     }
 }

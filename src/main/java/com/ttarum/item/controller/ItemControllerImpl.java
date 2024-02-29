@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -26,9 +23,9 @@ public class ItemControllerImpl implements ItemController {
     private final ItemService itemService;
 
     @Override
-    @GetMapping
-    public ResponseEntity<ItemDetailResponse> getDetail(final Long id) {
-        return ResponseEntity.ok(itemService.getItemDetail(id));
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemDetailResponse> getDetail(@PathVariable final long itemId) {
+        return ResponseEntity.ok(itemService.getItemDetail(itemId));
     }
 
     @Override

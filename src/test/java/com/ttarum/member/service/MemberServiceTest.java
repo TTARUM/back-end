@@ -495,7 +495,7 @@ class MemberServiceTest {
         long memberId = 1;
         long itemId = 1;
         int amount = 3;
-        CartUpdateRequest cartUpdateRequest = new CartUpdateRequest(itemId, amount);
+        CartUpdateRequest cartUpdateRequest = new CartUpdateRequest(amount);
         Cart cart = Cart.builder()
                 .member(Member.builder().id(memberId).build())
                 .item(Item.builder().id(itemId).build())
@@ -505,7 +505,7 @@ class MemberServiceTest {
         when(cartRepository.findById(new CartId(memberId, itemId))).thenReturn(Optional.of(cart));
 
         // when
-        memberService.updateItemAmountInCart(memberId, cartUpdateRequest);
+        memberService.updateItemAmountInCart(memberId, itemId, cartUpdateRequest);
 
         // then
         verify(cartRepository, times(1)).findById(any());
@@ -521,12 +521,12 @@ class MemberServiceTest {
         long memberId = 1;
         long itemId = 1;
         int amount = 3;
-        CartUpdateRequest cartUpdateRequest = new CartUpdateRequest(itemId, amount);
+        CartUpdateRequest cartUpdateRequest = new CartUpdateRequest(amount);
 
         when(cartRepository.findById(new CartId(memberId, itemId))).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> memberService.updateItemAmountInCart(memberId, cartUpdateRequest))
+        assertThatThrownBy(() -> memberService.updateItemAmountInCart(memberId, itemId, cartUpdateRequest))
                 .isInstanceOf(CartNotFoundException.class);
     }
 }

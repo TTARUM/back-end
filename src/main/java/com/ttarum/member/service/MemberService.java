@@ -286,8 +286,8 @@ public class MemberService {
      * @param cartUpdateRequest 변경할 제품의 데이터가 담긴 객체
      */
     @Transactional
-    public void updateItemAmountInCart(final long memberId, final CartUpdateRequest cartUpdateRequest) {
-        Cart cart = getCartById(new CartId(memberId, cartUpdateRequest.getItemId()));
+    public void updateItemAmountInCart(final long memberId, final long itemId, final CartUpdateRequest cartUpdateRequest) {
+        Cart cart = getCartById(new CartId(memberId, itemId));
         cart.updateAmount(cartUpdateRequest.getAmount());
     }
 

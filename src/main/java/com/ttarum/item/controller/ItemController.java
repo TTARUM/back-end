@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -32,9 +33,9 @@ public interface ItemController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "존재하지 않는 제품")
     })
-    @Parameter(name = "id", description = "제품의 아이디", example = "1", required = true)
+    @Parameter(name = "itemId", description = "제품의 아이디", example = "1", required = true)
     @GetMapping
-    ResponseEntity<ItemDetailResponse> getDetail(final Long itemId);
+    ResponseEntity<ItemDetailResponse> getDetail(@PathVariable final long itemId);
 
     /**
      * 요약된 제품 정보에 대한 검색 메서드

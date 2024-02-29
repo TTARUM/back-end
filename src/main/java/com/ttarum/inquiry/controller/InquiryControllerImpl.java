@@ -13,14 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -54,9 +50,9 @@ public class InquiryControllerImpl implements InquiryController {
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping
+    @GetMapping("/{inquiryId}")
     @Override
-    public ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(final long inquiryId, @VerificationUser final Optional<User> user) {
+    public ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(@PathVariable final long inquiryId, @VerificationUser final Optional<User> user) {
         InquiryDetailedResponse response;
         if (user.isPresent()) {
             response = inquiryService.getInquiryDetailedResponse(inquiryId, user.get().getId());

@@ -2,10 +2,7 @@ package com.ttarum.member.domain;
 
 import com.ttarum.common.domain.UpdatableEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +28,7 @@ public class Member extends UpdatableEntity {
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
+    @Setter
     @Column(name = "image_url", length = 100)
     private String imageUrl;
 

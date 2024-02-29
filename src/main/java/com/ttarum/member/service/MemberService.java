@@ -11,6 +11,7 @@ import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.exception.*;
 import com.ttarum.member.repository.*;
+import com.ttarum.s3.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,6 +40,7 @@ public class MemberService {
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
+    private final ImageService imageService;
 
     /**
      * 일반 회원의 회원가입 메서드
@@ -91,6 +96,24 @@ public class MemberService {
 
     public boolean isLoginIdDuplicate(final String loginId) {
         return normalMemberRepository.findNormalMemberByLoginId(loginId).isPresent();
+    }
+
+    /**
+     * 특정 회원의 프로필 이미지를 업데이트합니다.
+     *
+     * @param memberId 회원의 Id 값
+     * @param image    업데이트할 이미지 파일
+     * @throws MemberException 프로필 이미지 업데이트를 실패한 경우 발생합니다.
+     */
+    @Transactional
+    public void updateProfileImage(final Long memberId, final MultipartFile image) {
+        Member member = getMemberById(memberId);
+        try {
+            URL url = imageService.saveImage(image);
+            member.setImageUrl(url.getPath());
+        } catch (IOException e) {
+            throw new MemberException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다: " + e.getMessage());
+        }
     }
 
     /**

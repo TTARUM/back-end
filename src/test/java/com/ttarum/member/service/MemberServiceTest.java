@@ -13,6 +13,7 @@ import com.ttarum.member.exception.DuplicatedWishListException;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.*;
+import com.ttarum.s3.service.ImageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,8 +23,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +57,8 @@ class MemberServiceTest {
     private PasswordEncoder passwordEncoder;
     @Mock
     private AddressRepository addressRepository;
+    @Mock
+    private ImageService imageService;
 
     @Test
     @DisplayName("일반 유저 회원가입 - happy path")
@@ -222,6 +228,28 @@ class MemberServiceTest {
 
         // then
         assertTrue(member.getIsDeleted());
+    }
+
+    @Test
+    @DisplayName("회원 프로필 이미지 업데이트 - happy path")
+    void updateProfileImage() {
+        // given
+        long memberId = 1L;
+        Member member = Member.builder()
+                .id(memberId)
+                .build();
+        MultipartFile image = new MockMultipartFile("image", "test".getBytes());
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        assertDoesNotThrow(
+                () -> when(imageService.saveImage(any(MultipartFile.class))).thenReturn(new URL("http://test.com"))
+        );
+
+        // when
+        memberService.updateProfileImage(memberId, image);
+
+        // then
+        assertEquals("http://test.com", member.getImageUrl());
     }
 
     @Test

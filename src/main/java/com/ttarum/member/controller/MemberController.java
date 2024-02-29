@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,21 @@ public interface MemberController {
     })
     @DeleteMapping
     ResponseEntity<Void> withdrawMember(@AuthenticationPrincipal CustomUserDetails user);
+
+    /**
+     * 프로필 이미지 업데이트 메서드
+     *
+     * @param user  로그인한 회원
+     * @param image 업데이트할 이미지 파일
+     * @return 빈 응답
+     */
+    @Operation(summary = "프로필 이미지 업데이트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @PostMapping
+    ResponseEntity<Void> updateProfileImage(@AuthenticationPrincipal CustomUserDetails user, @RequestPart MultipartFile image);
 
     /**
      * 제품 찜 메서드

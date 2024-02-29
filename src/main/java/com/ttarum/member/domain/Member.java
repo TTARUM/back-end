@@ -29,6 +29,7 @@ public class Member extends UpdatableEntity {
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
+    @Setter
     @Column(name = "image_url", length = 100)
     private String imageUrl;
 

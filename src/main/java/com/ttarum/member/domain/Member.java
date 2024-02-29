@@ -7,6 +7,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,6 +36,7 @@ public class Member extends UpdatableEntity {
     @OneToMany(mappedBy = "member")
     private List<Address> addressList = new ArrayList<>();
 
+    @Setter
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 

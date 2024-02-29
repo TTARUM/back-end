@@ -32,8 +32,16 @@ public class MemberControllerImpl implements MemberController {
 
     @Override
     @PostMapping("/register")
-    public void registerNormalMember(NormalMemberRegister dto) {
+    public ResponseEntity<Void> registerNormalMember(NormalMemberRegister dto) {
         memberService.registerNormalUser(dto.toMemberEntity(), dto.toNormalMemberEntity());
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @DeleteMapping("/withdraw")
+    public ResponseEntity<Void> withdrawMember(@AuthenticationPrincipal final CustomUserDetails user) {
+        memberService.withdraw(user.getId());
+        return ResponseEntity.ok().build();
     }
 
     @Override

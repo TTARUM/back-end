@@ -94,6 +94,18 @@ public class MemberService {
     }
 
     /**
+     * 회원을 탈퇴합니다.
+     *
+     * @param memberId 회원의 Id 값
+     * @throws MemberNotFoundException 해당 회원이 존재하지 않으면 발생합니다.
+     */
+    @Transactional
+    public void withdraw(final Long memberId) {
+        Member member = getMemberById(memberId);
+        member.setIsDeleted(true);
+    }
+
+    /**
      * 특정 제품을 찜 목록에 추가합니다.
      *
      * @param memberId 회원의 Id 값

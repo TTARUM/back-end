@@ -122,7 +122,7 @@ public class MemberService {
         Member member = getMemberById(memberId);
         try {
             URL url = imageService.saveImage(image);
-            member.setImageUrl(url.getPath());
+            member.setImageUrl(url.toString());
         } catch (IOException e) {
             throw new MemberException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다: " + e.getMessage());
         }

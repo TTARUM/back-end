@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Schema(description = "찜 목록 DTO")
-public class WishListResponse {
+public class WishlistResponse {
 
     @Schema(description = "찜 리스트")
-    private final List<ItemSummaryResponseForWishList> wishList;
+    private final List<ItemSummaryResponseForWishlist> wishlist;
 }

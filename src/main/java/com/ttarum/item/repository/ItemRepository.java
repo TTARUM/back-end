@@ -46,7 +46,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             ON r.item.id = i.id
             LEFT JOIN FETCH OrderItem oi
             ON oi.item.id = i.id
-            LEFT JOIN FETCH WishList wl
+            LEFT JOIN FETCH Wishlist wl
             ON wl.item.id = i.id AND wl.member.id = :memberId
             WHERE i.name LIKE %:query%
             GROUP BY i.id, i.category.name, i.name, i.price, i.itemImageUrl, i.createdAt

@@ -6,7 +6,7 @@ import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.CartResponse;
-import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.dto.response.WishlistResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -81,7 +81,7 @@ public interface MemberController {
     })
     @Parameter(name = "itemId", required = true, description = "제품의 Id 값", example = "1")
     @PostMapping
-    ResponseEntity<Void> wishItem(@AuthenticationPrincipal CustomUserDetails user, @RequestParam long itemId);
+    ResponseEntity<Void> addItemToWishlist(@AuthenticationPrincipal CustomUserDetails user, @RequestParam long itemId);
 
     /**
      * 찜 목록 조회 메서드
@@ -101,7 +101,7 @@ public interface MemberController {
             @Parameter(name = "size", description = "페이지 당 찜한 제품 개수 (기본 값 8)", example = "8")
     })
     @GetMapping
-    ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal CustomUserDetails user,
+    ResponseEntity<WishlistResponse> getWishlist(@AuthenticationPrincipal CustomUserDetails user,
                                                  Optional<Integer> page,
                                                  Optional<Integer> size);
 

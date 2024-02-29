@@ -8,7 +8,7 @@ import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
-import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.dto.response.WishlistResponse;
 import com.ttarum.member.exception.*;
 import com.ttarum.member.repository.*;
 import com.ttarum.s3.service.ImageService;
@@ -35,7 +35,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
-    private final WishListRepository wishListRepository;
+    private final WishlistRepository wishlistRepository;
     private final NormalMemberRepository normalMemberRepository;
     private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
@@ -133,26 +133,26 @@ public class MemberService {
      *
      * @param memberId 회원의 Id 값
      * @param itemId   찜 목록에 추가될 제품의 Id 값
-     * @throws DuplicatedWishListException 이미 찜 목록에 제품이 존재하는 경우 발생합니다.
+     * @throws DuplicatedWishlistException 이미 찜 목록에 제품이 존재하는 경우 발생합니다.
      * @throws MemberNotFoundException     해당 회원이 존재하지 않으면 발생합니다.
      * @throws ItemNotFoundException       해당 제품이 존재하지 않으면 발생합니다.
      */
     @Transactional
     public void wishItem(final long memberId, final long itemId) {
-        validateDuplicatedWishList(memberId, itemId);
+        validateDuplicatedWishlist(memberId, itemId);
         Member member = getMemberById(memberId);
         Item item = getItemById(itemId);
-        WishList wishList = WishList.builder()
+        Wishlist wishlist = Wishlist.builder()
                 .member(member)
                 .item(item)
                 .build();
-        wishListRepository.save(wishList);
+        wishlistRepository.save(wishlist);
     }
 
-    private void validateDuplicatedWishList(final long memberId, final long itemId) {
-        Optional<WishList> optionalWishList = wishListRepository.findById(new WishListId(memberId, itemId));
-        if (optionalWishList.isPresent()) {
-            throw new DuplicatedWishListException();
+    private void validateDuplicatedWishlist(final long memberId, final long itemId) {
+        Optional<Wishlist> optionalWishlist = wishlistRepository.findById(new WishlistId(memberId, itemId));
+        if (optionalWishlist.isPresent()) {
+            throw new DuplicatedWishlistException();
         }
     }
 
@@ -174,9 +174,9 @@ public class MemberService {
      * @return 조회된 찜 목록 리스트
      * @throws MemberNotFoundException 사용자가 존재하지 않을 경우 발생한다.
      */
-    public WishListResponse getWishListResponse(final Long memberId, final Pageable pageable) {
+    public WishlistResponse getWishlistResponse(final Long memberId, final Pageable pageable) {
         checkMemberExistence(memberId);
-        return new WishListResponse(wishListRepository.findItemSummaryByMemberId(memberId, pageable));
+        return new WishlistResponse(wishlistRepository.findItemSummaryByMemberId(memberId, pageable));
     }
 
     private void checkMemberExistence(final Long memberId) {

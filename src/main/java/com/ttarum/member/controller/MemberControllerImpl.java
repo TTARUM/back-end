@@ -6,7 +6,7 @@ import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
 import com.ttarum.member.dto.response.CartResponse;
-import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.dto.response.WishlistResponse;
 import com.ttarum.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ import java.util.Optional;
 public class MemberControllerImpl implements MemberController {
 
 
-    private static final Integer DEFAULT_WISH_LIST_SIZE = 8;
+    private static final Integer DEFAULT_WISHLIST_SIZE = 8;
 
     private final MemberService memberService;
 
@@ -54,19 +54,19 @@ public class MemberControllerImpl implements MemberController {
 
     @Override
     @PostMapping("/wish-item")
-    public ResponseEntity<Void> wishItem(@AuthenticationPrincipal final CustomUserDetails user, @RequestParam final long itemId) {
+    public ResponseEntity<Void> addItemToWishlist(@AuthenticationPrincipal final CustomUserDetails user, @RequestParam final long itemId) {
         memberService.wishItem(user.getId(), itemId);
         return ResponseEntity.ok().build();
     }
 
     @Override
     @GetMapping("/wish-item")
-    public ResponseEntity<WishListResponse> getWishList(@AuthenticationPrincipal final CustomUserDetails user,
+    public ResponseEntity<WishlistResponse> getWishlist(@AuthenticationPrincipal final CustomUserDetails user,
                                                         final Optional<Integer> page,
                                                         final Optional<Integer> size) {
-        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_WISH_LIST_SIZE));
-        WishListResponse wishListResponse = memberService.getWishListResponse(user.getId(), pageRequest);
-        return ResponseEntity.ok(wishListResponse);
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(DEFAULT_WISHLIST_SIZE));
+        WishlistResponse wishlistResponse = memberService.getWishlistResponse(user.getId(), pageRequest);
+        return ResponseEntity.ok(wishlistResponse);
     }
 
     @Override

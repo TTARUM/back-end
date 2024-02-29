@@ -221,12 +221,7 @@ class MemberServiceTest {
         memberService.withdraw(memberId);
 
         // then
-        verify(memberRepository, times(1)).save(
-                Member.builder()
-                        .id(memberId)
-                        .isDeleted(true)
-                        .build()
-        );
+        assertTrue(member.getIsDeleted());
     }
 
     @Test

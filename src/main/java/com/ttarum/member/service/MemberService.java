@@ -103,7 +103,6 @@ public class MemberService {
     public void withdraw(final Long memberId) {
         Member member = getMemberById(memberId);
         member.setIsDeleted(true);
-        memberRepository.save(member);
     }
 
     /**

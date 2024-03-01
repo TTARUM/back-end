@@ -29,10 +29,10 @@ public class RedisService {
      * @param topN 조회할 인기 검색 키워드 개수
      * @return 인기 검색 키워드 목록
      */
-    public List<String> getPopularSearchKeywordStrings(int topN) {
-        return getPopularSearchKeywords(topN).stream().map(ZSetOperations.TypedTuple::getValue).toList();
+    public List<String> getPopularSearchKeywords(int topN) {
+        return getZsetSearchKeywords(topN).stream().map(ZSetOperations.TypedTuple::getValue).toList();
     }
-    private Set<ZSetOperations.TypedTuple<String>> getPopularSearchKeywords(int topN) {
+    private Set<ZSetOperations.TypedTuple<String>> getZsetSearchKeywords(int topN) {
         return redisTemplate.opsForZSet().reverseRangeWithScores(SEARCH_KEYWORD_ZSET_KEY, 0, topN - 1);
     }
 

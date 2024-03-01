@@ -30,7 +30,7 @@ public class RedisServiceTest {
         redisService.incrementSearchKeywordCount(keyCounted2);
         redisService.incrementSearchKeywordCount(keyCounted2);
 
-        List<String> list = redisService.getPopularSearchKeywordStrings(3);
+        List<String> list = redisService.getPopularSearchKeywords(3);
 
         // then
         assertEquals(3, list.size());

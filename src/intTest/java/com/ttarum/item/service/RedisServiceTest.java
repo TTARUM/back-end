@@ -21,11 +21,11 @@ public class RedisServiceTest {
         String keyword2 = "boot";
 
         // when
-        redisService.incrementKeywordCount(keyword1);
-        redisService.incrementKeywordCount(keyword2);
-        redisService.incrementKeywordCount(keyword2);
+        redisService.incrementSearchKeywordCount(keyword1);
+        redisService.incrementSearchKeywordCount(keyword2);
+        redisService.incrementSearchKeywordCount(keyword2);
 
-        List<ZSetOperations.TypedTuple<String>> list = redisService.getPopularKeywords(2).stream().toList();
+        List<ZSetOperations.TypedTuple<String>> list = redisService.getPopularSearchKeywords(2).stream().toList();
 
         // then
         assertEquals(2, list.size());
@@ -36,6 +36,6 @@ public class RedisServiceTest {
         assertEquals(keyword1, list.get(1).getValue());
         assertEquals(1, list.get(1).getScore());
 
-        redisService.deleteAllKeywords();
+        redisService.deleteAllSearchKeywords();
     }
 }

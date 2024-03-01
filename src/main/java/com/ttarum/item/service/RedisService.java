@@ -12,15 +12,15 @@ import java.util.Set;
 @AllArgsConstructor
 public class RedisService {
     private final StringRedisTemplate redisTemplate;
-    private final String KEYWORD_ZSET_KEY = "searchKeywords";
+    private final String SEARCH_KEYWORD_ZSET_KEY = "searchKeywords";
 
     /**
      * 검색 키워드 카운트 증가
      *
      * @param keyword 검색 키워드
      */
-    public void incrementKeywordCount(String keyword) {
-        redisTemplate.opsForZSet().incrementScore(KEYWORD_ZSET_KEY, keyword, 1);
+    public void incrementSearchKeywordCount(String keyword) {
+        redisTemplate.opsForZSet().incrementScore(SEARCH_KEYWORD_ZSET_KEY, keyword, 1);
     }
 
     /**
@@ -29,8 +29,8 @@ public class RedisService {
      * @param topN 조회할 인기 검색 키워드 개수
      * @return 인기 검색 키워드 목록
      */
-    public List<String> getPopularKeywordStrings(int topN) {
-        return getPopularKeywords(topN).stream().map(ZSetOperations.TypedTuple::getValue).toList();
+    public List<String> getPopularSearchKeywordStrings(int topN) {
+        return getPopularSearchKeywords(topN).stream().map(ZSetOperations.TypedTuple::getValue).toList();
     }
 
     /**
@@ -39,15 +39,15 @@ public class RedisService {
      * @param topN 조회할 인기 검색 키워드 개수
      * @return 인기 검색 키워드 목록
      */
-    public Set<ZSetOperations.TypedTuple<String>> getPopularKeywords(int topN) {
-        return redisTemplate.opsForZSet().reverseRangeWithScores(KEYWORD_ZSET_KEY, 0, topN - 1);
+    public Set<ZSetOperations.TypedTuple<String>> getPopularSearchKeywords(int topN) {
+        return redisTemplate.opsForZSet().reverseRangeWithScores(SEARCH_KEYWORD_ZSET_KEY, 0, topN - 1);
     }
 
     /**
      * 모든 검색 키워드 삭제
      * 사용 예시: 특정 기간이 자났을 때마다 초기화
      */
-    public void deleteAllKeywords() {
-        redisTemplate.delete(KEYWORD_ZSET_KEY);
+    public void deleteAllSearchKeywords() {
+        redisTemplate.delete(SEARCH_KEYWORD_ZSET_KEY);
     }
 }

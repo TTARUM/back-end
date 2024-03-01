@@ -10,10 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "wish_list")
-public class WishList extends BaseEntity {
+@Table(name = "wishlist")
+public class Wishlist extends BaseEntity {
     @EmbeddedId
-    private WishListId id;
+    private WishlistId id;
 
     @MapsId("memberId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

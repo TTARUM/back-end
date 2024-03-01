@@ -11,7 +11,7 @@ import java.time.Instant;
 @Builder
 @AllArgsConstructor
 @Schema(description = "찜 목록 조회 시 제품 DTO")
-public class ItemSummaryResponseForWishList {
+public class ItemSummaryResponseForWishlist {
 
     @Schema(description = "제품의 Id 값", example = "1")
     private final long itemId;

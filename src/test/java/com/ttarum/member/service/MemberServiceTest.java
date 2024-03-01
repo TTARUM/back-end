@@ -6,10 +6,10 @@ import com.ttarum.member.domain.*;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
-import com.ttarum.member.dto.response.ItemSummaryResponseForWishList;
-import com.ttarum.member.dto.response.WishListResponse;
+import com.ttarum.member.dto.response.ItemSummaryResponseForWishlist;
+import com.ttarum.member.dto.response.WishlistResponse;
 import com.ttarum.member.exception.CartNotFoundException;
-import com.ttarum.member.exception.DuplicatedWishListException;
+import com.ttarum.member.exception.DuplicatedWishlistException;
 import com.ttarum.member.exception.MemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.*;
@@ -50,7 +50,7 @@ class MemberServiceTest {
     @Mock
     private ItemRepository itemRepository;
     @Mock
-    private WishListRepository wishListRepository;
+    private WishlistRepository wishlistRepository;
     @Mock
     private CartRepository cartRepository;
     @Mock
@@ -262,14 +262,14 @@ class MemberServiceTest {
         Item item = Item.builder()
                 .id(1L)
                 .build();
-        WishList wishList = WishList.builder()
+        Wishlist wishlist = Wishlist.builder()
                 .member(member)
                 .item(item)
                 .build();
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-        when(wishListRepository.save(any(WishList.class))).thenReturn(wishList);
+        when(wishlistRepository.save(any(Wishlist.class))).thenReturn(wishlist);
 
         // when
         memberService.wishItem(member.getId(), item.getId());
@@ -277,14 +277,14 @@ class MemberServiceTest {
         // then
         verify(memberRepository, times(1)).findById(1L);
         verify(itemRepository, times(1)).findById(1L);
-        verify(wishListRepository, times(1)).save(any(WishList.class));
-        assertThat(wishList.getItem().getId()).isEqualTo(item.getId());
-        assertThat(wishList.getMember().getId()).isEqualTo(member.getId());
+        verify(wishlistRepository, times(1)).save(any(Wishlist.class));
+        assertThat(wishlist.getItem().getId()).isEqualTo(item.getId());
+        assertThat(wishlist.getMember().getId()).isEqualTo(member.getId());
     }
 
     @Test
     @DisplayName("제품 찜 하기 - 이미 찜 목록에 존재하는 제품을 찜할 경우 예외가 발생한다.")
-    void wishItemFailedByDuplicatedWishList() {
+    void wishItemFailedByDuplicatedWishlist() {
         // given
         long memberId = 1L;
         long itemId = 1L;
@@ -294,21 +294,21 @@ class MemberServiceTest {
         Item item = Item.builder()
                 .id(itemId)
                 .build();
-        WishList wishList = WishList.builder()
+        Wishlist wishlist = Wishlist.builder()
                 .member(member)
                 .item(item)
                 .build();
 
-        when(wishListRepository.findById(new WishListId(memberId, itemId))).thenReturn(Optional.of(wishList));
+        when(wishlistRepository.findById(new WishlistId(memberId, itemId))).thenReturn(Optional.of(wishlist));
 
         // when & then
         assertThatThrownBy(() -> memberService.wishItem(memberId, itemId))
-                .isInstanceOf(DuplicatedWishListException.class);
+                .isInstanceOf(DuplicatedWishlistException.class);
     }
 
     @Test
     @DisplayName("찜 목록을 조회할 수 있다.")
-    void getWishListResponse() {
+    void getWishlistResponse() {
         // given
         long memberId = 1L;
         PageRequest pageRequest = PageRequest.of(0, 8);
@@ -316,8 +316,8 @@ class MemberServiceTest {
                 .id(memberId)
                 .build();
         Instant now = Instant.now();
-        List<ItemSummaryResponseForWishList> response = List.of(
-                ItemSummaryResponseForWishList.builder()
+        List<ItemSummaryResponseForWishlist> response = List.of(
+                ItemSummaryResponseForWishlist.builder()
                         .itemId(1L)
                         .name("item1")
                         .categoryName("category1")
@@ -326,7 +326,7 @@ class MemberServiceTest {
                         .imageUrl("url1")
                         .createdAt(now)
                         .build(),
-                ItemSummaryResponseForWishList.builder()
+                ItemSummaryResponseForWishlist.builder()
                         .itemId(2L)
                         .name("item2")
                         .categoryName("category2")
@@ -338,36 +338,36 @@ class MemberServiceTest {
         );
 
         when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
-        when(wishListRepository.findItemSummaryByMemberId(memberId, pageRequest)).thenReturn(response);
+        when(wishlistRepository.findItemSummaryByMemberId(memberId, pageRequest)).thenReturn(response);
 
         // when
-        WishListResponse wishListResponse = memberService.getWishListResponse(memberId, pageRequest);
+        WishlistResponse wishlistResponse = memberService.getWishlistResponse(memberId, pageRequest);
 
         // then
         verify(memberRepository, times(1)).findById(memberId);
-        verify(wishListRepository, times(1)).findItemSummaryByMemberId(memberId, pageRequest);
+        verify(wishlistRepository, times(1)).findItemSummaryByMemberId(memberId, pageRequest);
 
-        assertThat(wishListResponse.getWishList()).size().isEqualTo(2);
-        assertThat(wishListResponse.getWishList().get(0).getItemId()).isEqualTo(1L);
-        assertThat(wishListResponse.getWishList().get(0).getName()).isEqualTo("item1");
-        assertThat(wishListResponse.getWishList().get(0).getCategoryName()).isEqualTo("category1");
-        assertThat(wishListResponse.getWishList().get(0).getPrice()).isEqualTo(1000);
-        assertThat(wishListResponse.getWishList().get(0).getRating()).isEqualTo(4.5);
-        assertThat(wishListResponse.getWishList().get(0).getImageUrl()).isEqualTo("url1");
-        assertThat(wishListResponse.getWishList().get(0).getCreatedAt()).isEqualTo(now);
+        assertThat(wishlistResponse.getWishlist()).size().isEqualTo(2);
+        assertThat(wishlistResponse.getWishlist().get(0).getItemId()).isEqualTo(1L);
+        assertThat(wishlistResponse.getWishlist().get(0).getName()).isEqualTo("item1");
+        assertThat(wishlistResponse.getWishlist().get(0).getCategoryName()).isEqualTo("category1");
+        assertThat(wishlistResponse.getWishlist().get(0).getPrice()).isEqualTo(1000);
+        assertThat(wishlistResponse.getWishlist().get(0).getRating()).isEqualTo(4.5);
+        assertThat(wishlistResponse.getWishlist().get(0).getImageUrl()).isEqualTo("url1");
+        assertThat(wishlistResponse.getWishlist().get(0).getCreatedAt()).isEqualTo(now);
 
-        assertThat(wishListResponse.getWishList().get(1).getItemId()).isEqualTo(2L);
-        assertThat(wishListResponse.getWishList().get(1).getName()).isEqualTo("item2");
-        assertThat(wishListResponse.getWishList().get(1).getCategoryName()).isEqualTo("category2");
-        assertThat(wishListResponse.getWishList().get(1).getPrice()).isEqualTo(2000);
-        assertThat(wishListResponse.getWishList().get(1).getRating()).isEqualTo(5.0);
-        assertThat(wishListResponse.getWishList().get(1).getImageUrl()).isEqualTo("url2");
-        assertThat(wishListResponse.getWishList().get(1).getCreatedAt()).isEqualTo(now);
+        assertThat(wishlistResponse.getWishlist().get(1).getItemId()).isEqualTo(2L);
+        assertThat(wishlistResponse.getWishlist().get(1).getName()).isEqualTo("item2");
+        assertThat(wishlistResponse.getWishlist().get(1).getCategoryName()).isEqualTo("category2");
+        assertThat(wishlistResponse.getWishlist().get(1).getPrice()).isEqualTo(2000);
+        assertThat(wishlistResponse.getWishlist().get(1).getRating()).isEqualTo(5.0);
+        assertThat(wishlistResponse.getWishlist().get(1).getImageUrl()).isEqualTo("url2");
+        assertThat(wishlistResponse.getWishlist().get(1).getCreatedAt()).isEqualTo(now);
     }
 
     @Test
     @DisplayName("찜 목록을 조회할 수 있다. - 유저가 존재하지 않을 시 예외가 발생한다.")
-    void getWishListResponseFailedByInvalidMember() {
+    void getWishlistResponseFailedByInvalidMember() {
         // given
         long memberId = 1L;
         PageRequest pageRequest = PageRequest.of(0, 8);
@@ -375,7 +375,7 @@ class MemberServiceTest {
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> memberService.getWishListResponse(memberId, pageRequest))
+        assertThatThrownBy(() -> memberService.getWishlistResponse(memberId, pageRequest))
                 .isInstanceOf(MemberNotFoundException.class);
     }
 

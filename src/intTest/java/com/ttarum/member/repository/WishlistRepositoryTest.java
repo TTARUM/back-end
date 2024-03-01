@@ -6,10 +6,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 
 @DataJpaTest
-class WishListRepositoryTest {
+class WishlistRepositoryTest {
 
     @Autowired
-    WishListRepository wishListRepository;
+    WishlistRepository wishListRepository;
 
     @Test
     void findItemSummaryByMemberId() {

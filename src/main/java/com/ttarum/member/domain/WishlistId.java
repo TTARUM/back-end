@@ -13,7 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Embeddable
-public class WishListId implements Serializable {
+public class WishlistId implements Serializable {
     private static final long serialVersionUID = -195332860357327664L;
     @Column(name = "member_id", nullable = false, columnDefinition = "int")
     private Long memberId;
@@ -25,7 +25,7 @@ public class WishListId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        WishListId entity = (WishListId) o;
+        WishlistId entity = (WishlistId) o;
         return Objects.equals(this.itemId, entity.itemId) &&
                 Objects.equals(this.memberId, entity.memberId);
     }

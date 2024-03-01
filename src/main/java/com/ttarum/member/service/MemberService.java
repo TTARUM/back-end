@@ -243,6 +243,11 @@ public class MemberService {
         addressRepository.save(address);
     }
 
+    @Transactional
+    public List<Address> getAddressList(final Long memberId) {
+        return addressRepository.findByMemberIdOrderByLastUsedAtDesc(memberId);
+    }
+
     private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(AddressException::notFound);

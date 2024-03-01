@@ -243,6 +243,16 @@ public class MemberService {
         addressRepository.save(address);
     }
 
+    /**
+     * 특정 사용자의 배송지 목록을 조회한다.
+     *
+     * @param memberId 사용자의 Id 값
+     * @return 사용자의 배송지 목록
+     */
+    public List<Address> getAddressList(final Long memberId) {
+        return addressRepository.findByMemberIdOrderByLastUsedAtDesc(memberId);
+    }
+
     private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(AddressException::notFound);

@@ -4,9 +4,6 @@ import com.ttarum.common.domain.UpdatableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
@@ -32,9 +29,6 @@ public class Member extends UpdatableEntity {
     @Setter
     @Column(name = "image_url", length = 100)
     private String imageUrl;
-
-    @OneToMany(mappedBy = "member")
-    private List<Address> addressList = new ArrayList<>();
 
     @Setter
     @Column(name = "is_deleted", nullable = false)

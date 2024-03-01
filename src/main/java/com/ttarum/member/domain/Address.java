@@ -2,7 +2,6 @@ package com.ttarum.member.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
 
@@ -27,11 +26,15 @@ public class Address {
     @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
     private Member member;
 
-    @CreatedDate
     @Column(name = "last_used_at", nullable = false)
     private Instant lastUsedAt;
 
     public void updateLastUsedAt() {
+        this.lastUsedAt = Instant.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
         this.lastUsedAt = Instant.now();
     }
 }

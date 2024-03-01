@@ -249,7 +249,6 @@ public class MemberService {
      * @param memberId 사용자의 Id 값
      * @return 사용자의 배송지 목록
      */
-    @Transactional
     public List<Address> getAddressList(final Long memberId) {
         return addressRepository.findByMemberIdOrderByLastUsedAtDesc(memberId);
     }

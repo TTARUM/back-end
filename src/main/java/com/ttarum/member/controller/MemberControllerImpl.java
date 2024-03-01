@@ -5,6 +5,7 @@ import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
+import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
 import com.ttarum.member.service.MemberService;
@@ -83,10 +84,21 @@ public class MemberControllerImpl implements MemberController {
         return ResponseEntity.ok(cartResponseList);
     }
 
+    @Override
     @PostMapping("/address")
     public ResponseEntity<Void> addAddress(@AuthenticationPrincipal final CustomUserDetails user, final AddressUpsertRequest addressUpsertRequest) {
         memberService.addAddress(user.getId(), addressUpsertRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @GetMapping("/address")
+    public ResponseEntity<List<AddressResponse>> getAddressList(@AuthenticationPrincipal final CustomUserDetails user) {
+        List<AddressResponse> addressResponseList = memberService.getAddressList(user.getId())
+                .stream()
+                .map(AddressResponse::fromAddress)
+                .toList();
+        return ResponseEntity.ok(addressResponseList);
     }
 
     @PostMapping("/address/{addressId}")

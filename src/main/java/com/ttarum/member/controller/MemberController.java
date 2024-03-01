@@ -5,6 +5,7 @@ import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.request.NormalMemberRegister;
+import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishListResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -151,6 +152,20 @@ public interface MemberController {
     })
     @PostMapping
     ResponseEntity<Void> addAddress(@AuthenticationPrincipal CustomUserDetails user, AddressUpsertRequest addressUpsertRequest);
+
+    /**
+     * 배송지 조회(최근 사용 순으로 정렬)
+     *
+     * @param user 로그인한 사용자
+     * @return 배송지 목록
+     */
+    @Operation(summary = "배송지 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @GetMapping
+    ResponseEntity<List<AddressResponse>> getAddressList(@AuthenticationPrincipal CustomUserDetails user);
 
     /**
      * 배송지 수정

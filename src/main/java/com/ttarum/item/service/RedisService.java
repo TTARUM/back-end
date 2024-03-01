@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -31,7 +32,9 @@ public class RedisService {
      * @return 인기 검색 키워드 목록
      */
     public List<String> getPopularSearchKeywords(int topN) {
-        return getZsetSearchKeywords(topN).stream().map(ZSetOperations.TypedTuple::getValue).toList();
+        return getZsetSearchKeywords(topN).stream()
+                .map(ZSetOperations.TypedTuple::getValue)
+                .toList();
     }
     private Set<ZSetOperations.TypedTuple<String>> getZsetSearchKeywords(int topN) {
         return redisTemplate.opsForZSet().reverseRangeWithScores(SEARCH_KEYWORD_ZSET_KEY, 0, topN - 1);
@@ -63,6 +66,7 @@ public class RedisService {
     public List<Long> getPopularPurchaseItems(int topN) {
         return getZsetPurchaseItems(topN).stream()
                 .map(ZSetOperations.TypedTuple::getValue)
+                .filter(Objects::nonNull)   // it could not be null
                 .map(Long::parseLong)
                 .toList();
     }

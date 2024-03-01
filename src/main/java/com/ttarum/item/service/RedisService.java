@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
-public class SearchKeywordService {
+public class RedisService {
     private final StringRedisTemplate redisTemplate;
     private final String KEYWORD_ZSET_KEY = "searchKeywords";
 

@@ -10,9 +10,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class SearchKeywordServiceTest {
+public class RedisServiceTest {
     @Autowired
-    private SearchKeywordService searchKeywordService;
+    private RedisService redisService;
 
     @Test
     void testIncrementKeywordCount() {
@@ -21,11 +21,11 @@ public class SearchKeywordServiceTest {
         String keyword2 = "boot";
 
         // when
-        searchKeywordService.incrementKeywordCount(keyword1);
-        searchKeywordService.incrementKeywordCount(keyword2);
-        searchKeywordService.incrementKeywordCount(keyword2);
+        redisService.incrementKeywordCount(keyword1);
+        redisService.incrementKeywordCount(keyword2);
+        redisService.incrementKeywordCount(keyword2);
 
-        List<ZSetOperations.TypedTuple<String>> list = searchKeywordService.getPopularKeywords(2).stream().toList();
+        List<ZSetOperations.TypedTuple<String>> list = redisService.getPopularKeywords(2).stream().toList();
 
         // then
         assertEquals(2, list.size());
@@ -36,6 +36,6 @@ public class SearchKeywordServiceTest {
         assertEquals(keyword1, list.get(1).getValue());
         assertEquals(1, list.get(1).getScore());
 
-        searchKeywordService.deleteAllKeywords();
+        redisService.deleteAllKeywords();
     }
 }

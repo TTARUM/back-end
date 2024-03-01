@@ -3,7 +3,6 @@ package com.ttarum.item.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.ZSetOperations;
 
 import java.util.List;
 
@@ -17,24 +16,27 @@ public class RedisServiceTest {
     @Test
     void testIncrementKeywordCount() {
         // given
-        String keyword1 = "spring";
-        String keyword2 = "boot";
+        String keyCounted1 = "count1";
+        String keyCounted2 = "count2";
+        String keyCounted3 = "count3";
 
         // when
-        redisService.incrementSearchKeywordCount(keyword1);
-        redisService.incrementSearchKeywordCount(keyword2);
-        redisService.incrementSearchKeywordCount(keyword2);
+        redisService.incrementSearchKeywordCount(keyCounted1);
 
-        List<ZSetOperations.TypedTuple<String>> list = redisService.getPopularSearchKeywords(2).stream().toList();
+        redisService.incrementSearchKeywordCount(keyCounted3);
+        redisService.incrementSearchKeywordCount(keyCounted3);
+        redisService.incrementSearchKeywordCount(keyCounted3);
+
+        redisService.incrementSearchKeywordCount(keyCounted2);
+        redisService.incrementSearchKeywordCount(keyCounted2);
+
+        List<String> list = redisService.getPopularSearchKeywordStrings(3);
 
         // then
-        assertEquals(2, list.size());
-
-        assertEquals(keyword2, list.get(0).getValue());
-        assertEquals(2, list.get(0).getScore());
-
-        assertEquals(keyword1, list.get(1).getValue());
-        assertEquals(1, list.get(1).getScore());
+        assertEquals(3, list.size());
+        assertEquals(keyCounted3, list.get(0));
+        assertEquals(keyCounted2, list.get(1));
+        assertEquals(keyCounted1, list.get(2));
 
         redisService.deleteAllSearchKeywords();
     }

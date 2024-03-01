@@ -32,14 +32,7 @@ public class RedisService {
     public List<String> getPopularSearchKeywordStrings(int topN) {
         return getPopularSearchKeywords(topN).stream().map(ZSetOperations.TypedTuple::getValue).toList();
     }
-
-    /**
-     * 인기 검색 키워드 목록 조회(점수와 함께 조회)
-     *
-     * @param topN 조회할 인기 검색 키워드 개수
-     * @return 인기 검색 키워드 목록
-     */
-    public Set<ZSetOperations.TypedTuple<String>> getPopularSearchKeywords(int topN) {
+    private Set<ZSetOperations.TypedTuple<String>> getPopularSearchKeywords(int topN) {
         return redisTemplate.opsForZSet().reverseRangeWithScores(SEARCH_KEYWORD_ZSET_KEY, 0, topN - 1);
     }
 

@@ -62,10 +62,19 @@ public interface ItemController {
     })
     @GetMapping
     ResponseEntity<ItemSummaryResponse> getSummary(@RequestParam(required = false) final String query,
-                                                         @VerificationUser final Optional<User> user,
-                                                         final Optional<Integer> page,
-                                                         final Optional<Integer> size);
+                                                   @VerificationUser final Optional<User> user,
+                                                   final Optional<Integer> page,
+                                                   final Optional<Integer> size);
 
+    /**
+     * 인기 검색어 조회
+     *
+     * @param number 조회할 인기 검색어 개수
+     * @return 인기 검색어 목록
+     */
+    @Operation(summary = "인기 검색어 조회")
+    @ApiResponse(responseCode = "200", description = "성공")
+    @Parameter(name = "number", description = "조회할 인기 검색어 개수 (기본 값 5)", example = "5")
     @GetMapping
     ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") int number);
 }

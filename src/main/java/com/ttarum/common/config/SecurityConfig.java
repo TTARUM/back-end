@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
                         .requestMatchers("/api/members/register").permitAll()
+                        .requestMatchers("/api/items/popular-list").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/items/list").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/inquiries").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/inquiries/list").permitAll()

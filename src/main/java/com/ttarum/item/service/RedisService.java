@@ -23,6 +23,7 @@ public class RedisService {
      * 검색 키워드 카운트 증가
      *
      * @param keyword 검색 키워드
+     * @param itemId 제품의 Id 값
      */
     public void incrementSearchKeywordCount(String keyword, long itemId) {
         PopularItem popularItem = new PopularItem(keyword, itemId);

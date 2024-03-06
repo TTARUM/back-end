@@ -5,6 +5,7 @@ import com.ttarum.common.dto.user.User;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
 import com.ttarum.item.service.ItemService;
+import com.ttarum.item.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -21,11 +22,17 @@ public class ItemControllerImpl implements ItemController {
 
     private static final int ITEM_DEFAULT_SIZE_PER_PAGE = 9;
     private final ItemService itemService;
+    private final RedisService redisService;
 
     @Override
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDetailResponse> getDetail(@PathVariable final long itemId) {
-        return ResponseEntity.ok(itemService.getItemDetail(itemId));
+    public ResponseEntity<ItemDetailResponse> getDetail(@PathVariable final long itemId,
+                                                        @RequestParam(defaultValue = "false") final boolean useSearch) {
+        ItemDetailResponse response = itemService.getItemDetail(itemId);
+        if (useSearch) {
+            redisService.incrementSearchKeywordCount(response.getName());
+        }
+        return ResponseEntity.ok(response);
     }
 
     @Override

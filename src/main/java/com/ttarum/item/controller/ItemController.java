@@ -39,7 +39,7 @@ public interface ItemController {
             @Parameter(name = "useSearch", description = "검색을 이용해 제품을 조회하는지 여부 (없을 시 false 적용)", example = "true")
     })
     @GetMapping
-    ResponseEntity<ItemDetailResponse> getDetail(@PathVariable long itemId, @RequestParam(defaultValue = "false") boolean useSearch);
+    ResponseEntity<ItemDetailResponse> getDetail(@PathVariable long itemId, @RequestParam(required = false, defaultValue = "false") boolean useSearch);
 
     /**
      * 요약된 제품 정보에 대한 검색 메서드

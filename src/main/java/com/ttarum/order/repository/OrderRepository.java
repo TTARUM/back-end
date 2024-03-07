@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             i.price AS itemPrice,
             oi.amount AS amount,
             exists(
-            SELECT 1 FROM Review r WHERE r.order_id = oi.order_id AND r.item_id = oi.item_id
+            SELECT 1 FROM Review r WHERE r.order_id = oi.order_id AND r.item_id = oi.item_id AND r.is_deleted = false
             ) AS hasReview
             FROM `Order` o
             LEFT JOIN Order_Item oi

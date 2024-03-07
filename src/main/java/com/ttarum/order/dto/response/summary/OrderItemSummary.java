@@ -1,4 +1,4 @@
-package com.ttarum.order.dto.response;
+package com.ttarum.order.dto.response.summary;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

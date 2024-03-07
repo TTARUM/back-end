@@ -24,8 +24,8 @@ public class OrderControllerImpl implements OrderController {
     @Override
     @GetMapping("/list")
     public ResponseEntity<OrderSummaryListResponse> getOrderList(@AuthenticationPrincipal final CustomUserDetails user,
-                                                                 @RequestParam(required = false, defaultValue = "0") int size,
-                                                                 @RequestParam(required = false, defaultValue = "5") int page) {
+                                                                 @RequestParam(required = false, defaultValue = "0") int page,
+                                                                 @RequestParam(required = false, defaultValue = "5") int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         OrderSummaryListResponse response = orderService.getOrderSummaryList(user.getId(), pageRequest);
         return ResponseEntity.ok(response);

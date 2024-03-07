@@ -24,6 +24,13 @@ public class OrderService {
 
     private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
 
+    /**
+     * 주문 내역 목록 조회 메서드
+     *
+     * @param memberId 회원의 Id 값
+     * @param pageable 페이지네이션 객체
+     * @return 주문 내역 목록
+     */
     public OrderSummaryListResponse getOrderSummaryList(final long memberId, final Pageable pageable) {
         List<Order> orderList = orderRepository.findOrderListByMemberId(memberId, pageable);
         List<OrderSummary> orderSummaryList = new ArrayList<>();

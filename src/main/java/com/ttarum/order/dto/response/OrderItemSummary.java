@@ -12,7 +12,7 @@ public class OrderItemSummary {
     private final long itemId;
     private final String itemImageUrl;
     private final String itemName;
-    private final int price;
-    private final int amount;
+    private final int itemPrice;
+    private final long amount;
     private final boolean hasReview;
 }

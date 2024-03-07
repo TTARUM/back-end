@@ -1,7 +1,7 @@
 package com.ttarum.order.repository;
 
 import com.ttarum.order.domain.Order;
-import com.ttarum.order.dto.response.OrderItemSummary;
+import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +27,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             LEFT JOIN Item i
             ON i.id = oi.item_id
             WHERE o.id = :orderId
+            limit :limit
             """, nativeQuery = true)
-    List<OrderItemSummary> findOrderItemListByOrderId(@Param("orderId") long orderId, Pageable pageable);
+    List<OrderItemSummary> findOrderItemListByOrderId(@Param("orderId") long orderId, @Param("limit") int limit);
 }

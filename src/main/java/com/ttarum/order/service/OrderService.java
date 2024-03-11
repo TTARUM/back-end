@@ -1,9 +1,12 @@
 package com.ttarum.order.service;
 
 import com.ttarum.order.domain.Order;
+import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.dto.response.summary.OrderSummary;
 import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
+import com.ttarum.order.exception.OrderForbiddenException;
+import com.ttarum.order.exception.OrderNotFoundException;
 import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -45,5 +49,19 @@ public class OrderService {
             );
         }
         return new OrderSummaryListResponse(orderSummaryList);
+    }
+
+    public OrderDetailResponse getOrderDetail(final long memberId, final long orderId) {
+        Order order = getOrderById(orderId);
+        if (!Objects.equals(order.getMember().getId(), memberId)) {
+            throw new OrderForbiddenException();
+        }
+        List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(orderId);
+        return OrderDetailResponse.of(orderItemSummaryList, order);
+    }
+
+    private Order getOrderById(final long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(OrderNotFoundException::new);
     }
 }

@@ -4,13 +4,17 @@ import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
+import com.ttarum.item.domain.redis.PopularItem;
+import com.ttarum.item.dto.response.PopularItemResponse;
 import com.ttarum.item.service.ItemService;
+import com.ttarum.item.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -21,11 +25,17 @@ public class ItemControllerImpl implements ItemController {
 
     private static final int ITEM_DEFAULT_SIZE_PER_PAGE = 9;
     private final ItemService itemService;
+    private final RedisService redisService;
 
     @Override
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDetailResponse> getDetail(@PathVariable final long itemId) {
-        return ResponseEntity.ok(itemService.getItemDetail(itemId));
+    public ResponseEntity<ItemDetailResponse> getDetail(@PathVariable final long itemId,
+                                                        @RequestParam(required = false, defaultValue = "false") final boolean useSearch) {
+        ItemDetailResponse response = itemService.getItemDetail(itemId);
+        if (useSearch) {
+            redisService.incrementSearchKeywordCount(response.getName(), itemId);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @Override
@@ -44,5 +54,12 @@ public class ItemControllerImpl implements ItemController {
             response = itemService.getItemSummaryList(query, pageRequest);
         }
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @GetMapping("/popular-list")
+    public ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") final int number) {
+        List<PopularItem> popularSearchKeywords = redisService.getPopularSearchKeywords(number);
+        return ResponseEntity.ok(new PopularItemResponse(popularSearchKeywords));
     }
 }

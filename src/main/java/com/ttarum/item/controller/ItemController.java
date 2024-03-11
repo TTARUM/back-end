@@ -4,6 +4,7 @@ import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSummaryResponse;
+import com.ttarum.item.dto.response.PopularItemResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -33,9 +34,12 @@ public interface ItemController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "존재하지 않는 제품")
     })
-    @Parameter(name = "itemId", description = "제품의 아이디", example = "1", required = true)
+    @Parameters(value = {
+            @Parameter(name = "itemId", description = "제품의 아이디", example = "1", required = true),
+            @Parameter(name = "useSearch", description = "검색을 이용해 제품을 조회하는지 여부 (없을 시 false 적용)", example = "true")
+    })
     @GetMapping
-    ResponseEntity<ItemDetailResponse> getDetail(@PathVariable final long itemId);
+    ResponseEntity<ItemDetailResponse> getDetail(@PathVariable long itemId, @RequestParam(required = false, defaultValue = "false") boolean useSearch);
 
     /**
      * 요약된 제품 정보에 대한 검색 메서드
@@ -58,7 +62,19 @@ public interface ItemController {
     })
     @GetMapping
     ResponseEntity<ItemSummaryResponse> getSummary(@RequestParam(required = false) final String query,
-                                                         @VerificationUser final Optional<User> user,
-                                                         final Optional<Integer> page,
-                                                         final Optional<Integer> size);
+                                                   @VerificationUser final Optional<User> user,
+                                                   final Optional<Integer> page,
+                                                   final Optional<Integer> size);
+
+    /**
+     * 인기 검색어 조회
+     *
+     * @param number 조회할 인기 검색어 개수
+     * @return 인기 검색어 목록
+     */
+    @Operation(summary = "인기 검색어 조회")
+    @ApiResponse(responseCode = "200", description = "성공")
+    @Parameter(name = "number", description = "조회할 인기 검색어 개수 (기본 값 5)", example = "5")
+    @GetMapping
+    ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") int number);
 }

@@ -1,5 +1,8 @@
 package com.ttarum.order.service;
 
+import com.ttarum.member.domain.Member;
+import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
 import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.summary.OrderItemSummary;
@@ -16,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -25,6 +27,7 @@ import java.util.Objects;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final MemberRepository memberRepository;
 
     private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
 
@@ -51,9 +54,20 @@ public class OrderService {
         return new OrderSummaryListResponse(orderSummaryList);
     }
 
+    /**
+     * 주문 세부사항 조회 메서드
+     *
+     * @param memberId 회원의 Id 값
+     * @param orderId  주문의 Id 값
+     * @return 주문의 세부사항
+     * @throws MemberNotFoundException 회원을 찾지 못하였을 경우 발생한다.
+     * @throws OrderNotFoundException  주문을 찾지 못하였을 경우 발생한다.
+     * @throws OrderForbiddenException 회원의 주문이 아닌 경우 발생한다.
+     */
     public OrderDetailResponse getOrderDetail(final long memberId, final long orderId) {
+        Member member = getMemberById(memberId);
         Order order = getOrderById(orderId);
-        if (!Objects.equals(order.getMember().getId(), memberId)) {
+        if (!member.isMyOrder(order)) {
             throw new OrderForbiddenException();
         }
         List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(orderId);
@@ -63,5 +77,10 @@ public class OrderService {
     private Order getOrderById(final long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
+    }
+
+    private Member getMemberById(final long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
     }
 }

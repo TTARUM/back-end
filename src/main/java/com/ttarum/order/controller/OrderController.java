@@ -36,6 +36,16 @@ public interface OrderController {
                                                           @RequestParam(required = false, defaultValue = "0") int page,
                                                           @RequestParam(required = false, defaultValue = "5") int size);
 
+    /**
+     * 주문 조회
+     *
+     * @param user    로그인한 회원
+     * @param orderId 조회할 주문의 Id 값
+     * @return 주문의 세부사항
+     */
+    @Operation(summary = "주문 조회")
+    @ApiResponse(responseCode = "200", description = "성공")
+    @Parameter(name = "orderId", description = "조회할 주문의 Id 값", example = "1")
     @GetMapping
     ResponseEntity<OrderDetailResponse> getOrderDetail(@AuthenticationPrincipal CustomUserDetails user, @PathVariable long orderId);
 }

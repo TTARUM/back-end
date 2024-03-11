@@ -18,7 +18,8 @@ public class Order extends BaseEntity {
     private Long id;
 
     @Column(name = "status", nullable = false, length = 20)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @Column(name = "comment", nullable = false, length = 100)
     private String comment;

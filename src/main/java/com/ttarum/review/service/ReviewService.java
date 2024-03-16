@@ -178,6 +178,15 @@ public class ReviewService {
                 .orElseThrow(ItemNotFoundException::new);
     }
 
+    /**
+     * 리뷰 업데이트를 위한 조회 메서드
+     *
+     * @param memberId 리뷰를 작성한 회원의 Id 값
+     * @param reviewId 조회할 리뷰의 Id 값
+     * @return 리뷰 데이터가 담긴 객체
+     * @throws ReviewNotFoundException  리뷰가 없을 경우 발생한다.
+     * @throws ReviewForbiddenException 다른 회원의 리뷰를 조회하는 경우 발생한다.
+     */
     public ReviewUpdateResponse getReviewForUpdating(final long memberId, final long reviewId) {
         Review review = getReviewById(reviewId);
         if (!review.getMember().getId().equals(memberId)) {

@@ -32,5 +32,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<OrderItemSummary> findOrderItemListByOrderId(@Param("orderId") long orderId, @Param("limit") int limit);
 
     @Query("SELECT o FROM Order o WHERE o.member.id = :memberId ORDER BY o.createdAt DESC")
-    List<Order> findOrderListByMemberId(@Param("orderId") long memberId, Pageable pageable);
+    List<Order> findOrderListByMemberId(@Param("memberId") long memberId, Pageable pageable);
 }

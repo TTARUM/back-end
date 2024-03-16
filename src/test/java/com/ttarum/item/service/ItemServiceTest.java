@@ -2,8 +2,10 @@ package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemDetailResponse;
-import com.ttarum.item.dto.response.ItemSummary;
-import com.ttarum.item.dto.response.ItemSummaryResponse;
+import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
+import com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice;
+import com.ttarum.item.dto.response.summary.ItemSummary;
+import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
@@ -116,4 +118,68 @@ class ItemServiceTest {
         // then
         assertThat(summaryList).isEmpty();
     }
+
+    @Test
+    @DisplayName("가격대가 비슷한 술 조회")
+    void getItemSummaryListWithSimilarPriceRange() {
+        // given
+        int price = 23000;
+        List<ItemSummaryWithSimilarPrice> itemSummaryList = List.of(
+                ItemSummaryWithSimilarPrice.builder()
+                        .itemId(1)
+                        .itemName("item1")
+                        .price(17000)
+                        .imageUrl("ttarum.image.url")
+                        .inWishList(false)
+                        .build()
+        );
+
+        when(itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(price - 10000, price + 10000)).thenReturn(itemSummaryList);
+
+        // when
+        ItemSimilarPriceResponse response = itemService.getItemSummaryListWithSimilarPriceRange(price);
+        List<ItemSummaryWithSimilarPrice> list = response.getItemSummaryList();
+
+        // then
+        verify(itemRepository, times(1)).getItemSummaryWithSimilarPriceListByPriceRange(price - 10000, price + 10000);
+        assertThat(list).size().isEqualTo(1);
+        assertThat(list.get(0).getItemId()).isEqualTo(1);
+        assertThat(list.get(0).getItemName()).isEqualTo("item1");
+        assertThat(list.get(0).getPrice()).isEqualTo(17000);
+        assertThat(list.get(0).getImageUrl()).isEqualTo("ttarum.image.url");
+        assertThat(list.get(0).isInWishList()).isFalse();
+    }
+
+    @Test
+    @DisplayName("가격대가 비슷한 술 조회 - 10000원 이하일 경우")
+    void getItemSummaryListWithSimilarPriceRange_PriceLessThan10000() {
+        // given
+        long memberId = 1;
+        int price = 7000;
+        List<ItemSummaryWithSimilarPrice> itemSummaryList = List.of(
+                ItemSummaryWithSimilarPrice.builder()
+                        .itemId(1)
+                        .itemName("item1")
+                        .price(17000)
+                        .imageUrl("ttarum.image.url")
+                        .inWishList(true)
+                        .build()
+        );
+
+        when(itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(0, price + 10000, memberId)).thenReturn(itemSummaryList);
+
+        // when
+        ItemSimilarPriceResponse response = itemService.getItemSummaryListWithSimilarPriceRange(memberId, price);
+        List<ItemSummaryWithSimilarPrice> list = response.getItemSummaryList();
+
+        // then
+        verify(itemRepository, times(1)).getItemSummaryWithSimilarPriceListByPriceRange(0, price + 10000, memberId);
+        assertThat(list).size().isEqualTo(1);
+        assertThat(list.get(0).getItemId()).isEqualTo(1);
+        assertThat(list.get(0).getItemName()).isEqualTo("item1");
+        assertThat(list.get(0).getPrice()).isEqualTo(17000);
+        assertThat(list.get(0).getImageUrl()).isEqualTo("ttarum.image.url");
+        assertThat(list.get(0).isInWishList()).isTrue();
+    }
+
 }

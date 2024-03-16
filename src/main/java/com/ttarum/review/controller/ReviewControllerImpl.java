@@ -60,7 +60,7 @@ public class ReviewControllerImpl implements ReviewController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/update")
+    @GetMapping("/{reviewId}/update")
     @Override
     public ResponseEntity<ReviewUpdateResponse> updateReview(@PathVariable final long reviewId,
                                                              @AuthenticationPrincipal final CustomUserDetails user) {

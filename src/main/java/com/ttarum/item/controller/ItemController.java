@@ -79,6 +79,19 @@ public interface ItemController {
     @GetMapping
     ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") int number);
 
+    /**
+     * 가격대가 비슷한 술 조회
+     *
+     * @param user  로그인한 사용자 여부를 확인하기 위한 객체
+     * @param price 가격대
+     * @return 조회된 제품 리스트
+     */
+    @Operation(summary = "가격대가 비슷한 술 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "조회 실패")
+    })
+    @Parameter(name = "price", description = "가격", example = "17000")
     @GetMapping
     ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser Optional<User> user, int price);
 }

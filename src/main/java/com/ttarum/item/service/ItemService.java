@@ -77,6 +77,12 @@ public class ItemService {
                 .orElseThrow(ItemNotFoundException::new);
     }
 
+    /**
+     * 가격대가 비슷한 제품 조회 메서드
+     *
+     * @param price 가격대
+     * @return 제품 리스트
+     */
     public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final int price) {
         int lowPrice = getLowPrice(price);
         int highPrice = price + 10000;
@@ -93,6 +99,14 @@ public class ItemService {
         return lowPrice;
     }
 
+    /**
+     * 가격대가 비슷한 제품 조회 메서드
+     * 로그인한 경우 사용되며 찜목록에 포함되었는지에 대한 여부가 포함됩니다.
+     *
+     * @param memberId 회원의 Id 값
+     * @param price    가격대
+     * @return 제품 리스트
+     */
     public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final long memberId, final int price) {
         int lowPrice = getLowPrice(price);
         int highPrice = price + 10000;

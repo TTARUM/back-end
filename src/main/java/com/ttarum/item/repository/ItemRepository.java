@@ -62,11 +62,12 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<ItemSummaryWithSimilarPrice> getItemSummaryWithSimilarPriceListByPriceRange(@Param("lowPrice") int lowPrice, @Param("highPrice") int highPrice);
 
     @Query("""
-            SELECT new com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice(i.id, i.name, i.price, i.itemImageUrl, false)
+            SELECT new com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice(i.id, i.name, i.price, i.itemImageUrl, COUNT(wl.id) > 0)
             FROM Item i
             LEFT JOIN FETCH Wishlist wl
             ON wl.item.id = i.id AND wl.member.id = :memberId
             WHERE i.price BETWEEN :lowPrice AND :highPrice
+            GROUP BY i.id, i.name, i.price, i.itemImageUrl
             """)
     List<ItemSummaryWithSimilarPrice> getItemSummaryWithSimilarPriceListByPriceRange(@Param("lowPrice") int lowPrice, @Param("highPrice") int highPrice, @Param("memberId") long memberId);
 }

@@ -15,9 +15,12 @@ import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewImageResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import com.ttarum.review.exception.DuplicatedReviewException;
 import com.ttarum.review.exception.ReviewException;
+import com.ttarum.review.exception.ReviewForbiddenException;
 import com.ttarum.review.exception.ReviewNotFoundException;
+import com.ttarum.review.repository.ReviewImageRepository;
 import com.ttarum.review.repository.ReviewRepository;
 import com.ttarum.review.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +44,7 @@ public class ReviewService {
     private final ReviewValidator reviewValidator;
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
+    private final ReviewImageRepository reviewImageRepository;
 
     /**
      * 특정 제품의 리뷰들을 반환합니다.
@@ -172,5 +176,16 @@ public class ReviewService {
     private Item getItemById(final long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(ItemNotFoundException::new);
+    }
+
+    public ReviewUpdateResponse getReviewForUpdating(final long memberId, final long reviewId) {
+        Review review = getReviewById(reviewId);
+        if (!review.getMember().getId().equals(memberId)) {
+            throw new ReviewForbiddenException();
+        }
+        ReviewUpdateResponse reviewUpdateResponse = reviewRepository.findReviewUpdateResponseById(reviewId);
+        List<String> imageUrlList = reviewImageRepository.findUrlsByReviewId(reviewId);
+        imageUrlList.forEach(reviewUpdateResponse::addImageUrl);
+        return reviewUpdateResponse;
     }
 }

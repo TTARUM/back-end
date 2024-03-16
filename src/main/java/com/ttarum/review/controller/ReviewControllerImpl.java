@@ -5,6 +5,7 @@ import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewCreationResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import com.ttarum.review.service.ReviewImageService;
 import com.ttarum.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,14 @@ public class ReviewControllerImpl implements ReviewController {
                                              @AuthenticationPrincipal final CustomUserDetails user) {
         reviewService.updateReview(reviewId, request, user.getId());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/update")
+    @Override
+    public ResponseEntity<ReviewUpdateResponse> updateReview(@PathVariable final long reviewId,
+                                                             @AuthenticationPrincipal final CustomUserDetails user) {
+        ReviewUpdateResponse reviewUpdateResponse = reviewService.getReviewForUpdating(user.getId(), reviewId);
+        return ResponseEntity.ok(reviewUpdateResponse);
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewCreationResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -82,6 +83,9 @@ public interface ReviewController {
     })
     @PutMapping
     ResponseEntity<Void> updateReview(@PathVariable long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
+
+    @GetMapping
+    ResponseEntity<ReviewUpdateResponse> updateReview(@PathVariable long reviewId, @AuthenticationPrincipal CustomUserDetails user);
 
     /**
      * 리뷰 작성

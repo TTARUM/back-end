@@ -83,10 +83,11 @@ public class ItemService {
      * @param price 가격대
      * @return 제품 리스트
      */
-    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final int price) {
+    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final int price, final Pageable pageable) {
         int lowPrice = getLowPrice(price);
         int highPrice = price + 10000;
-        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice);
+
+        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, pageable);
         return new ItemSimilarPriceResponse(summaryList);
     }
 
@@ -107,10 +108,10 @@ public class ItemService {
      * @param price    가격대
      * @return 제품 리스트
      */
-    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final long memberId, final int price) {
+    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final long memberId, final int price, final Pageable pageable) {
         int lowPrice = getLowPrice(price);
         int highPrice = price + 10000;
-        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId);
+        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId, pageable);
         return new ItemSimilarPriceResponse(summaryList);
     }
 }

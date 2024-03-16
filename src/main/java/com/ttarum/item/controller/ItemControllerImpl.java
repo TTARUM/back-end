@@ -25,6 +25,7 @@ import java.util.Optional;
 public class ItemControllerImpl implements ItemController {
 
     private static final int ITEM_DEFAULT_SIZE_PER_PAGE = 9;
+    private static final int ITEM_SIMILAR_PRICE_DEFAULT_SIZE_PER_PAGE = 7;
     private final ItemService itemService;
     private final RedisService redisService;
 
@@ -66,12 +67,14 @@ public class ItemControllerImpl implements ItemController {
 
     @Override
     @GetMapping("/similar-price")
-    public ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser final Optional<User> user, final int price) {
+    public ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser final Optional<User> user, final int price, final Optional<Integer> page, final Optional<Integer> size) {
+
         ItemSimilarPriceResponse response;
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_SIMILAR_PRICE_DEFAULT_SIZE_PER_PAGE));
         if (user.isPresent()) {
-            response = itemService.getItemSummaryListWithSimilarPriceRange(user.get().getId(), price);
+            response = itemService.getItemSummaryListWithSimilarPriceRange(user.get().getId(), price, pageRequest);
         } else {
-            response = itemService.getItemSummaryListWithSimilarPriceRange(price);
+            response = itemService.getItemSummaryListWithSimilarPriceRange(price, pageRequest);
         }
         return ResponseEntity.ok(response);
     }

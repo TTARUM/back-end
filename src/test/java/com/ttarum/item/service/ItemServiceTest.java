@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -133,15 +132,16 @@ class ItemServiceTest {
                         .inWishList(false)
                         .build()
         );
+        PageRequest pageRequest = PageRequest.of(0, 7);
 
-        when(itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(price - 10000, price + 10000)).thenReturn(itemSummaryList);
+        when(itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(price - 10000, price + 10000, pageRequest)).thenReturn(itemSummaryList);
 
         // when
-        ItemSimilarPriceResponse response = itemService.getItemSummaryListWithSimilarPriceRange(price);
+        ItemSimilarPriceResponse response = itemService.getItemSummaryListWithSimilarPriceRange(price, pageRequest);
         List<ItemSummaryWithSimilarPrice> list = response.getItemSummaryList();
 
         // then
-        verify(itemRepository, times(1)).getItemSummaryWithSimilarPriceListByPriceRange(price - 10000, price + 10000);
+        verify(itemRepository, times(1)).getItemSummaryWithSimilarPriceListByPriceRange(price - 10000, price + 10000, pageRequest);
         assertThat(list).size().isEqualTo(1);
         assertThat(list.get(0).getItemId()).isEqualTo(1);
         assertThat(list.get(0).getItemName()).isEqualTo("item1");
@@ -165,15 +165,16 @@ class ItemServiceTest {
                         .inWishList(true)
                         .build()
         );
+        PageRequest pageRequest = PageRequest.of(0, 7);
 
-        when(itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(0, price + 10000, memberId)).thenReturn(itemSummaryList);
+        when(itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(0, price + 10000, memberId, pageRequest)).thenReturn(itemSummaryList);
 
         // when
-        ItemSimilarPriceResponse response = itemService.getItemSummaryListWithSimilarPriceRange(memberId, price);
+        ItemSimilarPriceResponse response = itemService.getItemSummaryListWithSimilarPriceRange(memberId, price, pageRequest);
         List<ItemSummaryWithSimilarPrice> list = response.getItemSummaryList();
 
         // then
-        verify(itemRepository, times(1)).getItemSummaryWithSimilarPriceListByPriceRange(0, price + 10000, memberId);
+        verify(itemRepository, times(1)).getItemSummaryWithSimilarPriceListByPriceRange(0, price + 10000, memberId, pageRequest);
         assertThat(list).size().isEqualTo(1);
         assertThat(list.get(0).getItemId()).isEqualTo(1);
         assertThat(list.get(0).getItemName()).isEqualTo("item1");

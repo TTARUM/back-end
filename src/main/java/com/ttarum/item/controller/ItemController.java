@@ -91,7 +91,11 @@ public interface ItemController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "조회 실패")
     })
-    @Parameter(name = "price", description = "가격", example = "17000")
+    @Parameters(value = {
+            @Parameter(name = "price", description = "가격", example = "17000"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "size", description = "페이지당 개수 (기본 값 7)", example = "7")
+    })
     @GetMapping
-    ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser Optional<User> user, int price);
+    ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser Optional<User> user, int price, Optional<Integer> page, Optional<Integer> size);
 }

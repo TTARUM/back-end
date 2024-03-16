@@ -59,7 +59,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             FROM Item i
             WHERE i.price BETWEEN :lowPrice AND :highPrice
             """)
-    List<ItemSummaryWithSimilarPrice> getItemSummaryWithSimilarPriceListByPriceRange(@Param("lowPrice") int lowPrice, @Param("highPrice") int highPrice);
+    List<ItemSummaryWithSimilarPrice> getItemSummaryWithSimilarPriceListByPriceRange(@Param("lowPrice") int lowPrice, @Param("highPrice") int highPrice, Pageable pageable);
 
     @Query("""
             SELECT new com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice(i.id, i.name, i.price, i.itemImageUrl, COUNT(wl.id) > 0)
@@ -69,5 +69,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             WHERE i.price BETWEEN :lowPrice AND :highPrice
             GROUP BY i.id, i.name, i.price, i.itemImageUrl
             """)
-    List<ItemSummaryWithSimilarPrice> getItemSummaryWithSimilarPriceListByPriceRange(@Param("lowPrice") int lowPrice, @Param("highPrice") int highPrice, @Param("memberId") long memberId);
+    List<ItemSummaryWithSimilarPrice> getItemSummaryWithSimilarPriceListByPriceRange(@Param("lowPrice") int lowPrice, @Param("highPrice") int highPrice, @Param("memberId") long memberId, Pageable pageable);
 }

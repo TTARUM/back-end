@@ -3,7 +3,8 @@ package com.ttarum.item.controller;
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
 import com.ttarum.item.dto.response.ItemDetailResponse;
-import com.ttarum.item.dto.response.ItemSummaryResponse;
+import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
+import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
 import com.ttarum.item.domain.redis.PopularItem;
 import com.ttarum.item.dto.response.PopularItemResponse;
 import com.ttarum.item.service.ItemService;
@@ -61,5 +62,17 @@ public class ItemControllerImpl implements ItemController {
     public ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") final int number) {
         List<PopularItem> popularSearchKeywords = redisService.getPopularSearchKeywords(number);
         return ResponseEntity.ok(new PopularItemResponse(popularSearchKeywords));
+    }
+
+    @Override
+    @GetMapping("/similar-price")
+    public ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser final Optional<User> user, final int price) {
+        ItemSimilarPriceResponse response;
+        if (user.isPresent()) {
+            response = itemService.getItemSummaryListWithSimilarPriceRange(user.get().getId(), price);
+        } else {
+            response = itemService.getItemSummaryListWithSimilarPriceRange(price);
+        }
+        return ResponseEntity.ok(response);
     }
 }

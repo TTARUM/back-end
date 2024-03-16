@@ -1,4 +1,4 @@
-package com.ttarum.item.dto.response;
+package com.ttarum.item.dto.response.summary;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

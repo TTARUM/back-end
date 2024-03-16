@@ -2,8 +2,10 @@ package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemDetailResponse;
-import com.ttarum.item.dto.response.ItemSummary;
-import com.ttarum.item.dto.response.ItemSummaryResponse;
+import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
+import com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice;
+import com.ttarum.item.dto.response.summary.ItemSummary;
+import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import jakarta.transaction.Transactional;
@@ -73,5 +75,28 @@ public class ItemService {
     private Item getItemById(final Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(ItemNotFoundException::new);
+    }
+
+    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final int price) {
+        int lowPrice = getLowPrice(price);
+        int highPrice = price + 10000;
+        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice);
+        return new ItemSimilarPriceResponse(summaryList);
+    }
+
+    private int getLowPrice(final int price) {
+        int lowPrice;
+        if (price < 10000)
+            lowPrice = 0;
+        else
+            lowPrice = price - 10000;
+        return lowPrice;
+    }
+
+    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final long memberId, final int price) {
+        int lowPrice = getLowPrice(price);
+        int highPrice = price + 10000;
+        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId);
+        return new ItemSimilarPriceResponse(summaryList);
     }
 }

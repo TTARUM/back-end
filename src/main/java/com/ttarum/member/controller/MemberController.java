@@ -1,10 +1,7 @@
 package com.ttarum.member.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
-import com.ttarum.member.dto.request.AddressUpsertRequest;
-import com.ttarum.member.dto.request.CartAdditionRequest;
-import com.ttarum.member.dto.request.CartUpdateRequest;
-import com.ttarum.member.dto.request.NormalMemberRegister;
+import com.ttarum.member.dto.request.*;
 import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
@@ -200,7 +197,7 @@ public interface MemberController {
     /**
      * 장바구니에서 제품 제거
      *
-     * @param itemId 제거할 제품의 Id 값
+     * @param cartDeletionRequest 제거할 제품의 Id 값이 담긴 객체
      * @param user   로그인한 사용자
      * @return 빈 응답
      */
@@ -209,9 +206,8 @@ public interface MemberController {
             @ApiResponse(responseCode = "200", description = "제거 성공"),
             @ApiResponse(responseCode = "400", description = "제거 실패")
     })
-    @Parameter(name = "itemId", description = "제거할 제품의 Id", example = "1")
     @DeleteMapping
-    ResponseEntity<Void> deleteFromCart(@PathVariable long itemId, @AuthenticationPrincipal CustomUserDetails user);
+    ResponseEntity<Void> deleteFromCart(@RequestBody CartDeletionRequest cartDeletionRequest, @AuthenticationPrincipal CustomUserDetails user);
 
     /**
      * 장바구니 수량 업데이트

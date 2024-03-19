@@ -22,6 +22,7 @@ import java.util.List;
 @Transactional
 public class ItemService {
 
+    private static final int SIMILAR_PRICE_RANGE = 10000;
     private final ItemRepository itemRepository;
 
     /**
@@ -85,7 +86,7 @@ public class ItemService {
      */
     public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final int price, final Pageable pageable) {
         int lowPrice = getLowPrice(price);
-        int highPrice = price + 10000;
+        int highPrice = price + SIMILAR_PRICE_RANGE;
 
         List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, pageable);
         return new ItemSimilarPriceResponse(summaryList);
@@ -93,10 +94,10 @@ public class ItemService {
 
     private int getLowPrice(final int price) {
         int lowPrice;
-        if (price < 10000)
+        if (price < SIMILAR_PRICE_RANGE)
             lowPrice = 0;
         else
-            lowPrice = price - 10000;
+            lowPrice = price - SIMILAR_PRICE_RANGE;
         return lowPrice;
     }
 

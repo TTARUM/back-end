@@ -77,6 +77,16 @@ public class ItemService {
                 .orElseThrow(ItemNotFoundException::new);
     }
 
+    /**
+     * 카테고리 인기상품 조회 메서드
+     * 현재 시각 기준 일주일 전으로 부터의 주문 건수를 이용해 인기상품을 조회합니다.
+     * 로그인한 회원의 Id 값을 받아 찜 목록에 포함이 되어있는지에 대한 여부값을 포함합니다.
+     *
+     * @param memberId     로그인한 회원의 Id 값
+     * @param categoryName 카테고리 이름
+     * @param pageable     페이지네이션 객체
+     * @return 조회된 제품 리스트
+     */
     public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final long memberId, final String categoryName, final Pageable pageable) {
         Instant after = Instant.now();
         Instant before = after.minus(7, ChronoUnit.DAYS);
@@ -87,6 +97,14 @@ public class ItemService {
         return new PopularItemInCategoryResponse(list);
     }
 
+    /**
+     * 카테고리 인기상품 조회 메서드
+     * 현재 시각 기준 일주일 전으로 부터의 주문 건수를 이용해 인기상품을 조회합니다.
+     *
+     * @param categoryName 카테고리 이름
+     * @param pageable     페이지네이션 객체
+     * @return 조회된 제품 리스트
+     */
     public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final String categoryName, final Pageable pageable) {
         Instant after = Instant.now();
         Instant before = after.minus(7, ChronoUnit.DAYS);

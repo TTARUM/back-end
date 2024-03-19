@@ -5,6 +5,7 @@ import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewCreationResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -82,6 +83,22 @@ public interface ReviewController {
     })
     @PutMapping
     ResponseEntity<Void> updateReview(@PathVariable long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
+
+    /**
+     * 리뷰 업데이트를 위한 데이터 조회
+     *
+     * @param reviewId 조회할 리뷰의 Id 값
+     * @param user     로그인한 회원
+     * @return 리뷰 데이터
+     */
+    @Operation(summary = "리뷰 업데이트를 위한 데이터 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "조회 실패")
+    })
+    @Parameter(name = "reviewId", description = "조회할 리뷰의 Id 값", example = "1")
+    @GetMapping
+    ResponseEntity<ReviewUpdateResponse> updateReview(@PathVariable long reviewId, @AuthenticationPrincipal CustomUserDetails user);
 
     /**
      * 리뷰 작성

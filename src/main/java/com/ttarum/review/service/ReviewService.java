@@ -15,9 +15,12 @@ import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewImageResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import com.ttarum.review.exception.DuplicatedReviewException;
 import com.ttarum.review.exception.ReviewException;
+import com.ttarum.review.exception.ReviewForbiddenException;
 import com.ttarum.review.exception.ReviewNotFoundException;
+import com.ttarum.review.repository.ReviewImageRepository;
 import com.ttarum.review.repository.ReviewRepository;
 import com.ttarum.review.validator.ReviewValidator;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +44,7 @@ public class ReviewService {
     private final ReviewValidator reviewValidator;
     private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
+    private final ReviewImageRepository reviewImageRepository;
 
     /**
      * 특정 제품의 리뷰들을 반환합니다.
@@ -172,5 +176,25 @@ public class ReviewService {
     private Item getItemById(final long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(ItemNotFoundException::new);
+    }
+
+    /**
+     * 리뷰 업데이트를 위한 조회 메서드
+     *
+     * @param memberId 리뷰를 작성한 회원의 Id 값
+     * @param reviewId 조회할 리뷰의 Id 값
+     * @return 리뷰 데이터가 담긴 객체
+     * @throws ReviewNotFoundException  리뷰가 없을 경우 발생한다.
+     * @throws ReviewForbiddenException 다른 회원의 리뷰를 조회하는 경우 발생한다.
+     */
+    public ReviewUpdateResponse getReviewForUpdating(final long memberId, final long reviewId) {
+        Review review = getReviewById(reviewId);
+        if (!review.getMember().getId().equals(memberId)) {
+            throw new ReviewForbiddenException();
+        }
+        ReviewUpdateResponse reviewUpdateResponse = reviewRepository.findReviewUpdateResponseById(reviewId);
+        List<String> imageUrlList = reviewImageRepository.findUrlsByReviewId(reviewId);
+        imageUrlList.forEach(reviewUpdateResponse::addImageUrl);
+        return reviewUpdateResponse;
     }
 }

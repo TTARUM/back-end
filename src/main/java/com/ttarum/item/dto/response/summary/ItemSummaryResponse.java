@@ -1,4 +1,4 @@
-package com.ttarum.item.dto.response;
+package com.ttarum.item.dto.response.summary;
 
 import lombok.Getter;
 

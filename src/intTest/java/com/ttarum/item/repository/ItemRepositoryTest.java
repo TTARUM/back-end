@@ -17,4 +17,16 @@ class ItemRepositoryTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
         itemRepository.getItemSummaryListByName(query, pageRequest);
     }
+
+    @Test
+    void getItemSummaryWithSimilarPriceListByPriceRange() {
+        // given
+        long memberId = 1;
+        int lowPrice = 10000;
+        int highPrice = 20000;
+        PageRequest pageRequest = PageRequest.of(0, 7);
+
+        // when
+        itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId, pageRequest);
+    }
 }

@@ -1,6 +1,7 @@
 package com.ttarum.member.domain;
 
 import com.ttarum.common.domain.UpdatableEntity;
+import com.ttarum.order.domain.Order;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,5 +38,9 @@ public class Member extends UpdatableEntity {
     @PrePersist
     public void prePersist() {
         this.isDeleted = false;
+    }
+
+    public boolean isMyOrder(final Order order) {
+        return equals(order.getMember());
     }
 }

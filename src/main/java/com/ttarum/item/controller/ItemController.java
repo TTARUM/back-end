@@ -2,6 +2,10 @@ package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
+import com.ttarum.item.dto.response.ItemDetailResponse;
+import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
+import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
+import com.ttarum.item.dto.response.PopularItemResponse;
 import com.ttarum.item.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -75,6 +79,26 @@ public interface ItemController {
     @Parameter(name = "number", description = "조회할 인기 검색어 개수 (기본 값 5)", example = "5")
     @GetMapping
     ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") int number);
+
+    /**
+     * 가격대가 비슷한 술 조회
+     *
+     * @param user  로그인한 사용자 여부를 확인하기 위한 객체
+     * @param price 가격대
+     * @return 조회된 제품 리스트
+     */
+    @Operation(summary = "가격대가 비슷한 술 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "조회 실패")
+    })
+    @Parameters(value = {
+            @Parameter(name = "price", description = "가격", example = "17000"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "size", description = "페이지당 개수 (기본 값 7)", example = "7")
+    })
+    @GetMapping
+    ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser Optional<User> user, int price, Optional<Integer> page, Optional<Integer> size);
 
     /**
      * 카테고리 인기상품 조회

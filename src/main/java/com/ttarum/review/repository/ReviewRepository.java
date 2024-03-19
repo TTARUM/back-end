@@ -3,6 +3,7 @@ package com.ttarum.review.repository;
 import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -46,4 +47,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r WHERE r.order.id = :orderId AND r.item.id = :itemId")
     Optional<Review> findReviewByOrderIdAndItemId(@Param("orderId") long orderId, @Param("itemId")  long itemId);
+
+    @Query("""
+            SELECT new com.ttarum.review.dto.response.ReviewUpdateResponse(r.item.name, r.content, r.createdAt)
+            FROM Review r
+            WHERE r.id = :reviewId
+            """)
+    ReviewUpdateResponse findReviewUpdateResponseById(@Param("reviewId") long reviewId);
 }

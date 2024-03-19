@@ -1,6 +1,11 @@
 package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.dto.response.ItemDetailResponse;
+import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
+import com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice;
+import com.ttarum.item.dto.response.summary.ItemSummary;
+import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
 import com.ttarum.item.dto.response.*;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
@@ -21,6 +26,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ItemService {
 
+    private static final int SIMILAR_PRICE_RANGE = 10000;
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
 
@@ -75,6 +81,44 @@ public class ItemService {
     private Item getItemById(final Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(ItemNotFoundException::new);
+    }
+
+    /**
+     * 가격대가 비슷한 제품 조회 메서드
+     *
+     * @param price 가격대
+     * @return 제품 리스트
+     */
+    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final int price, final Pageable pageable) {
+        int lowPrice = getLowPrice(price);
+        int highPrice = price + SIMILAR_PRICE_RANGE;
+
+        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, pageable);
+        return new ItemSimilarPriceResponse(summaryList);
+    }
+
+    private int getLowPrice(final int price) {
+        int lowPrice;
+        if (price < SIMILAR_PRICE_RANGE)
+            lowPrice = 0;
+        else
+            lowPrice = price - SIMILAR_PRICE_RANGE;
+        return lowPrice;
+    }
+
+    /**
+     * 가격대가 비슷한 제품 조회 메서드
+     * 로그인한 경우 사용되며 찜목록에 포함되었는지에 대한 여부가 포함됩니다.
+     *
+     * @param memberId 회원의 Id 값
+     * @param price    가격대
+     * @return 제품 리스트
+     */
+    public ItemSimilarPriceResponse getItemSummaryListWithSimilarPriceRange(final long memberId, final int price, final Pageable pageable) {
+        int lowPrice = getLowPrice(price);
+        int highPrice = price + 10000;
+        List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId, pageable);
+        return new ItemSimilarPriceResponse(summaryList);
     }
 
     /**

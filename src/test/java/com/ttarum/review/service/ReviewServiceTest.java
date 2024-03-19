@@ -14,9 +14,12 @@ import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewResponse;
+import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import com.ttarum.review.exception.DuplicatedReviewException;
 import com.ttarum.review.exception.ReviewException;
+import com.ttarum.review.exception.ReviewForbiddenException;
 import com.ttarum.review.exception.ReviewNotFoundException;
+import com.ttarum.review.repository.ReviewImageRepository;
 import com.ttarum.review.repository.ReviewRepository;
 import com.ttarum.review.validator.ReviewValidator;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +50,9 @@ class ReviewServiceTest {
 
     @Mock
     ReviewRepository reviewRepository;
+
+    @Mock
+    ReviewImageRepository reviewImageRepository;
 
     @Mock
     ItemRepository itemRepository;
@@ -158,6 +165,7 @@ class ReviewServiceTest {
         assertThatThrownBy(() -> reviewService.deleteReview(reviewId, memberId))
                 .isInstanceOf(ReviewException.class);
     }
+
     @Test
     @DisplayName("리뷰를 수정할 수 있다.")
     void updateReview() {
@@ -438,5 +446,74 @@ class ReviewServiceTest {
         // when & then
         assertThatThrownBy(() -> reviewService.createReview(memberId, request))
                 .isInstanceOf(DuplicatedReviewException.class);
+    }
+
+    @Test
+    @DisplayName("리뷰 업데이트를 위한 데이터 조회")
+    void getReviewForUpdating() {
+        // given
+        long memberId = 1;
+        long reviewId = 1;
+        Instant createdAt = Instant.now();
+        Review review = Review.builder().
+                member(Member.builder()
+                        .id(memberId)
+                        .build())
+                .build();
+        ReviewUpdateResponse reviewUpdateResponse = ReviewUpdateResponse.builder()
+                .itemName("제품 이름")
+                .content("리뷰 내용")
+                .createdAt(createdAt)
+                .build();
+        List<String> imageUrlList = List.of("ttarum.image.url1", "ttarum.image.url2");
+
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+        when(reviewRepository.findReviewUpdateResponseById(reviewId)).thenReturn(reviewUpdateResponse);
+        when(reviewImageRepository.findUrlsByReviewId(reviewId)).thenReturn(imageUrlList);
+
+        // when
+        ReviewUpdateResponse response = reviewService.getReviewForUpdating(memberId, reviewId);
+
+        // then
+        verify(reviewRepository, times(1)).findById(reviewId);
+        verify(reviewRepository, times(1)).findReviewUpdateResponseById(reviewId);
+        verify(reviewImageRepository, times(1)).findUrlsByReviewId(reviewId);
+        assertThat(response.getItemName()).isEqualTo("제품 이름");
+        assertThat(response.getContent()).isEqualTo("리뷰 내용");
+        assertThat(response.getCreatedAt()).isEqualTo(createdAt);
+        assertThat(response.getImageUrlList()).isEqualTo(imageUrlList);
+    }
+
+    @Test
+    @DisplayName("리뷰 업데이트를 위한 데이터 조회 - 존재하지 않는 리뷰의 경우 예외가 발생한다.")
+    void getReviewForUpdatingFailedByInvalidReview() {
+        // given
+        long memberId = 1;
+        long reviewId = 1;
+
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.getReviewForUpdating(memberId, reviewId))
+                .isInstanceOf(ReviewNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("리뷰 업데이트를 위한 데이터 조회 - 다른 회원의 리뷰의 경우 예외가 발생한다.")
+    void getReviewForUpdatingFailedByForbiddenReview() {
+        // given
+        long memberId = 1;
+        long reviewId = 1;
+        Review review = Review.builder().
+                member(Member.builder()
+                        .id(2L)
+                        .build())
+                .build();
+
+        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.getReviewForUpdating(memberId, reviewId))
+                .isInstanceOf(ReviewForbiddenException.class);
     }
 }

@@ -21,6 +21,18 @@ class ItemRepositoryTest {
     }
 
     @Test
+    void getItemSummaryWithSimilarPriceListByPriceRange() {
+        // given
+        long memberId = 1;
+        int lowPrice = 10000;
+        int highPrice = 20000;
+        PageRequest pageRequest = PageRequest.of(0, 7);
+
+        // when
+        itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId, pageRequest);
+    }
+
+    @Test
     void getPopularItemSummaryListInCategory() {
         // given
         List<Long> itemIdList = List.of(1L, 2L, 3L);

@@ -36,7 +36,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findOrderListByMemberId(@Param("memberId") long memberId, Pageable pageable);
 
     @Query("""
-            SELECT oi.item.id
+            SELECT DISTINCT oi.item.id
             FROM Order o
             LEFT JOIN FETCH OrderItem oi
             ON oi.order.id = o.id

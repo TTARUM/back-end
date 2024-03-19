@@ -2,6 +2,7 @@ package com.ttarum.item.repository;
 
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.dto.response.ItemSummary;
+import com.ttarum.item.dto.response.PopularItemSummaryInCategory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -52,4 +53,20 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             GROUP BY i.id, i.category.name, i.name, i.price, i.itemImageUrl, i.createdAt
             """)
     List<ItemSummary> getItemSummaryListByName(@Param("query") String query, Pageable pageable, @Param("memberId") Long memberId);
+
+    @Query("""
+            SELECT new com.ttarum.item.dto.response.PopularItemSummaryInCategory(i.id, i.name, i.price, i.itemImageUrl, (COUNT(wl.id) > 0))
+            FROM Item i
+            LEFT JOIN FETCH Wishlist wl
+            ON wl.item.id =  i.id AND wl.member.id = :memberId
+            WHERE i.id in :ids
+            """)
+    List<PopularItemSummaryInCategory> getPopularItemSummaryListInCategory(@Param("ids") List<Long> itemIdList, @Param("memberId") long memberId);
+
+    @Query("""
+            SELECT new com.ttarum.item.dto.response.PopularItemSummaryInCategory(i.id, i.name, i.price, i.itemImageUrl, false)
+            FROM Item i
+            WHERE i.id in :ids
+            """)
+    List<PopularItemSummaryInCategory> getPopularItemSummaryListInCategory(@Param("ids") List<Long> itemIdList);
 }

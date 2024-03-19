@@ -2,9 +2,7 @@ package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
-import com.ttarum.item.dto.response.ItemDetailResponse;
-import com.ttarum.item.dto.response.ItemSummaryResponse;
-import com.ttarum.item.dto.response.PopularItemResponse;
+import com.ttarum.item.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -77,4 +75,7 @@ public interface ItemController {
     @Parameter(name = "number", description = "조회할 인기 검색어 개수 (기본 값 5)", example = "5")
     @GetMapping
     ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") int number);
+
+    @GetMapping
+    ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser Optional<User> user, String category, Optional<Integer> page, Optional<Integer> size);
 }

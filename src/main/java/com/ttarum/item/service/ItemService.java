@@ -1,26 +1,28 @@
 package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
-import com.ttarum.item.dto.response.ItemDetailResponse;
-import com.ttarum.item.dto.response.ItemSummary;
-import com.ttarum.item.dto.response.ItemSummaryResponse;
+import com.ttarum.item.dto.response.*;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
-import jakarta.transaction.Transactional;
+import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final OrderRepository orderRepository;
 
     /**
      * 제품의 상세정보를 반환합니다.
@@ -73,5 +75,25 @@ public class ItemService {
     private Item getItemById(final Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(ItemNotFoundException::new);
+    }
+
+    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final long memberId, final String categoryName, final Pageable pageable) {
+        Instant after = Instant.now();
+        Instant before = after.minus(7, ChronoUnit.DAYS);
+        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
+
+        List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList, memberId);
+
+        return new PopularItemInCategoryResponse(list);
+    }
+
+    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final String categoryName, final Pageable pageable) {
+        Instant after = Instant.now();
+        Instant before = after.minus(7, ChronoUnit.DAYS);
+        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
+
+        List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList);
+
+        return new PopularItemInCategoryResponse(list);
     }
 }

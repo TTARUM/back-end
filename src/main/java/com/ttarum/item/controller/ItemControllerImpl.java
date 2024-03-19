@@ -2,10 +2,8 @@ package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.User;
-import com.ttarum.item.dto.response.ItemDetailResponse;
-import com.ttarum.item.dto.response.ItemSummaryResponse;
+import com.ttarum.item.dto.response.*;
 import com.ttarum.item.domain.redis.PopularItem;
-import com.ttarum.item.dto.response.PopularItemResponse;
 import com.ttarum.item.service.ItemService;
 import com.ttarum.item.service.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +22,7 @@ import java.util.Optional;
 public class ItemControllerImpl implements ItemController {
 
     private static final int ITEM_DEFAULT_SIZE_PER_PAGE = 9;
+    private static final int ITEM_POPULAR_IN_CATEGORY_DEFAULT_SIZE_PER_PAGE = 7;
     private final ItemService itemService;
     private final RedisService redisService;
 
@@ -61,5 +60,18 @@ public class ItemControllerImpl implements ItemController {
     public ResponseEntity<PopularItemResponse> getPopularItemList(@RequestParam(required = false, defaultValue = "5") final int number) {
         List<PopularItem> popularSearchKeywords = redisService.getPopularSearchKeywords(number);
         return ResponseEntity.ok(new PopularItemResponse(popularSearchKeywords));
+    }
+
+    @Override
+    @GetMapping("/popular-in-category")
+    public ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser final Optional<User> user, final String category, final Optional<Integer> page, final Optional<Integer> size) {
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_POPULAR_IN_CATEGORY_DEFAULT_SIZE_PER_PAGE));
+        PopularItemInCategoryResponse response;
+        if (user.isPresent()) {
+            response = itemService.getPopularItemSummaryListInCategory(user.get().getId(), category, pageRequest);
+        } else {
+            response = itemService.getPopularItemSummaryListInCategory(category, pageRequest);
+        }
+        return ResponseEntity.ok(response);
     }
 }

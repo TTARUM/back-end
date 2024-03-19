@@ -4,6 +4,7 @@ import com.ttarum.member.domain.Cart;
 import com.ttarum.member.domain.CartId;
 import com.ttarum.member.dto.response.CartResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,4 +26,8 @@ public interface CartRepository extends JpaRepository<Cart, CartId> {
             WHERE c.member.id = :memberId
             """)
     List<CartResponse> getCartResponseListByMemberId(@Param("memberId") long memberId);
+
+    @Modifying
+    @Query("DELETE FROM Cart c WHERE c.id in :ids")
+    void deleteAllByIdList(@Param("ids") List<CartId> ids);
 }

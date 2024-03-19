@@ -6,6 +6,7 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
+import com.ttarum.member.dto.request.CartDeletionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
@@ -302,14 +303,17 @@ public class MemberService {
     }
 
     /**
-     * 특정 회원의 장바구니에서 특정 제품을 제거한다.
+     * 특정 회원의 장바구니에서 특정 제품들을 제거한다.
      *
      * @param memberId 회원의 Id 값
-     * @param itemId   제품의 Id 값
+     * @param cartDeletionRequest   제품의 Id 값이 담긴 객체
      */
     @Transactional
-    public void deleteFromCart(final long memberId, final long itemId) {
-        cartRepository.deleteById(new CartId(memberId, itemId));
+    public void deleteFromCart(final long memberId, final CartDeletionRequest cartDeletionRequest) {
+        List<CartId> idList = cartDeletionRequest.getItemIdList().stream()
+                .map(c -> new CartId(memberId, c))
+                .toList();
+        cartRepository.deleteAllByIdList(idList);
     }
 
     /**

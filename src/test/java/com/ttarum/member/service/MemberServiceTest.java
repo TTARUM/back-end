@@ -4,6 +4,7 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
+import com.ttarum.member.dto.request.CartDeletionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.ItemSummaryResponseForWishlist;
@@ -506,14 +507,15 @@ class MemberServiceTest {
         // given
         long memberId = 1;
         long itemId = 1;
+        CartDeletionRequest cartDeletionRequest = new CartDeletionRequest(List.of(itemId));
 
-        doNothing().when(cartRepository).deleteById(any());
+        doNothing().when(cartRepository).deleteAllByIdList(any());
 
         // when
-        memberService.deleteFromCart(memberId, itemId);
+        memberService.deleteFromCart(memberId, cartDeletionRequest);
 
         // then
-        verify(cartRepository, times(1)).deleteById(any());
+        verify(cartRepository, times(1)).deleteAllByIdList(any());
     }
 
     @Test

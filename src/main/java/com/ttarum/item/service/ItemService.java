@@ -12,7 +12,6 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -160,11 +159,27 @@ public class ItemService {
         return new PopularItemInCategoryResponse(list);
     }
 
+    /**
+     * 카테고리별 제품 조회 메서드
+     *
+     * @param categoryName 카테고리 이름
+     * @param pageable     페이지네이션 객체
+     * @return 조회된 제품 리스트
+     */
     public ItemSummaryResponse getItemSummaryListByCategory(final String categoryName, final Pageable pageable) {
         List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryName, pageable);
         return new ItemSummaryResponse(itemSummaryList);
     }
 
+    /**
+     * 카테고리별 제품 조회 메서드
+     * 회원의 Id 값을 이용해 찜 목록 포함 여부를 함께 조회합니다.
+     *
+     * @param memberId     회원의 Id 값
+     * @param categoryName 카테고리 이름
+     * @param pageable     페이지네이션 객체
+     * @return 조회된 제품 리스트
+     */
     public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final String categoryName, final Pageable pageable) {
         List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryName, pageable);
         return new ItemSummaryResponse(itemSummaryList);

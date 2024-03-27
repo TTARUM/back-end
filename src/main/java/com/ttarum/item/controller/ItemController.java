@@ -119,6 +119,22 @@ public interface ItemController {
     @GetMapping
     ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser Optional<User> user, String category, Optional<Integer> page, Optional<Integer> size);
 
+    /**
+     * 카테고리별 제품 조회
+     *
+     * @param user     로그인한 회원
+     * @param category 카테고리 이름
+     * @param page     페이지 넘버
+     * @param size     페이지당 조회할 제품의 수
+     * @return 조회된 제품 리스트
+     */
+    @Operation(summary = "카테고리별 제품 조회")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @Parameters(value = {
+            @Parameter(name = "user", hidden = true),
+            @Parameter(name = "page", description = "페이지 넘버 (기본값 0)", example = "0"),
+            @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9)", example = "9")
+    })
     @GetMapping
     ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@VerificationUser Optional<User> user, @PathVariable String category, Optional<Integer> page, Optional<Integer> size);
 }

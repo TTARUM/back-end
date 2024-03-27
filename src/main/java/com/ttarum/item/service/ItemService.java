@@ -160,13 +160,13 @@ public class ItemService {
         return new PopularItemInCategoryResponse(list);
     }
 
-    public ItemSummaryResponse getItemSummaryListByCategory(final String categoryName, final PageRequest pageRequest) {
-        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryName, pageRequest);
+    public ItemSummaryResponse getItemSummaryListByCategory(final String categoryName, final Pageable pageable) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryName, pageable);
         return new ItemSummaryResponse(itemSummaryList);
     }
 
-    public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final String categoryName, final PageRequest pageRequest) {
-        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryName, pageRequest);
+    public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final String categoryName, final Pageable pageable) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryName, pageable);
         return new ItemSummaryResponse(itemSummaryList);
     }
 }

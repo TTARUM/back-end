@@ -6,24 +6,29 @@ import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice;
 import com.ttarum.item.dto.response.summary.ItemSummary;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
+import com.ttarum.item.dto.response.*;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
-import jakarta.transaction.Transactional;
+import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class ItemService {
 
     private static final int SIMILAR_PRICE_RANGE = 10000;
     private final ItemRepository itemRepository;
+    private final OrderRepository orderRepository;
 
     /**
      * 제품의 상세정보를 반환합니다.
@@ -114,5 +119,43 @@ public class ItemService {
         int highPrice = price + 10000;
         List<ItemSummaryWithSimilarPrice> summaryList = itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId, pageable);
         return new ItemSimilarPriceResponse(summaryList);
+    }
+
+    /**
+     * 카테고리 인기상품 조회 메서드
+     * 현재 시각 기준 일주일 전으로 부터의 주문 건수를 이용해 인기상품을 조회합니다.
+     * 로그인한 회원의 Id 값을 받아 찜 목록에 포함이 되어있는지에 대한 여부값을 포함합니다.
+     *
+     * @param memberId     로그인한 회원의 Id 값
+     * @param categoryName 카테고리 이름
+     * @param pageable     페이지네이션 객체
+     * @return 조회된 제품 리스트
+     */
+    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final long memberId, final String categoryName, final Pageable pageable) {
+        Instant after = Instant.now();
+        Instant before = after.minus(7, ChronoUnit.DAYS);
+        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
+
+        List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList, memberId);
+
+        return new PopularItemInCategoryResponse(list);
+    }
+
+    /**
+     * 카테고리 인기상품 조회 메서드
+     * 현재 시각 기준 일주일 전으로 부터의 주문 건수를 이용해 인기상품을 조회합니다.
+     *
+     * @param categoryName 카테고리 이름
+     * @param pageable     페이지네이션 객체
+     * @return 조회된 제품 리스트
+     */
+    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final String categoryName, final Pageable pageable) {
+        Instant after = Instant.now();
+        Instant before = after.minus(7, ChronoUnit.DAYS);
+        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
+
+        List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList);
+
+        return new PopularItemInCategoryResponse(list);
     }
 }

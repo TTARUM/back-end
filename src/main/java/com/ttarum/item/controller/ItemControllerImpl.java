@@ -5,8 +5,8 @@ import com.ttarum.common.dto.user.User;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
+import com.ttarum.item.dto.response.*;
 import com.ttarum.item.domain.redis.PopularItem;
-import com.ttarum.item.dto.response.PopularItemResponse;
 import com.ttarum.item.service.ItemService;
 import com.ttarum.item.service.RedisService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +26,7 @@ public class ItemControllerImpl implements ItemController {
 
     private static final int ITEM_DEFAULT_SIZE_PER_PAGE = 9;
     private static final int ITEM_SIMILAR_PRICE_DEFAULT_SIZE_PER_PAGE = 7;
+    private static final int ITEM_POPULAR_IN_CATEGORY_DEFAULT_SIZE_PER_PAGE = 7;
     private final ItemService itemService;
     private final RedisService redisService;
 
@@ -75,6 +76,19 @@ public class ItemControllerImpl implements ItemController {
             response = itemService.getItemSummaryListWithSimilarPriceRange(user.get().getId(), price, pageRequest);
         } else {
             response = itemService.getItemSummaryListWithSimilarPriceRange(price, pageRequest);
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @GetMapping("/popular-in-category")
+    public ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser final Optional<User> user, final String category, final Optional<Integer> page, final Optional<Integer> size) {
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_POPULAR_IN_CATEGORY_DEFAULT_SIZE_PER_PAGE));
+        PopularItemInCategoryResponse response;
+        if (user.isPresent()) {
+            response = itemService.getPopularItemSummaryListInCategory(user.get().getId(), category, pageRequest);
+        } else {
+            response = itemService.getPopularItemSummaryListInCategory(category, pageRequest);
         }
         return ResponseEntity.ok(response);
     }

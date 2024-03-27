@@ -6,6 +6,7 @@ import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
 import com.ttarum.item.dto.response.PopularItemResponse;
+import com.ttarum.item.dto.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -98,4 +99,23 @@ public interface ItemController {
     })
     @GetMapping
     ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser Optional<User> user, int price, Optional<Integer> page, Optional<Integer> size);
+
+    /**
+     * 카테고리 인기상품 조회
+     *
+     * @param user     로그인한 회원
+     * @param category 카테고리 이름
+     * @param page     페이지 넘버
+     * @param size     페이지당 조회할 제품의 수
+     * @return 조회된 인기상품
+     */
+    @Operation(summary = "카테고리 인기상품 조회")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @Parameters(value = {
+            @Parameter(name = "category", description = "카테고리 이름", example = "red"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본값 0)", example = "1"),
+            @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 7)", example = "7")
+    })
+    @GetMapping
+    ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser Optional<User> user, String category, Optional<Integer> page, Optional<Integer> size);
 }

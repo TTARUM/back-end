@@ -92,4 +92,17 @@ public class ItemControllerImpl implements ItemController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    @GetMapping("/{category}")
+    public ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@VerificationUser final Optional<User> user, @PathVariable final String category, final Optional<Integer> page, final Optional<Integer> size) {
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_DEFAULT_SIZE_PER_PAGE));
+        ItemSummaryResponse response;
+        if (user.isPresent()) {
+            response = itemService.getItemSummaryListByCategory(user.get().getId(), category, pageRequest);
+        } else {
+            response = itemService.getItemSummaryListByCategory(category, pageRequest);
+        }
+        return ResponseEntity.ok(response);
+    }
 }

@@ -118,4 +118,7 @@ public interface ItemController {
     })
     @GetMapping
     ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser Optional<User> user, String category, Optional<Integer> page, Optional<Integer> size);
+
+    @GetMapping
+    ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@VerificationUser Optional<User> user, @PathVariable String category, Optional<Integer> page, Optional<Integer> size);
 }

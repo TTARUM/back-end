@@ -12,6 +12,7 @@ import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,5 +158,15 @@ public class ItemService {
         List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList);
 
         return new PopularItemInCategoryResponse(list);
+    }
+
+    public ItemSummaryResponse getItemSummaryListByCategory(final String categoryName, final PageRequest pageRequest) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryName, pageRequest);
+        return new ItemSummaryResponse(itemSummaryList);
+    }
+
+    public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final String categoryName, final PageRequest pageRequest) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryName, pageRequest);
+        return new ItemSummaryResponse(itemSummaryList);
     }
 }

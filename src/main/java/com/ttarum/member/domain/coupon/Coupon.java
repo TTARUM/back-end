@@ -20,4 +20,8 @@ public class Coupon {
     private CouponStrategy couponStrategy;
 
     private int value;
+
+    public double calculate(int existingPrice) {
+        return couponStrategy.calculate(existingPrice, value);
+    }
 }

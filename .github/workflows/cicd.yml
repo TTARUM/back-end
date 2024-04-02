@@ -26,49 +26,20 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Check if the image  tag exists in ECR
-        id: check-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: |
-          if aws ecr describe-images --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --region $AWS_REGION 2>&1 | grep -q "ImageNotFoundException"
-          then
-            echo "IMAGE_EXISTS=false" >> $GITHUB_ENV
-          else
-            echo "IMAGE_EXISTS=true" >> $GITHUB_ENV
-          fi
-          echo "IMAGE_NAME=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV 
-
-      - name: Build and push the Docker image to Amazon ECR
-        if: env.IMAGE_EXISTS == 'false'
-        id: build-image
-        run: |
-          docker build -t ${{ env.IMAGE_NAME }} .
-          docker push ${{ env.IMAGE_NAME }}
-
       - name: Deploy to EC2
         run: |
           # Save private key to a file
           KEY_FILE=$(mktemp)
           echo "$SSH_PRIVATE_KEY" > "$KEY_FILE"
           chmod 600 "$KEY_FILE"
-          
-          # Save image name to a file
-          echo "IMAGE_NAME=${{ env.IMAGE_NAME }}" > .env
 
           # Deploy using docker-compose on the EC2 instance
-          scp -o StrictHostKeyChecking=no -i "$KEY_FILE" docker-compose.yml $EC2_USER@$EC2_HOST:/tmp/docker-compose.yml
-          scp -o StrictHostKeyChecking=no -i "$KEY_FILE" .env $EC2_USER@$EC2_HOST:/tmp/.env
-          scp -r -o StrictHostKeyChecking=no -i "$KEY_FILE" ./initdb $EC2_USER@$EC2_HOST:/tmp/initdb
           ssh -o StrictHostKeyChecking=no -i "$KEY_FILE" $EC2_USER@$EC2_HOST "
-            docker compose -f /tmp/docker-compose.yml --env-file /tmp/.env pull
-            docker compose -f /tmp/docker-compose.yml --env-file=/tmp/.env up -d
+            cd back-end
+            git pull
+            docker compose down
+            docker compose build
+            docker compose up -d
           "
 
           # Clean up the private key file

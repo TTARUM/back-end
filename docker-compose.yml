@@ -7,13 +7,8 @@ services:
     restart: always
     ports:
       - "80:8080"
-    environment:
-      - DATABASE_URL=jdbc:mysql://mysql:3306/ttarum
-      - DATABASE_USERNAME=root
-      - DATABASE_PASSWORD=secret
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=secret
+    env_file:
+      - /home/ec2-user/.env
     depends_on:
       - mysql
       - redis

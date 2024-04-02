@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -34,7 +35,7 @@ public class UserVerificationFilter extends OncePerRequestFilter {
         Optional<User> user = Optional.empty();
 
         String jwt = jwtUtil.getJwtFromRequest(request);
-        if (jwtUtil.validateToken(jwt)) {
+        if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
             String memberId = jwtUtil.extractMemberId(jwt);
             Optional<Member> m = memberRepository.findById(Long.parseLong(memberId));
             if (m.isPresent()) {

@@ -2,6 +2,7 @@ package com.ttarum.inquiry.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.common.annotation.VerificationUser;
+import com.ttarum.common.dto.user.LoggedInUser;
 import com.ttarum.common.dto.user.User;
 import com.ttarum.inquiry.dto.response.InquiryDetailedResponse;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
@@ -37,7 +38,7 @@ public class InquiryControllerImpl implements InquiryController {
     @GetMapping("/list")
     @Override
     public ResponseEntity<List<InquirySummaryResponse>> getInquirySummaryResponse(final long itemId,
-                                                                                  @VerificationUser final Optional<User> user,
+                                                                                  @VerificationUser final Optional<LoggedInUser> user,
                                                                                   Optional<Integer> page,
                                                                                   Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(INQUIRY_DEFAULT_SIZE_PER_PAGE));
@@ -52,7 +53,7 @@ public class InquiryControllerImpl implements InquiryController {
 
     @GetMapping("/{inquiryId}")
     @Override
-    public ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(@PathVariable final long inquiryId, @VerificationUser final Optional<User> user) {
+    public ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(@PathVariable final long inquiryId, @VerificationUser final Optional<LoggedInUser> user) {
         InquiryDetailedResponse response;
         if (user.isPresent()) {
             response = inquiryService.getInquiryDetailedResponse(inquiryId, user.get().getId());

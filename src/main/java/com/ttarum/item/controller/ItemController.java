@@ -1,7 +1,7 @@
 package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
-import com.ttarum.common.dto.user.User;
+import com.ttarum.common.dto.user.LoggedInUser;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
@@ -58,13 +58,12 @@ public interface ItemController {
     @ApiResponse(responseCode = "200", description = "성공")
     @Parameters(value = {
             @Parameter(name = "query", description = "검색어"),
-            @Parameter(name = "user", hidden = true),
             @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9개)", example = "9")
     })
     @GetMapping
     ResponseEntity<ItemSummaryResponse> getSummary(@RequestParam(required = false) final String query,
-                                                   @VerificationUser final Optional<User> user,
+                                                   @VerificationUser final Optional<LoggedInUser> user,
                                                    final Optional<Integer> page,
                                                    final Optional<Integer> size);
 
@@ -98,7 +97,7 @@ public interface ItemController {
             @Parameter(name = "size", description = "페이지당 개수 (기본 값 7)", example = "7")
     })
     @GetMapping
-    ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser Optional<User> user, int price, Optional<Integer> page, Optional<Integer> size);
+    ResponseEntity<ItemSimilarPriceResponse> getSummaryWithSimilarPriceRange(@VerificationUser Optional<LoggedInUser> user, int price, Optional<Integer> page, Optional<Integer> size);
 
     /**
      * 카테고리 인기상품 조회
@@ -117,7 +116,7 @@ public interface ItemController {
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 7)", example = "7")
     })
     @GetMapping
-    ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser Optional<User> user, String category, Optional<Integer> page, Optional<Integer> size);
+    ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(@VerificationUser Optional<LoggedInUser> user, String category, Optional<Integer> page, Optional<Integer> size);
 
     /**
      * 카테고리별 제품 조회
@@ -136,5 +135,5 @@ public interface ItemController {
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9)", example = "9")
     })
     @GetMapping
-    ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@VerificationUser Optional<User> user, @PathVariable String category, Optional<Integer> page, Optional<Integer> size);
+    ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@VerificationUser Optional<LoggedInUser> user, @PathVariable String category, Optional<Integer> page, Optional<Integer> size);
 }

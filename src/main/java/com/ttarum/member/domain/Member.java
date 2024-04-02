@@ -1,15 +1,11 @@
 package com.ttarum.member.domain;
 
 import com.ttarum.common.domain.UpdatableEntity;
+import com.ttarum.order.domain.Order;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@EqualsAndHashCode(callSuper = false)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,18 +27,20 @@ public class Member extends UpdatableEntity {
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
+    @Setter
     @Column(name = "image_url", length = 100)
     private String imageUrl;
 
-    @OneToMany(mappedBy = "member")
-    private List<Address> addressList = new ArrayList<>();
-
+    @Setter
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    @Override
+    @PrePersist
     public void prePersist() {
-        super.prePersist();
         this.isDeleted = false;
+    }
+
+    public boolean isMyOrder(final Order order) {
+        return equals(order.getMember());
     }
 }

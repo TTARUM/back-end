@@ -18,11 +18,18 @@ public class ReviewImage {
     @Column(name = "file_url", nullable = false, length = 100)
     private String fileUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "review_id", nullable = false)
     private Review review;
 
     @Column(name = "`order`", nullable = false)
     private Integer order;
 
+    public static ReviewImage of(final String fileUrl, final Review review, final int order) {
+        return ReviewImage.builder()
+                .fileUrl(fileUrl)
+                .review(review)
+                .order(order)
+                .build();
+    }
 }

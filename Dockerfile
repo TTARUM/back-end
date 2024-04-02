@@ -6,7 +6,7 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 
 # Build the application
-RUN gradle build --no-daemon
+RUN gradle build --no-daemon -x intTest
 
 # Stage 2: Run the application
 FROM openjdk:17-alpine

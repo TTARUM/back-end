@@ -3,7 +3,6 @@ package com.ttarum.inquiry.controller;
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.LoggedInUser;
-import com.ttarum.common.dto.user.User;
 import com.ttarum.inquiry.dto.response.InquiryDetailedResponse;
 import com.ttarum.inquiry.dto.response.InquirySummaryResponse;
 import com.ttarum.inquiry.service.InquiryService;

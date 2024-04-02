@@ -2,7 +2,6 @@ package com.ttarum.common.filter;
 
 import com.ttarum.auth.componenet.JwtUtil;
 import com.ttarum.common.dto.user.LoggedInUser;
-import com.ttarum.common.dto.user.User;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.repository.MemberRepository;
 import io.micrometer.common.lang.NonNullApi;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * {@link HttpServletRequest}에 JWT 토큰이 있을 경우 애트리뷰트에 {@link User}를 {@link Optional}로 감싸서 저장합니다.
+ * {@link HttpServletRequest}에 JWT 토큰이 있을 경우 애트리뷰트에 {@link LoggedInUser}를 {@link Optional}로 감싸서 저장합니다.
  */
 @NonNullApi
 @Slf4j
@@ -32,7 +31,7 @@ public class UserVerificationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<User> user = Optional.empty();
+        Optional<LoggedInUser> user = Optional.empty();
 
         String jwt = jwtUtil.getJwtFromRequest(request);
         if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {

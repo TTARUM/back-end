@@ -5,11 +5,10 @@ import lombok.Builder;
 
 @AllArgsConstructor
 @Builder
-public class LoggedInUser implements User {
+public class LoggedInUser {
 
     private final Long id;
 
-    @Override
     public long getId() {
         return id;
     }

@@ -78,6 +78,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             LEFT JOIN FETCH Wishlist wl
             ON wl.item.id =  i.id AND wl.member.id = :memberId
             WHERE i.id in :ids
+            GROUP BY i.id, i.name, i.price, i.itemImageUrl
             """)
     List<PopularItemSummaryInCategory> getPopularItemSummaryListInCategory(@Param("ids") List<Long> itemIdList, @Param("memberId") long memberId);
 

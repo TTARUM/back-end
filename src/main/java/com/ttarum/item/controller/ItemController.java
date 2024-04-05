@@ -130,7 +130,6 @@ public interface ItemController {
     @Operation(summary = "카테고리별 제품 조회")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @Parameters(value = {
-            @Parameter(name = "user", hidden = true),
             @Parameter(name = "page", description = "페이지 넘버 (기본값 0)", example = "0"),
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9)", example = "9")
     })

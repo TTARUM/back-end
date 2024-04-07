@@ -72,7 +72,7 @@ class MemberServiceTest {
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")
-                .password("testPassword123")
+                .password("1234qwer!@")
                 .email("testEmail@gmail.com")
                 .build();
 
@@ -172,7 +172,7 @@ class MemberServiceTest {
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")
-                .password("testPassword123")
+                .password("1234qwer!@")
                 .email("testEmail@gmail.com")
                 .build();
 
@@ -198,7 +198,7 @@ class MemberServiceTest {
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")
-                .password("testPassword123")
+                .password("1234qwer!@")
                 .email("testEmail@gmail.com")
                 .build();
 

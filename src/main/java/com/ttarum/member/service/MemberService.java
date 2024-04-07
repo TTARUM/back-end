@@ -24,9 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -85,10 +83,23 @@ public class MemberService {
     }
 
     private boolean isValidPassword(final String password) {
-        if (password.isEmpty() || password.length() > 20) {
+        if (password.length() > 20 || password.length() < 8) {
             return false;
         }
-        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
+
+        List<Character> list = new ArrayList<>();
+        for (char c : password.toCharArray()) {
+            list.add(c);
+        }
+
+        if (!list.removeIf(Character::isDigit))
+            return false;
+        if (!list.removeIf(Character::isAlphabetic))
+            return false;
+        boolean containsSpecialCharacter = list.removeIf(c -> c == '~' || c == '!' || c == '@' || c == '#' || c == '$' || c == '%' || c == '^' ||
+                c == '&' || c == '*' || c == '-' || c == '_' || c == '=' || c == '+' || c == ',' || c == '<' || c == '.' || c == '>' || c == '/' ||
+                c == '?' || c == ';' || c == ':');
+        return containsSpecialCharacter && list.isEmpty();
     }
 
     public boolean isNicknameDuplicate(final String nickname) {
@@ -305,8 +316,8 @@ public class MemberService {
     /**
      * 특정 회원의 장바구니에서 특정 제품들을 제거한다.
      *
-     * @param memberId 회원의 Id 값
-     * @param cartDeletionRequest   제품의 Id 값이 담긴 객체
+     * @param memberId            회원의 Id 값
+     * @param cartDeletionRequest 제품의 Id 값이 담긴 객체
      */
     @Transactional
     public void deleteFromCart(final long memberId, final CartDeletionRequest cartDeletionRequest) {

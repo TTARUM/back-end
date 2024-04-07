@@ -213,6 +213,31 @@ class MemberServiceTest {
         assertTrue(exception.getMessage().contains("로그인 아이디가 중복되었습니다."));
     }
 
+    @ParameterizedTest
+    @DisplayName("일반 유저 회원가입 - 로그인 아이디 길이 불만족 시 예외가 발생한다.")
+    @ValueSource(strings = {"", "asdf", "asdfasdfasdfasdfasdfa"})
+    void registerNormalUser_registerWithInvalidLoginIdThrowException(final String input) {
+        // given
+        Member targetMember = Member.builder()
+                .nickname("nickname1")
+                .name("testName")
+                .phoneNumber("testPhoneNumber")
+                .build();
+        NormalMember targetNormalMember = NormalMember.builder()
+                .loginId(input)
+                .password("1234qwer!@")
+                .email("testEmail@gmail.com")
+                .build();
+
+        // when
+        Exception exception = assertThrows(MemberException.class, () ->
+                memberService.registerNormalUser(targetMember, targetNormalMember)
+        );
+
+        // then
+        assertTrue(exception.getMessage().contains("올바르지 않은 로그인 아이디입니다."));
+    }
+
     @Test
     @DisplayName("회원 탈퇴 - happy path")
     void deleteMember() {
@@ -456,7 +481,7 @@ class MemberServiceTest {
                         .member(testMember)
                         .address("new address")
                         .build()
-                );
+        );
     }
 
     @Test

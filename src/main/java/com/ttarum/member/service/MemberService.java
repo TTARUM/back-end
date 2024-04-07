@@ -62,6 +62,9 @@ public class MemberService {
         if (isNicknameDuplicate(member.getNickname())) {
             throw new MemberException(HttpStatus.BAD_REQUEST, "닉네임이 중복되었습니다.");
         }
+        if (!isValidLogInId(normalMember.getLoginId())) {
+            throw new MemberException(HttpStatus.BAD_REQUEST, "올바르지 않은 로그인 아이디입니다.");
+        }
         if (isLoginIdDuplicate(normalMember.getLoginId())) {
             throw new MemberException(HttpStatus.BAD_REQUEST, "로그인 아이디가 중복되었습니다.");
         }
@@ -69,6 +72,10 @@ public class MemberService {
         normalMember.setMember(saved);
         normalMember.encodePassword(passwordEncoder);
         normalMemberRepository.save(normalMember);
+    }
+
+    private boolean isValidLogInId(final String loginId) {
+        return loginId.length() >= 5 && loginId.length() <= 20;
     }
 
     private boolean isValidNickname(final String nickname) {

@@ -266,7 +266,7 @@ public class MemberService {
      * @return 사용자의 배송지 목록
      */
     public List<Address> getAddressList(final Long memberId) {
-        return addressRepository.findByMemberIdOrderByLastUsedAtDesc(memberId);
+        return addressRepository.findByMemberId(memberId);
     }
 
     private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {

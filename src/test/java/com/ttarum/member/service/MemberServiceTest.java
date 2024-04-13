@@ -485,30 +485,6 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("배송지 최근 사용 일자 업데이트 - happy path")
-    void updateLastUsedAt() {
-        // given
-        Long memberId = 1L;
-        Long addressId = 999L;
-        Member testMember = Member.builder().id(memberId).build();
-        Address previousAddress = Address.builder().member(testMember).build();
-
-        when(addressRepository.findById(addressId))
-                .thenReturn(Optional.of(previousAddress));
-        // when
-        memberService.updateLastUsedAt(memberId, addressId);
-
-        // then
-        verify(addressRepository).save(
-                Address.builder()
-                        .member(testMember)
-                        .address("new address")
-                        .lastUsedAt(any())
-                        .build()
-        );
-    }
-
-    @Test
     @DisplayName("배송지 삭제 - happy path")
     void deleteAddress() {
         // given

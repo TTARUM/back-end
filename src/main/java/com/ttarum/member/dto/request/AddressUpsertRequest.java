@@ -1,11 +1,12 @@
 package com.ttarum.member.dto.request;
 
+import com.ttarum.member.domain.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@Builder
 @Schema(name = "AddressUpsertRequest", description = "배송지 추가/수정 요청 DTO")
 public class AddressUpsertRequest {
     @Schema(description = "배송지 별칭", example = "집")
@@ -20,4 +21,15 @@ public class AddressUpsertRequest {
     private final String phoneNumber;
     @Schema(description = "기본 배송지 여부", example = "true")
     private final boolean isDefault;
+
+    public Address toEntity() {
+        return Address.builder()
+                .addressAlias(addressAlias)
+                .recipient(recipient)
+                .address(address)
+                .detailAddress(detailAddress)
+                .phoneNumber(phoneNumber)
+                .isDefault(isDefault)
+                .build();
+    }
 }

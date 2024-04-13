@@ -296,19 +296,6 @@ public class MemberService {
     }
 
     /**
-     * 특정 사용자 배송지의 최근 사용 일자를 업데이트한다.
-     *
-     * @param memberId  사용자의 Id 값
-     * @param addressId 배송지의 Id 값
-     */
-    @Transactional
-    public void updateLastUsedAt(final Long memberId, final Long addressId) {
-        Address address = getValidAddress(memberId, addressId);
-        address.updateLastUsedAt();
-        addressRepository.save(address);
-    }
-
-    /**
      * 특정 사용자의 배송지를 삭제한다.
      *
      * @param memberId  사용자의 Id 값

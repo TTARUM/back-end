@@ -22,7 +22,6 @@ public class Address {
     @Column(name = "recipient", nullable = false, length = 20)
     private String recipient;
 
-    @Setter
     @Column(name = "address", nullable = false, length = 100)
     private String address;
 
@@ -32,10 +31,24 @@ public class Address {
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
     private Member member;
 
     @Column(name = "is_default", nullable = false)
     boolean isDefault;
+
+    public void update(final Address newAddress) {
+        this.addressAlias = newAddress.getAddressAlias();
+        this.recipient = newAddress.getRecipient();
+        this.address = newAddress.getAddress();
+        this.detailAddress = newAddress.getDetailAddress();
+        this.phoneNumber = newAddress.getPhoneNumber();
+        this.isDefault = newAddress.isDefault();
+    }
+
+    public void nonDefault() {
+        this.isDefault = false;
+    }
 }

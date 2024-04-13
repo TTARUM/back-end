@@ -255,8 +255,13 @@ public class MemberService {
         Member member = getMemberById(memberId);
 
         Address address = Address.builder()
-                .member(member)
+                .addressAlias(request.getAddressAlias())
+                .recipient(request.getRecipient())
                 .address(request.getAddress())
+                .detailAddress(request.getDetailAddress())
+                .phoneNumber(request.getPhoneNumber())
+                .member(member)
+                .isDefault(request.isDefault())
                 .build();
 
         addressRepository.save(address);

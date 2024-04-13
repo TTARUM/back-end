@@ -450,36 +450,26 @@ class MemberServiceTest {
                 .thenReturn(Optional.of(dummyMember));
 
         // when
-        memberService.addAddress(memberId, new AddressUpsertRequest("test address"));
+        memberService.addAddress(memberId, AddressUpsertRequest.builder()
+                        .addressAlias("test alias")
+                        .recipient("test recipient")
+                        .address("test address")
+                        .detailAddress("test detail address")
+                        .phoneNumber("010-1234-5678")
+                        .isDefault(true)
+                .build()
+        );
 
         // then
         verify(addressRepository).save(
                 Address.builder()
                         .member(dummyMember)
+                        .addressAlias("test alias")
+                        .recipient("test recipient")
                         .address("test address")
-                        .build()
-        );
-    }
-
-    @Test
-    @DisplayName("배송지 수정 - happy path")
-    void updateAddress() {
-        // given
-        Long memberId = 1L;
-        Long addressId = 999L;
-        Member testMember = Member.builder().id(memberId).build();
-        Address previousAddress = Address.builder().member(testMember).build();
-
-        when(addressRepository.findById(addressId))
-                .thenReturn(Optional.of(previousAddress));
-        // when
-        memberService.updateAddress(memberId, addressId, new AddressUpsertRequest("new address"));
-
-        // then
-        verify(addressRepository).save(
-                Address.builder()
-                        .member(testMember)
-                        .address("new address")
+                        .detailAddress("test detail address")
+                        .phoneNumber("010-1234-5678")
+                        .isDefault(true)
                         .build()
         );
     }

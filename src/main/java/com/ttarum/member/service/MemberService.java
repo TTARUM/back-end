@@ -254,16 +254,8 @@ public class MemberService {
     public void addAddress(final Long memberId, final AddressUpsertRequest request) {
         Member member = getMemberById(memberId);
 
-        Address address = Address.builder()
-                .addressAlias(request.getAddressAlias())
-                .recipient(request.getRecipient())
-                .address(request.getAddress())
-                .detailAddress(request.getDetailAddress())
-                .phoneNumber(request.getPhoneNumber())
-                .member(member)
-                .isDefault(request.isDefault())
-                .build();
-
+        Address address = request.toEntity();
+        address.setMember(member);
         addressRepository.save(address);
     }
 
@@ -296,8 +288,8 @@ public class MemberService {
     @Transactional
     public void updateAddress(final Long memberId, final Long addressId, final AddressUpsertRequest request) {
         Address address = getValidAddress(memberId, addressId);
-        address.setAddress(request.getAddress());
-        addressRepository.save(address);
+        Address newAddress = request.toEntity();
+        address.update(newAddress);
     }
 
     /**

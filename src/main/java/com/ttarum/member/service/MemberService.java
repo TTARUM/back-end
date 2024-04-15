@@ -256,6 +256,12 @@ public class MemberService {
 
         Address address = request.toEntity();
         address.setMember(member);
+
+        if (address.isDefault()) {
+            addressRepository.findDefaultAddressByMemberId(memberId)
+                    .ifPresent(Address::nonDefault);
+        }
+
         addressRepository.save(address);
     }
 
@@ -289,6 +295,12 @@ public class MemberService {
     public void updateAddress(final Long memberId, final Long addressId, final AddressUpsertRequest request) {
         Address address = getValidAddress(memberId, addressId);
         Address newAddress = request.toEntity();
+
+        if (newAddress.isDefault()) {
+            addressRepository.findDefaultAddressByMemberId(memberId)
+                    .ifPresent(Address::nonDefault);
+        }
+
         address.update(newAddress);
     }
 
@@ -301,6 +313,9 @@ public class MemberService {
     @Transactional
     public void deleteAddress(final Long memberId, final Long addressId) {
         Address address = getValidAddress(memberId, addressId);
+        if (address.isDefault()) {
+            throw AddressException.deleteDefault();
+        }
         addressRepository.delete(address);
     }
 

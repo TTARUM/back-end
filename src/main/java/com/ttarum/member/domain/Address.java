@@ -37,7 +37,7 @@ public class Address {
     private Member member;
 
     @Column(name = "is_default", nullable = false)
-    boolean isDefault;
+    private boolean isDefault;
 
     public void update(final Address newAddress) {
         this.addressAlias = newAddress.getAddressAlias();

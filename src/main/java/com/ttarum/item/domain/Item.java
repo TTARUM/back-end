@@ -25,10 +25,10 @@ public class Item extends BaseEntity {
     @Column(name = "price", nullable = false, columnDefinition = "int")
     private Integer price;
 
-    @Column(name = "item_image_url", nullable = false, length = 100)
+    @Column(name = "item_image_url", nullable = false, length = 200)
     private String itemImageUrl;
 
-    @Column(name = "item_description_image_url", nullable = false, length = 100)
+    @Column(name = "item_description_image_url", length = 200)
     private String itemDescriptionImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

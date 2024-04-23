@@ -1,5 +1,6 @@
 package com.ttarum.member.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.ttarum.member.domain.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -17,6 +18,11 @@ public class AddressResponse {
     private final String phoneNumber;
     private final boolean isDefault;
 
+    @JsonGetter("isDefault")
+    public boolean isDefault() {
+        return isDefault;
+    }
+
     public static AddressResponse fromAddress(Address address) {
         return AddressResponse.builder()
                 .addressId(address.getId())
@@ -25,6 +31,7 @@ public class AddressResponse {
                 .address(address.getAddress())
                 .detailAddress(address.getDetailAddress())
                 .phoneNumber(address.getPhoneNumber())
+                .isDefault(address.isDefault())
                 .build();
     }
 }

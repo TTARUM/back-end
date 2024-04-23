@@ -28,13 +28,8 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          # Save private key to a file
           KEY_FILE=$(mktemp)
           echo "$SSH_PRIVATE_KEY" > "$KEY_FILE"
           chmod 600 "$KEY_FILE"
-
-          # Deploy using docker-compose on the EC2 instance
           touch hi.txt
-
-          # Clean up the private key file
           rm "$KEY_FILE"

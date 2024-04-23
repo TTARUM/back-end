@@ -5,16 +5,10 @@ on:
     branches:
       - main
 
-env:
-  IMAGE_NAME: ttarum-back
-  ECR_REPOSITORY: ttarum
-  EC2_HOST: ${{ secrets.EC2_HOST }}
-  EC2_USER: ec2-user
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -22,7 +16,7 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa $EC2_HOST >> ~/.ssh/known_hosts
-          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST "echo Successfully connected"
+          ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} "echo Successfully connected"

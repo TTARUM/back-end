@@ -1,5 +1,6 @@
 package com.ttarum.member.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.ttarum.member.domain.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -21,6 +22,11 @@ public class AddressUpsertRequest {
     private final String phoneNumber;
     @Schema(description = "기본 배송지 여부", example = "true")
     private final boolean isDefault;
+
+    @JsonGetter("isDefault")
+    public boolean isDefault() {
+        return isDefault;
+    }
 
     public Address toEntity() {
         return Address.builder()

@@ -20,3 +20,13 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} "echo Successfully connected"
+
+      - name: Deploy to EC2
+        run: |
+          ssh ec2-user@${{ secrets.EC2_HOST }} "\
+          cd /home/ec2-user/back-end && \
+          git pull && \
+          docker-compose down && \
+          docker-compose build && \
+          docker-compose up -d \
+          "

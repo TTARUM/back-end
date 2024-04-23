@@ -72,7 +72,7 @@ class MemberServiceTest {
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")
-                .password("testPassword123")
+                .password("1234qwer!@")
                 .email("testEmail@gmail.com")
                 .build();
 
@@ -172,7 +172,7 @@ class MemberServiceTest {
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")
-                .password("testPassword123")
+                .password("1234qwer!@")
                 .email("testEmail@gmail.com")
                 .build();
 
@@ -198,7 +198,7 @@ class MemberServiceTest {
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")
-                .password("testPassword123")
+                .password("1234qwer!@")
                 .email("testEmail@gmail.com")
                 .build();
 
@@ -211,6 +211,31 @@ class MemberServiceTest {
 
         // then
         assertTrue(exception.getMessage().contains("로그인 아이디가 중복되었습니다."));
+    }
+
+    @ParameterizedTest
+    @DisplayName("일반 유저 회원가입 - 로그인 아이디 길이 불만족 시 예외가 발생한다.")
+    @ValueSource(strings = {"", "asdf", "asdfasdfasdfasdfasdfa"})
+    void registerNormalUser_registerWithInvalidLoginIdThrowException(final String input) {
+        // given
+        Member targetMember = Member.builder()
+                .nickname("nickname1")
+                .name("testName")
+                .phoneNumber("testPhoneNumber")
+                .build();
+        NormalMember targetNormalMember = NormalMember.builder()
+                .loginId(input)
+                .password("1234qwer!@")
+                .email("testEmail@gmail.com")
+                .build();
+
+        // when
+        Exception exception = assertThrows(MemberException.class, () ->
+                memberService.registerNormalUser(targetMember, targetNormalMember)
+        );
+
+        // then
+        assertTrue(exception.getMessage().contains("올바르지 않은 로그인 아이디입니다."));
     }
 
     @Test
@@ -425,60 +450,26 @@ class MemberServiceTest {
                 .thenReturn(Optional.of(dummyMember));
 
         // when
-        memberService.addAddress(memberId, new AddressUpsertRequest("test address"));
+        memberService.addAddress(memberId, AddressUpsertRequest.builder()
+                        .addressAlias("test alias")
+                        .recipient("test recipient")
+                        .address("test address")
+                        .detailAddress("test detail address")
+                        .phoneNumber("010-1234-5678")
+                        .isDefault(true)
+                .build()
+        );
 
         // then
         verify(addressRepository).save(
                 Address.builder()
                         .member(dummyMember)
+                        .addressAlias("test alias")
+                        .recipient("test recipient")
                         .address("test address")
-                        .build()
-        );
-    }
-
-    @Test
-    @DisplayName("배송지 수정 - happy path")
-    void updateAddress() {
-        // given
-        Long memberId = 1L;
-        Long addressId = 999L;
-        Member testMember = Member.builder().id(memberId).build();
-        Address previousAddress = Address.builder().member(testMember).build();
-
-        when(addressRepository.findById(addressId))
-                .thenReturn(Optional.of(previousAddress));
-        // when
-        memberService.updateAddress(memberId, addressId, new AddressUpsertRequest("new address"));
-
-        // then
-        verify(addressRepository).save(
-                Address.builder()
-                        .member(testMember)
-                        .address("new address")
-                        .build()
-                );
-    }
-
-    @Test
-    @DisplayName("배송지 최근 사용 일자 업데이트 - happy path")
-    void updateLastUsedAt() {
-        // given
-        Long memberId = 1L;
-        Long addressId = 999L;
-        Member testMember = Member.builder().id(memberId).build();
-        Address previousAddress = Address.builder().member(testMember).build();
-
-        when(addressRepository.findById(addressId))
-                .thenReturn(Optional.of(previousAddress));
-        // when
-        memberService.updateLastUsedAt(memberId, addressId);
-
-        // then
-        verify(addressRepository).save(
-                Address.builder()
-                        .member(testMember)
-                        .address("new address")
-                        .lastUsedAt(any())
+                        .detailAddress("test detail address")
+                        .phoneNumber("010-1234-5678")
+                        .isDefault(true)
                         .build()
         );
     }

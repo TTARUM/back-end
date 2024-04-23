@@ -2,7 +2,7 @@ package com.ttarum.inquiry.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.common.annotation.VerificationUser;
-import com.ttarum.common.dto.user.User;
+import com.ttarum.common.dto.user.LoggedInUser;
 import com.ttarum.inquiry.dto.request.InquiryCreationRequest;
 import com.ttarum.inquiry.dto.response.InquiryCreationResponse;
 import com.ttarum.inquiry.dto.response.InquiryDetailedResponse;
@@ -45,13 +45,12 @@ public interface InquiryController {
     })
     @Parameters(value = {
             @Parameter(name = "itemId", description = "제품의 ID", example = "1"),
-            @Parameter(name = "user", hidden = true),
             @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
             @Parameter(name = "size", description = "한 페이지 당 조회할 문의 수 (기본 값 10개)", example = "1")
     })
     @GetMapping
     ResponseEntity<List<InquirySummaryResponse>> getInquirySummaryResponse(long itemId,
-                                                                           @VerificationUser Optional<User> user,
+                                                                           @VerificationUser Optional<LoggedInUser> user,
                                                                            Optional<Integer> page,
                                                                            Optional<Integer> size);
 
@@ -69,10 +68,9 @@ public interface InquiryController {
     })
     @Parameters(value = {
             @Parameter(name = "inquiryId", description = "문의글의 ID", example = "1"),
-            @Parameter(name = "user", hidden = true)
     })
     @GetMapping
-    ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(@PathVariable long inquiryId, @VerificationUser Optional<User> user);
+    ResponseEntity<InquiryDetailedResponse> getInquiryDetailedResponse(@PathVariable long inquiryId, @VerificationUser Optional<LoggedInUser> user);
 
     /**
      * 문의글 등록 메서드

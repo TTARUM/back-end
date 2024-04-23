@@ -24,9 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -64,6 +62,9 @@ public class MemberService {
         if (isNicknameDuplicate(member.getNickname())) {
             throw new MemberException(HttpStatus.BAD_REQUEST, "닉네임이 중복되었습니다.");
         }
+        if (!isValidLogInId(normalMember.getLoginId())) {
+            throw new MemberException(HttpStatus.BAD_REQUEST, "올바르지 않은 로그인 아이디입니다.");
+        }
         if (isLoginIdDuplicate(normalMember.getLoginId())) {
             throw new MemberException(HttpStatus.BAD_REQUEST, "로그인 아이디가 중복되었습니다.");
         }
@@ -71,6 +72,10 @@ public class MemberService {
         normalMember.setMember(saved);
         normalMember.encodePassword(passwordEncoder);
         normalMemberRepository.save(normalMember);
+    }
+
+    private boolean isValidLogInId(final String loginId) {
+        return loginId.length() >= 5 && loginId.length() <= 20;
     }
 
     private boolean isValidNickname(final String nickname) {
@@ -85,10 +90,23 @@ public class MemberService {
     }
 
     private boolean isValidPassword(final String password) {
-        if (password.isEmpty() || password.length() > 20) {
+        if (password.length() > 20 || password.length() < 8) {
             return false;
         }
-        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
+
+        List<Character> list = new ArrayList<>();
+        for (char c : password.toCharArray()) {
+            list.add(c);
+        }
+
+        if (!list.removeIf(Character::isDigit))
+            return false;
+        if (!list.removeIf(Character::isAlphabetic))
+            return false;
+        boolean containsSpecialCharacter = list.removeIf(c -> c == '~' || c == '!' || c == '@' || c == '#' || c == '$' || c == '%' || c == '^' ||
+                c == '&' || c == '*' || c == '-' || c == '_' || c == '=' || c == '+' || c == ',' || c == '<' || c == '.' || c == '>' || c == '/' ||
+                c == '?' || c == ';' || c == ':');
+        return containsSpecialCharacter && list.isEmpty();
     }
 
     public boolean isNicknameDuplicate(final String nickname) {
@@ -236,10 +254,13 @@ public class MemberService {
     public void addAddress(final Long memberId, final AddressUpsertRequest request) {
         Member member = getMemberById(memberId);
 
-        Address address = Address.builder()
-                .member(member)
-                .address(request.getAddress())
-                .build();
+        Address address = request.toEntity();
+        address.setMember(member);
+
+        if (address.isDefault()) {
+            addressRepository.findDefaultAddressByMemberId(memberId)
+                    .ifPresent(Address::nonDefault);
+        }
 
         addressRepository.save(address);
     }
@@ -251,7 +272,7 @@ public class MemberService {
      * @return 사용자의 배송지 목록
      */
     public List<Address> getAddressList(final Long memberId) {
-        return addressRepository.findByMemberIdOrderByLastUsedAtDesc(memberId);
+        return addressRepository.findByMemberId(memberId);
     }
 
     private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {
@@ -273,21 +294,14 @@ public class MemberService {
     @Transactional
     public void updateAddress(final Long memberId, final Long addressId, final AddressUpsertRequest request) {
         Address address = getValidAddress(memberId, addressId);
-        address.setAddress(request.getAddress());
-        addressRepository.save(address);
-    }
+        Address newAddress = request.toEntity();
 
-    /**
-     * 특정 사용자 배송지의 최근 사용 일자를 업데이트한다.
-     *
-     * @param memberId  사용자의 Id 값
-     * @param addressId 배송지의 Id 값
-     */
-    @Transactional
-    public void updateLastUsedAt(final Long memberId, final Long addressId) {
-        Address address = getValidAddress(memberId, addressId);
-        address.updateLastUsedAt();
-        addressRepository.save(address);
+        if (newAddress.isDefault()) {
+            addressRepository.findDefaultAddressByMemberId(memberId)
+                    .ifPresent(Address::nonDefault);
+        }
+
+        address.update(newAddress);
     }
 
     /**
@@ -299,14 +313,17 @@ public class MemberService {
     @Transactional
     public void deleteAddress(final Long memberId, final Long addressId) {
         Address address = getValidAddress(memberId, addressId);
+        if (address.isDefault()) {
+            throw AddressException.deleteDefault();
+        }
         addressRepository.delete(address);
     }
 
     /**
      * 특정 회원의 장바구니에서 특정 제품들을 제거한다.
      *
-     * @param memberId 회원의 Id 값
-     * @param cartDeletionRequest   제품의 Id 값이 담긴 객체
+     * @param memberId            회원의 Id 값
+     * @param cartDeletionRequest 제품의 Id 값이 담긴 객체
      */
     @Transactional
     public void deleteFromCart(final long memberId, final CartDeletionRequest cartDeletionRequest) {

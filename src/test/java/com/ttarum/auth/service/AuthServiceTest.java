@@ -47,6 +47,7 @@ class AuthServiceTest {
                 .name("testName")
                 .phoneNumber("testPhoneNumber")
                 .imageUrl("testImageUrl")
+                .isDeleted(false)
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")
@@ -97,6 +98,7 @@ class AuthServiceTest {
                 .name("testName")
                 .phoneNumber("testPhoneNumber")
                 .imageUrl("testImageUrl")
+                .isDeleted(false)
                 .build();
         NormalMember targetNormalMember = NormalMember.builder()
                 .loginId("testLoginId")

@@ -34,6 +34,10 @@ public class AuthService {
             throw AuthException.UserNotFound();
         }
 
+        if (normalMember.get().getMember().getIsDeleted()) {
+            throw AuthException.DeletedMember();
+        }
+
         if (!passwordEncoder.matches(dto.getPassword(), normalMember.get().getPassword())) {
             throw AuthException.InvalidPassword();
         }

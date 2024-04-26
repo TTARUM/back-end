@@ -216,6 +216,7 @@ public class MemberService {
     @Transactional
     public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
         Member member = getMemberById(memberId);
+        Item item = getItemById(cartAdditionRequest.getItemId());
 
         Optional<Cart> optionalCart = cartRepository.findById(new CartId(memberId, cartAdditionRequest.getItemId()));
         if (optionalCart.isPresent()) {
@@ -224,7 +225,6 @@ public class MemberService {
             return;
         }
 
-        Item item = getItemById(cartAdditionRequest.getItemId());
         Cart cart = Cart.builder()
                 .member(member)
                 .item(item)

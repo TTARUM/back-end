@@ -5,6 +5,7 @@ import com.ttarum.member.dto.request.*;
 import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
+import com.ttarum.member.service.EmailService;
 import com.ttarum.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class MemberControllerImpl implements MemberController {
     private static final Integer DEFAULT_WISHLIST_SIZE = 8;
 
     private final MemberService memberService;
+    private final EmailService emailService;
 
     @Override
     @PostMapping("/register")
@@ -121,6 +123,13 @@ public class MemberControllerImpl implements MemberController {
     @PutMapping("/carts/{itemId}")
     public ResponseEntity<Void> updateItemAmountInCart(@PathVariable final long itemId, @AuthenticationPrincipal final CustomUserDetails user, final CartUpdateRequest cartUpdateRequest) {
         memberService.updateItemAmountInCart(user.getId(), itemId, cartUpdateRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @PostMapping("/register/verification/email")
+    public ResponseEntity<Void> sendVerificationCodeToRegister(@RequestParam final String email) {
+        emailService.sendVerificationCodeToRegister(email);
         return ResponseEntity.ok().build();
     }
 }

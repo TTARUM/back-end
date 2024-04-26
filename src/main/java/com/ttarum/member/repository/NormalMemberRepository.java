@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface NormalMemberRepository extends JpaRepository<NormalMember, Long> {
     Optional<NormalMember> findNormalMemberByLoginId(String loginId);
+
+    boolean existsByEmail(String email);
 }

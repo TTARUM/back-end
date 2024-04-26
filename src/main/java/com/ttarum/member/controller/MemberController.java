@@ -229,4 +229,9 @@ public interface MemberController {
     })
     @PutMapping
     ResponseEntity<Void> updateItemAmountInCart(@PathVariable long itemId, @AuthenticationPrincipal CustomUserDetails user, CartUpdateRequest cartUpdateRequest);
+
+    // 이메일 중복인지 체크하는 인증 코드를 보내는 API
+    @PostMapping
+    ResponseEntity<Void> sendVerificationCodeToRegister(@RequestParam String email);
+    // 인증 코드를 확인하는 API -> 하나?
 }

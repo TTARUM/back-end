@@ -8,7 +8,7 @@ import java.time.Instant;
 public class VerificationCode {
 
     private final String code;
-    private Status status;
+    private final Status status;
     private final Instant datetime;
 
     public VerificationCode(final String code, final Instant datetime) {

@@ -5,8 +5,12 @@ import com.ttarum.member.dto.request.*;
 import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
+import com.ttarum.member.mail.dto.EmailCheckDTO;
+import com.ttarum.member.mail.dto.MailRequest;
+import com.ttarum.member.mail.exception.MailException;
 import com.ttarum.member.service.EmailService;
 import com.ttarum.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.ttarum.member.mail.exception.ErrorType.VALIDATING;
 
 @Slf4j
 @RestController
@@ -127,9 +133,18 @@ public class MemberControllerImpl implements MemberController {
     }
 
     @Override
-    @PostMapping("/register/verification/email")
-    public ResponseEntity<Void> sendVerificationCodeToRegister(@RequestParam final String email) {
-        emailService.sendVerificationCodeToRegister(email);
+    @PostMapping("/register/mailSend")
+    public ResponseEntity<Void> sendVerificationCodeToRegister(@RequestBody @Valid MailRequest mailRequest) {
+        emailService.sendVerificationCodeToRegister(mailRequest.getEmail());
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> checkVerificationCodeToRegister(final EmailCheckDTO emailCheckDTO) {
+        boolean checked = emailService.checkVerificationCode(emailCheckDTO.getEmail(), emailCheckDTO.getVerificationCode());
+        if (checked) {
+            return ResponseEntity.ok().build();
+        }
+        throw MailException.getInstance(VALIDATING);
     }
 }

@@ -134,5 +134,5 @@ public interface ItemController {
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9)", example = "9")
     })
     @GetMapping
-    ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@VerificationUser Optional<LoggedInUser> user, @PathVariable String category, Optional<Integer> page, Optional<Integer> size);
+    ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@Parameter(hidden = true) @VerificationUser Optional<LoggedInUser> user, @RequestParam @PathVariable String category, @RequestParam Optional<Integer> page, @RequestParam Optional<Integer> size);
 }

@@ -94,7 +94,7 @@ public class ItemControllerImpl implements ItemController {
     }
 
     @Override
-    @GetMapping("/category/{category}")
+    @GetMapping("/category")
     public ResponseEntity<ItemSummaryResponse> getSummaryByCategory(@VerificationUser final Optional<LoggedInUser> user, @PathVariable final String category, final Optional<Integer> page, final Optional<Integer> size) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_DEFAULT_SIZE_PER_PAGE));
         ItemSummaryResponse response;

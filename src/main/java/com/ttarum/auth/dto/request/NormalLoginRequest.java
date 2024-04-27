@@ -9,8 +9,8 @@ import lombok.Getter;
 @Builder
 @Schema(description = "로그인 DTO")
 public class NormalLoginRequest {
-    @NotBlank
     @Schema(description = "로그인 ID", example = "login1234")
+    @NotBlank
     // TODO: Add size
     private final String loginId;
 

@@ -91,10 +91,16 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     // TODO: Update rating and salesVolume
     @Query("""
-            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, i.category.name, i.name, i.price, 0.0, i.itemImageUrl, false, i.createdAt, 0L)
+            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl, (COUNT(wl.id) > 0), i.createdAt, COUNT(oi.order.id))
             FROM Item i
-            JOIN i.category c
-            WHERE c.name = :category
+            LEFT JOIN FETCH Review r
+            ON r.item.id = i.id
+            LEFT JOIN FETCH OrderItem oi
+            ON oi.item.id = i.id
+            LEFT JOIN FETCH Wishlist wl
+            ON wl.item.id = i.id AND wl.member.id = :memberId
+            WHERE i.category.name = :category
+            GROUP BY i.id, i.category.name, i.name, i.price, i.itemImageUrl, i.createdAt
             """)
     List<ItemSummary> getItemSummaryByCategoryName(@Param("memberId") long memberId, @Param("category") String category, Pageable pageable);
 

@@ -216,6 +216,7 @@ public class MemberService {
     @Transactional
     public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
         Member member = getMemberById(memberId);
+        Item item = getItemById(cartAdditionRequest.getItemId());
 
         Optional<Cart> optionalCart = cartRepository.findById(new CartId(memberId, cartAdditionRequest.getItemId()));
         if (optionalCart.isPresent()) {
@@ -224,7 +225,6 @@ public class MemberService {
             return;
         }
 
-        Item item = getItemById(cartAdditionRequest.getItemId());
         Cart cart = Cart.builder()
                 .member(member)
                 .item(item)
@@ -254,10 +254,13 @@ public class MemberService {
     public void addAddress(final Long memberId, final AddressUpsertRequest request) {
         Member member = getMemberById(memberId);
 
-        Address address = Address.builder()
-                .member(member)
-                .address(request.getAddress())
-                .build();
+        Address address = request.toEntity();
+        address.setMember(member);
+
+        if (address.isDefault()) {
+            addressRepository.findDefaultAddressByMemberId(memberId)
+                    .ifPresent(Address::nonDefault);
+        }
 
         addressRepository.save(address);
     }
@@ -269,7 +272,7 @@ public class MemberService {
      * @return 사용자의 배송지 목록
      */
     public List<Address> getAddressList(final Long memberId) {
-        return addressRepository.findByMemberIdOrderByLastUsedAtDesc(memberId);
+        return addressRepository.findByMemberId(memberId);
     }
 
     private Address getValidAddress(final Long memberId, final Long addressId) throws AddressException {
@@ -291,21 +294,14 @@ public class MemberService {
     @Transactional
     public void updateAddress(final Long memberId, final Long addressId, final AddressUpsertRequest request) {
         Address address = getValidAddress(memberId, addressId);
-        address.setAddress(request.getAddress());
-        addressRepository.save(address);
-    }
+        Address newAddress = request.toEntity();
 
-    /**
-     * 특정 사용자 배송지의 최근 사용 일자를 업데이트한다.
-     *
-     * @param memberId  사용자의 Id 값
-     * @param addressId 배송지의 Id 값
-     */
-    @Transactional
-    public void updateLastUsedAt(final Long memberId, final Long addressId) {
-        Address address = getValidAddress(memberId, addressId);
-        address.updateLastUsedAt();
-        addressRepository.save(address);
+        if (newAddress.isDefault()) {
+            addressRepository.findDefaultAddressByMemberId(memberId)
+                    .ifPresent(Address::nonDefault);
+        }
+
+        address.update(newAddress);
     }
 
     /**
@@ -317,6 +313,9 @@ public class MemberService {
     @Transactional
     public void deleteAddress(final Long memberId, final Long addressId) {
         Address address = getValidAddress(memberId, addressId);
+        if (address.isDefault()) {
+            throw AddressException.deleteDefault();
+        }
         addressRepository.delete(address);
     }
 

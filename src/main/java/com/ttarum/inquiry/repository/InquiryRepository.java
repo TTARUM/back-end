@@ -22,18 +22,15 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
      */
     @Query(value = """
             SELECT
-            i.id AS id,
-            i.title AS title,
-            i.is_secret AS isSecretInquiry,
-            i.member_id = :memberId,
-            i.exist_answer AS hasAnswer,
-            m.name AS memberName,
-            i.created_at AS createdAt
+            new com.ttarum.inquiry.dto.response.InquirySummaryResponse(
+                i.id, i.title, i.isSecret,
+                CASE WHEN i.member.id = :memberId THEN true ELSE false END,
+                i.existAnswer, m.name, i.createdAt
+            )
             FROM Inquiry i
-            LEFT OUTER JOIN Member m
-            ON i.member_id = m.id
-            WHERE i.item_id = :itemId
-            """, nativeQuery = true)
+            LEFT OUTER JOIN i.member m
+            WHERE i.item.id = :itemId
+            """)
     List<InquirySummaryResponse> findInquirySummaryByItemIdAndMemberId(@Param("itemId") long itemId, @Param("memberId") long memberId, Pageable pageable);
 
     /**
@@ -45,17 +42,12 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
      */
     @Query(value = """
             SELECT
-            i.id AS id,
-            i.title AS title,
-            i.is_secret AS isSecretInquiry,
-            false,
-            i.exist_answer AS hasAnswer,
-            m.name AS memberName,
-            i.created_at AS createdAt
-            FROM inquiry i
-            LEFT OUTER JOIN Member m
-            ON i.member_id = m.id
-            WHERE i.item_id = :itemId
-            """, nativeQuery = true)
+            new com.ttarum.inquiry.dto.response.InquirySummaryResponse(
+                i.id, i.title, i.isSecret, false, i.existAnswer, m.name, i.createdAt
+            )
+            FROM Inquiry i
+            LEFT OUTER JOIN i.member m
+            WHERE i.item.id = :itemId
+            """)
     List<InquirySummaryResponse> findInquirySummaryByItemId(@Param("itemId") long itemId, Pageable pageable);
 }

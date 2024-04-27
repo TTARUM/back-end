@@ -52,8 +52,7 @@ public class MemberControllerImpl implements MemberController {
 
     @Override
     @PostMapping("/profile-image")
-    public ResponseEntity<Void> updateProfileImage(@AuthenticationPrincipal final CustomUserDetails user,
-                                                   @RequestPart(name = "image") final MultipartFile image) {
+    public ResponseEntity<Void> updateProfileImage(final CustomUserDetails user, final MultipartFile image) {
         memberService.updateProfileImage(user.getId(), image);
         return ResponseEntity.ok().build();
     }

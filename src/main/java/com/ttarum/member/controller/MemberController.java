@@ -65,8 +65,10 @@ public interface MemberController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "실패")
     })
-    @PostMapping
-    ResponseEntity<Void> updateProfileImage(@AuthenticationPrincipal CustomUserDetails user, @RequestPart MultipartFile image);
+    @PostMapping(consumes = "multipart/form-data")
+    ResponseEntity<Void> updateProfileImage(@AuthenticationPrincipal CustomUserDetails user,
+                                            @Parameter(description = "프로필 이미지 파일", required = true)
+                                            @RequestPart("image") MultipartFile image);
 
     /**
      * 제품 찜 메서드
@@ -123,7 +125,7 @@ public interface MemberController {
             @Parameter(name = "cartAdditionRequest", hidden = true)
     })
     @PostMapping
-    ResponseEntity<Void> addToCart(@AuthenticationPrincipal CustomUserDetails user, CartAdditionRequest cartAdditionRequest);
+    ResponseEntity<Void> addToCart(@AuthenticationPrincipal CustomUserDetails user, @RequestBody CartAdditionRequest cartAdditionRequest);
 
     /**
      * 장바구니 조회 메서드
@@ -151,7 +153,7 @@ public interface MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping
-    ResponseEntity<Void> addAddress(@AuthenticationPrincipal CustomUserDetails user, AddressUpsertRequest addressUpsertRequest);
+    ResponseEntity<Void> addAddress(@AuthenticationPrincipal CustomUserDetails user, @RequestBody AddressUpsertRequest addressUpsertRequest);
 
     /**
      * 배송지 조회(최근 사용 순으로 정렬)
@@ -180,7 +182,7 @@ public interface MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping
-    ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId, AddressUpsertRequest addressUpsertRequest);
+    ResponseEntity<Void> updateAddress(@AuthenticationPrincipal CustomUserDetails user, @PathVariable final Long addressId, @RequestBody AddressUpsertRequest addressUpsertRequest);
 
     /**
      * 배송지 삭제
@@ -231,7 +233,7 @@ public interface MemberController {
             @Parameter(name = "cartUpdateRequest", hidden = true)
     })
     @PutMapping
-    ResponseEntity<Void> updateItemAmountInCart(@PathVariable long itemId, @AuthenticationPrincipal CustomUserDetails user, CartUpdateRequest cartUpdateRequest);
+    ResponseEntity<Void> updateItemAmountInCart(@PathVariable long itemId, @AuthenticationPrincipal CustomUserDetails user, @RequestBody CartUpdateRequest cartUpdateRequest);
 
     @Operation(summary = "회원가입 과정의 이메일 인증 코드 요청")
     @ApiResponses(value = {

@@ -3,8 +3,6 @@ package com.ttarum.member.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,23 +16,39 @@ public class Address {
     @Column(name = "id", nullable = false, columnDefinition = "int")
     private Long id;
 
-    @Setter
+    @Column(name = "address_alias", nullable = false, length = 45)
+    private String addressAlias;
+
+    @Column(name = "recipient", nullable = false, length = 20)
+    private String recipient;
+
     @Column(name = "address", nullable = false, length = 100)
     private String address;
 
+    @Column(name = "detail_address", nullable = false, length = 100)
+    private String detailAddress;
+
+    @Column(name = "phone_number", nullable = false, length = 15)
+    private String phoneNumber;
+
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id", nullable = false, columnDefinition = "int")
     private Member member;
 
-    @Column(name = "last_used_at", nullable = false)
-    private Instant lastUsedAt;
+    @Column(name = "is_default", nullable = false)
+    private boolean isDefault;
 
-    public void updateLastUsedAt() {
-        this.lastUsedAt = Instant.now();
+    public void update(final Address newAddress) {
+        this.addressAlias = newAddress.getAddressAlias();
+        this.recipient = newAddress.getRecipient();
+        this.address = newAddress.getAddress();
+        this.detailAddress = newAddress.getDetailAddress();
+        this.phoneNumber = newAddress.getPhoneNumber();
+        this.isDefault = newAddress.isDefault();
     }
 
-    @PrePersist
-    public void prePersist() {
-        this.lastUsedAt = Instant.now();
+    public void nonDefault() {
+        this.isDefault = false;
     }
 }

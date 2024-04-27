@@ -62,7 +62,7 @@ public interface MemberController {
             @ApiResponse(responseCode = "200", description = "성공"),
             @ApiResponse(responseCode = "400", description = "실패")
     })
-    @PostMapping(value= "/profile-image", consumes = "multipart/form-data")
+    @PostMapping(consumes = "multipart/form-data")
     ResponseEntity<Void> updateProfileImage(@AuthenticationPrincipal CustomUserDetails user,
                                             @Parameter(description = "프로필 이미지 파일", required = true)
                                             @RequestPart("image") MultipartFile image);

@@ -12,6 +12,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.ttarum.common.filter.UserVerificationFilter.AUTHENTICATION;
 
@@ -26,7 +27,7 @@ public class VerificationUserResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         VerificationUser annotation = parameter.getParameterAnnotation(VerificationUser.class);
-        return Objects.nonNull(annotation) && parameter.getParameterType().equals(LoggedInUser.class);
+        return Objects.nonNull(annotation) && parameter.getParameterType().equals(Optional.class);
     }
 
     @Override

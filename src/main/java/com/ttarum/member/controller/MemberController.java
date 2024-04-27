@@ -201,7 +201,7 @@ public interface MemberController {
      * 장바구니에서 제품 제거
      *
      * @param cartDeletionRequest 제거할 제품의 Id 값이 담긴 객체
-     * @param user   로그인한 사용자
+     * @param user                로그인한 사용자
      * @return 빈 응답
      */
     @Operation(summary = "장바구니에서 제품 제거")
@@ -233,9 +233,16 @@ public interface MemberController {
     @PutMapping
     ResponseEntity<Void> updateItemAmountInCart(@PathVariable long itemId, @AuthenticationPrincipal CustomUserDetails user, CartUpdateRequest cartUpdateRequest);
 
+    @Operation(summary = "회원가입 과정의 이메일 인증 코드 요청")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
     @PostMapping
     ResponseEntity<Void> sendVerificationCodeToRegister(@RequestBody @Valid MailRequest mailRequest);
 
+    @Operation(summary = "회원가입 과정의 이메일 인증 코드 확인")
+    @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping
     ResponseEntity<Void> checkVerificationCodeToRegister(@RequestBody @Valid EmailCheckDTO emailCheckDTO);
 }

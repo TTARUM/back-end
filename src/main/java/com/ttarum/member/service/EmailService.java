@@ -32,6 +32,11 @@ public class EmailService {
     private String from;
 
 
+    /**
+     * 회원가입 과정의 이메일 인증 코드 전송 메서드
+     *
+     * @param email 인증 코드를 보낼 이메일
+     */
     public void sendVerificationCodeToRegister(final String email) {
         validateDuplicatingEmail(email);
         String verificationCode = makeVerificationCode();
@@ -49,6 +54,17 @@ public class EmailService {
         sendMail(from, email, title, content, verificationCode);
     }
 
+    /**
+     * 이메일 인증 코드 전송 메서드
+     * 레디스에 인증 코드를 저장하며 유효기간은 3분 이다.
+     *
+     * @param from             발신자
+     * @param to               수신자
+     * @param title            제목
+     * @param content          내용
+     * @param verificationCode 인증 코드
+     * @throws MailException 이메일 전송 과정에 예외가 발생할 경우
+     */
     public void sendMail(final String from, final String to, final String title, final String content, final String verificationCode) {
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
@@ -80,6 +96,13 @@ public class EmailService {
         return randomNumber.toString();
     }
 
+    /**
+     * 인증 코드 확인 메서드
+     *
+     * @param email            인증 코드를 확인할 이메일
+     * @param verificationCode 인증 코드
+     * @return 인증에 성공할 경우 <code>true</code>, 실패할 경우 <code>false</code>를 반환한다.
+     */
     public boolean checkVerificationCode(final String email, final String verificationCode) {
         if (redisAuthService.getData(verificationCode) == null) {
             return false;

@@ -22,7 +22,11 @@ public class UserVerificationFilterConfig {
                 "/api/items/list",
                 "/api/inquiries/list",
                 "/api/inquiries/*",
-                "/api/items/similar-price"
+                "/api/items/similar-price",
+                "/api/items/list",
+                "/api/items/similar-price",
+                "/api/items/popular-in-category",
+                "/api/items/category"
         ));
         return filterRegistrationBean;
     }

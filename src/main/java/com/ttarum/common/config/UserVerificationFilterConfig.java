@@ -21,7 +21,7 @@ public class UserVerificationFilterConfig {
         filterRegistrationBean.setUrlPatterns(List.of(
                 "/api/items/list",
                 "/api/inquiries/list",
-                "/api/inquiries",
+                "/api/inquiries/*",
                 "/api/items/similar-price"
         ));
         return filterRegistrationBean;

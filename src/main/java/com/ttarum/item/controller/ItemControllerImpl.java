@@ -99,7 +99,8 @@ public class ItemControllerImpl implements ItemController {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_DEFAULT_SIZE_PER_PAGE));
         ItemSummaryResponse response;
         if (user.isPresent()) {
-            response = itemService.getItemSummaryListByCategory(user.get().getId(), category, pageRequest);
+            //TODO: Update here to use userId
+            response = itemService.getItemSummaryListByCategory(category, pageRequest);
         } else {
             response = itemService.getItemSummaryListByCategory(category, pageRequest);
         }

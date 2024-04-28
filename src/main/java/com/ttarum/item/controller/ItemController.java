@@ -86,9 +86,9 @@ public class ItemController {
     @GetMapping("/list")
     public ResponseEntity<ItemSummaryResponse> getSummary(
             @RequestParam(required = false) final String query,
-            @VerificationUser final Optional<LoggedInUser> user,
             @RequestParam final Optional<Integer> page,
-            @RequestParam final Optional<Integer> size
+            @RequestParam final Optional<Integer> size,
+            @Parameter(hidden = true) @VerificationUser final Optional<LoggedInUser> user
     ) {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_DEFAULT_SIZE_PER_PAGE));
         ItemSummaryResponse response;

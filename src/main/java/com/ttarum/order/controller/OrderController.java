@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
 @Tag(name = "order", description = "주문")
-public class OrderControllerImpl {
+public class OrderController {
 
     private final OrderService orderService;
 

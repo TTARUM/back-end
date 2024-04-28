@@ -35,7 +35,7 @@ import static com.ttarum.member.mail.exception.ErrorType.VALIDATING;
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
 @Tag(name = "Member", description = "회원")
-public class MemberControllerImpl {
+public class MemberController {
     private static final Integer DEFAULT_WISHLIST_SIZE = 8;
 
     private final MemberService memberService;

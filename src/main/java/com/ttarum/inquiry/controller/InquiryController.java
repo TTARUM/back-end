@@ -35,7 +35,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Tag(name = "inquiry", description = "문의")
 @RequestMapping("/api/inquiries")
-public class InquiryControllerImpl {
+public class InquiryController {
 
     private static final int INQUIRY_DEFAULT_SIZE_PER_PAGE = 10;
     private final InquiryService inquiryService;

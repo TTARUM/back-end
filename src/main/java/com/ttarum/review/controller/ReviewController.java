@@ -33,7 +33,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/reviews")
 @Tag(name = "review", description = "리뷰")
-public class ReviewControllerImpl {
+public class ReviewController {
 
     private static final int PAGE_DEFAULT_SIZE = 10;
 

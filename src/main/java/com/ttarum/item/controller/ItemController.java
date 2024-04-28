@@ -30,7 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/api/items")
 @Tag(name = "item", description = "제품")
-public class ItemControllerImpl {
+public class ItemController {
 
     private static final int ITEM_DEFAULT_SIZE_PER_PAGE = 9;
     private static final int ITEM_SIMILAR_PRICE_DEFAULT_SIZE_PER_PAGE = 7;

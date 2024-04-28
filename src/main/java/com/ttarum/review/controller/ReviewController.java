@@ -6,23 +6,39 @@ import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewCreationResponse;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.dto.response.ReviewUpdateResponse;
+import com.ttarum.review.service.ReviewImageService;
+import com.ttarum.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/reviews")
 @Tag(name = "review", description = "리뷰")
-public interface ReviewController {
+public class ReviewController {
+
+    private static final int PAGE_DEFAULT_SIZE = 10;
+
+    private final ReviewService reviewService;
+    private final ReviewImageService reviewImageService;
 
     /**
      * 특정 제품에 대한 리뷰 조회
@@ -45,9 +61,15 @@ public interface ReviewController {
 
     })
     @GetMapping
-    ResponseEntity<List<ReviewResponse>> getReviewResponseList(@RequestParam long itemId,
-                                                               Optional<Integer> page,
-                                                               Optional<Integer> size);
+    public ResponseEntity<List<ReviewResponse>> getReviewResponseList(
+            @RequestParam final long itemId,
+            final Optional<Integer> page,
+            final Optional<Integer> size
+    ) {
+        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(PAGE_DEFAULT_SIZE));
+        List<ReviewResponse> list = reviewService.getReviewResponseList(itemId, pageRequest);
+        return ResponseEntity.ok(list);
+    }
 
     /**
      * 특정 리뷰 제거
@@ -62,8 +84,14 @@ public interface ReviewController {
             @ApiResponse(responseCode = "400", description = "제거 실패")
     })
     @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
-    @DeleteMapping
-    ResponseEntity<Void> deleteReview(@PathVariable long reviewId, @AuthenticationPrincipal CustomUserDetails user);
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable final long reviewId,
+            @AuthenticationPrincipal final CustomUserDetails user
+    ) {
+        reviewService.deleteReview(reviewId, user.getId());
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * 리뷰 업데이트
@@ -81,8 +109,15 @@ public interface ReviewController {
     @Parameters(value = {
             @Parameter(name = "reviewId", description = "리뷰의 Id값", example = "1", required = true)
     })
-    @PutMapping
-    ResponseEntity<Void> updateReview(@PathVariable long reviewId, @RequestBody ReviewUpdateRequest request, @AuthenticationPrincipal CustomUserDetails user);
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<Void> updateReview(
+            @PathVariable final long reviewId,
+            @RequestBody final ReviewUpdateRequest request,
+            @AuthenticationPrincipal final CustomUserDetails user
+    ) {
+        reviewService.updateReview(reviewId, request, user.getId());
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * 리뷰 업데이트를 위한 데이터 조회
@@ -97,8 +132,14 @@ public interface ReviewController {
             @ApiResponse(responseCode = "400", description = "조회 실패")
     })
     @Parameter(name = "reviewId", description = "조회할 리뷰의 Id 값", example = "1")
-    @GetMapping
-    ResponseEntity<ReviewUpdateResponse> updateReview(@PathVariable long reviewId, @AuthenticationPrincipal CustomUserDetails user);
+    @GetMapping("/{reviewId}/update")
+    public ResponseEntity<ReviewUpdateResponse> updateReview(
+            @PathVariable final long reviewId,
+            @AuthenticationPrincipal final CustomUserDetails user
+    ) {
+        ReviewUpdateResponse reviewUpdateResponse = reviewService.getReviewForUpdating(user.getId(), reviewId);
+        return ResponseEntity.ok(reviewUpdateResponse);
+    }
 
     /**
      * 리뷰 작성
@@ -113,7 +154,17 @@ public interface ReviewController {
             @ApiResponse(responseCode = "200", description = "리뷰 작성 성공"),
             @ApiResponse(responseCode = "400", description = "리뷰 작성 실패")
     })
+    @Transactional
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<ReviewCreationResponse> createReview(@AuthenticationPrincipal CustomUserDetails user, @RequestPart(name = "images") List<MultipartFile> multipartFileList, @RequestPart(name = "reviewCreationRequest") ReviewCreationRequest request);
-
+    public ResponseEntity<ReviewCreationResponse> createReview(
+            @RequestPart(name = "images", required = false) final List<MultipartFile> multipartFileList,
+            @RequestPart(name = "reviewCreationRequest") final ReviewCreationRequest request,
+            @AuthenticationPrincipal final CustomUserDetails user
+    ) {
+        long reviewId = reviewService.createReview(user.getId(), request);
+        if (Objects.nonNull(multipartFileList) && !multipartFileList.isEmpty()) {
+            reviewImageService.saveImageList(reviewId, multipartFileList);
+        }
+        return ResponseEntity.ok(new ReviewCreationResponse(reviewId));
+    }
 }

@@ -43,4 +43,13 @@ public class Item extends BaseEntity {
 
     @Column(name = "order_count", nullable = false, columnDefinition = "bigint default 0")
     private Long orderCount;
+
+    public void addRating(final Long rating, final Long count) {
+        this.ratingSum += rating;
+        this.ratingCount += count;
+    }
+
+    public void addOrderCount(final Long count) {
+        this.orderCount += count;
+    }
 }

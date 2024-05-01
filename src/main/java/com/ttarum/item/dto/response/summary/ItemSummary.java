@@ -41,4 +41,19 @@ public class ItemSummary {
 
     @Schema(description = "판매량", example = "300")
     private final long salesVolume;
+
+    public ItemSummary(final long id, final String categoryName, final String name, final int price, final String imageUrl, final boolean isInWishList, final Instant createdAt, final long salesVolume, final Long ratingSum, final Long ratingCount) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.salesVolume = salesVolume;
+        if (ratingCount == 0) {
+            this.rating = 0;
+        } else {
+            this.rating = (double) ratingSum / ratingCount;
+        }
+    }
 }

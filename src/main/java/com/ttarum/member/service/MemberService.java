@@ -158,21 +158,15 @@ public class MemberService {
      */
     @Transactional
     public void wishItem(final long memberId, final long itemId) {
-        verifyForbiddenMember(memberId);
-        existsItem(itemId);
+        Member member = getMemberById(memberId);
+        Item item = getItemById(itemId);
         validateDuplicatedWishlist(memberId, itemId);
         Wishlist wishlist = Wishlist.builder()
                 .id(new WishlistId(memberId, itemId))
+                .member(member)
+                .item(item)
                 .build();
         wishlistRepository.save(wishlist);
-    }
-
-    private void verifyForbiddenMember(final long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(MemberNotFoundException::new);
-        if (Boolean.TRUE.equals(member.getIsDeleted())) {
-            throw new AccessForbiddenMemberException();
-        }
     }
 
     private void validateDuplicatedWishlist(final long memberId, final long itemId) {
@@ -190,13 +184,6 @@ public class MemberService {
     private Item getItemById(final long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(ItemNotFoundException::new);
-    }
-
-    private void existsItem(final long itemId) {
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            throw new ItemNotFoundException();
-        }
     }
 
     /**

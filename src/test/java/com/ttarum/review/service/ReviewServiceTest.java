@@ -117,11 +117,19 @@ class ReviewServiceTest {
         Member member = Member.builder()
                 .id(memberId)
                 .build();
+        Item item = Item.builder()
+                .id(1L)
+                .ratingSum(1L)
+                .ratingCount(2L)
+                .build();
         Review review = Review.builder()
                 .member(member)
+                .star(Short.valueOf("3"))
+                .item(item)
                 .build();
 
         // when
+        when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
         when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(review));
         reviewService.deleteReview(reviewId, memberId);
 
@@ -173,11 +181,21 @@ class ReviewServiceTest {
         Member member = Member.builder()
                 .id(1L)
                 .build();
+        Item item = Item.builder()
+                .id(1L)
+                .name("item")
+                .description("description")
+                .price(13000)
+                .ratingSum(2L)
+                .ratingCount(3L)
+                .orderCount(4L)
+                .build();
         Review review = Review.builder()
                 .id(1L)
                 .content("content before updating")
                 .member(member)
                 .star(Integer.valueOf(1).shortValue())
+                .item(item)
                 .isDeleted(false)
                 .build();
         ReviewUpdateRequest request = ReviewUpdateRequest.builder()
@@ -186,6 +204,7 @@ class ReviewServiceTest {
                 .build();
 
         // when
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
         when(reviewRepository.findById(review.getId())).thenReturn(Optional.of(review));
         reviewService.updateReview(review.getId(), request, member.getId());
 
@@ -291,6 +310,8 @@ class ReviewServiceTest {
                 .build();
         Item item = Item.builder()
                 .id(1L)
+                .ratingSum(1L)
+                .ratingCount(2L)
                 .build();
         ReviewCreationRequest request = ReviewCreationRequest.builder()
                 .orderId(order.getId())

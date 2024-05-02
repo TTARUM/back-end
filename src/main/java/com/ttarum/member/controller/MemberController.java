@@ -100,7 +100,7 @@ public class MemberController {
      * 제품 찜 메서드
      *
      * @param user   로그인한 회원
-     * @param itemId 찜 목록에 추가할 제품의 Id 값
+     * @param wishItemRequest 찜 목록에 추가할 제품의 Id 값
      * @return 빈 응답
      */
     @Operation(summary = "제품 찜하기")
@@ -111,10 +111,10 @@ public class MemberController {
     @Parameter(name = "itemId", required = true, description = "제품의 Id 값", example = "1")
     @PostMapping("/wish-item")
     public ResponseEntity<Void> addItemToWishlist(
-            @RequestParam final long itemId,
+            @RequestBody final WishItemRequest wishItemRequest,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
-        memberService.wishItem(user.getId(), itemId);
+        memberService.wishItem(user.getId(), wishItemRequest.getItemId());
         return ResponseEntity.ok().build();
     }
 

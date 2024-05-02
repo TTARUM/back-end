@@ -16,4 +16,10 @@ class ReviewRepositoryTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
         reviewRepository.findReviewResponseByItemId(1L, pageRequest);
     }
+
+    @Test
+    void findReviewResponseByMemberId() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        reviewRepository.findReviewResponseByMemberId(1L, pageRequest);
+    }
 }

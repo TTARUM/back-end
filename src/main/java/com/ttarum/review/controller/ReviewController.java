@@ -169,6 +169,12 @@ public class ReviewController {
         return ResponseEntity.ok(new ReviewCreationResponse(reviewId));
     }
 
+    @Operation(summary = "특정 회원의 리뷰 조회")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @Parameters(value = {
+            @Parameter(name = "page", description = "조회할 페이지 넘버 (기본값 0)", example = "0"),
+            @Parameter(name = "size", description = "페이지당 조회할 리뷰글의 수 (기본값 10)", example = "10")
+    })
     @GetMapping("/member")
     public ResponseEntity<ReviewListResponseForSpecificMember> getReviewsForSpecificMember(@AuthenticationPrincipal final CustomUserDetails userDetails, final Optional<Integer> page, final Optional<Integer> size) {
         PageRequest pageable = PageRequest.of(page.orElse(0), size.orElse(PAGE_DEFAULT_SIZE));

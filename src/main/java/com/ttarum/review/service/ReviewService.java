@@ -212,6 +212,14 @@ public class ReviewService {
         return reviewUpdateResponse;
     }
 
+    /**
+     * 특정 회원이 작성한 리뷰글 조회
+     *
+     * @param memberId 특정 회원의 Id 값
+     * @param pageable 페이지네이션 객체
+     * @return 조회한 리뷰글 리스트
+     * @throws AccessForbiddenMemberException 삭제된 회원의 리뷰글 조회 시 발생
+     */
     public ReviewListResponseForSpecificMember getReviewForSpecificMember(final long memberId, final Pageable pageable) {
         verifyForbiddenMember(memberId);
 

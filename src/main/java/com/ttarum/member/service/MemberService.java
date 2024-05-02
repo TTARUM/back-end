@@ -160,7 +160,7 @@ public class MemberService {
     public void wishItem(final long memberId, final long itemId) {
         Member member = getMemberById(memberId);
         Item item = getItemById(itemId);
-        validateDuplicatedWishlist(member, item);
+        validateDuplicatedWishlist(memberId, itemId);
         Wishlist wishlist = Wishlist.builder()
                 .member(member)
                 .item(item)
@@ -168,8 +168,8 @@ public class MemberService {
         wishlistRepository.save(wishlist);
     }
 
-    private void validateDuplicatedWishlist(final Member member, final Item item) {
-        Optional<Wishlist> optionalWishlist = wishlistRepository.findById(new WishlistId(member, item));
+    private void validateDuplicatedWishlist(final long memberId, final long itemId) {
+        Optional<Wishlist> optionalWishlist = wishlistRepository.findById(new WishlistId(memberId, itemId));
         if (optionalWishlist.isPresent()) {
             throw new DuplicatedWishlistException();
         }

@@ -325,6 +325,8 @@ class MemberServiceTest {
                 .item(item)
                 .build();
 
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
         when(wishlistRepository.findById(new WishlistId(memberId, itemId))).thenReturn(Optional.of(wishlist));
 
         // when & then

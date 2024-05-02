@@ -4,6 +4,7 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
+import com.ttarum.member.exception.AccessForbiddenMemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
@@ -14,6 +15,7 @@ import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewImageResponse;
+import com.ttarum.review.dto.response.ReviewListResponseForSpecificMember;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import com.ttarum.review.exception.DuplicatedReviewException;
@@ -208,5 +210,39 @@ public class ReviewService {
         List<String> imageUrlList = reviewImageRepository.findUrlsByReviewId(reviewId);
         imageUrlList.forEach(reviewUpdateResponse::addImageUrl);
         return reviewUpdateResponse;
+    }
+
+    /**
+     * 특정 회원이 작성한 리뷰글 조회
+     *
+     * @param memberId 특정 회원의 Id 값
+     * @param pageable 페이지네이션 객체
+     * @return 조회한 리뷰글 리스트
+     * @throws AccessForbiddenMemberException 삭제된 회원의 리뷰글 조회 시 발생
+     */
+    public ReviewListResponseForSpecificMember getReviewForSpecificMember(final long memberId, final Pageable pageable) {
+        verifyForbiddenMember(memberId);
+
+        List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByMemberId(memberId, pageable);
+        List<Long> ids = extractId(reviewResponseList);
+
+        List<ReviewImage> reviewImageList = reviewRepository.findReviewImageByReviewId(ids);
+        reviewImageList.forEach(ri ->
+                reviewResponseList.stream()
+                        .filter(r -> r.getId().equals(ri.getReview().getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new ReviewException(HttpStatus.INTERNAL_SERVER_ERROR, "Unreachable Exception"))
+                        .addImageUrl(ReviewImageResponse.of(ri))
+        );
+
+        return new ReviewListResponseForSpecificMember(reviewResponseList);
+    }
+
+    private void verifyForbiddenMember(final long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+        if (Boolean.TRUE.equals(member.getIsDeleted())) {
+            throw new AccessForbiddenMemberException();
+        }
     }
 }

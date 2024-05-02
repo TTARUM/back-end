@@ -325,7 +325,9 @@ class MemberServiceTest {
                 .item(item)
                 .build();
 
-        when(wishlistRepository.findById(new WishlistId(memberId, itemId))).thenReturn(Optional.of(wishlist));
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+        when(itemRepository.findById(itemId)).thenReturn(Optional.of(item));
+        when(wishlistRepository.findById(new WishlistId(member, item))).thenReturn(Optional.of(wishlist));
 
         // when & then
         assertThatThrownBy(() -> memberService.wishItem(memberId, itemId))

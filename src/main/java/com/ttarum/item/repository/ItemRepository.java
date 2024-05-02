@@ -100,9 +100,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             """)
     List<ItemSummary> getItemSummaryByCategoryName(@Param("memberId") long memberId, @Param("category") String category, Pageable pageable);
 
-    // TODO: Update rating and salesVolume
+    // TODO: Update salesVolume
     @Query("""
-            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, c.name, i.name, i.price, 0.0, i.itemImageUrl, false, i.createdAt, 0L)
+            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, c.name, i.name, i.price, i.itemImageUrl, false, i.createdAt, 0L, i.ratingSum, i.ratingCount)
             FROM Item i
             JOIN i.category c
             WHERE c.name = :category

@@ -97,6 +97,11 @@ public class ReviewService {
     public void deleteReview(final Long reviewId, final Long memberId) {
         Review review = getReviewById(reviewId);
         validateWriter(review, memberId);
+
+        Item item = itemRepository.findById(review.getItem().getId())
+                .orElseThrow(ItemNotFoundException::new);
+        item.addRating(-review.getStar().longValue(), -1L);
+
         review.delete();
     }
 
@@ -123,6 +128,12 @@ public class ReviewService {
             throw new ReviewException(HttpStatus.BAD_REQUEST, "삭제된 리뷰는 수정이 불가능합니다.");
         }
         validateWriter(review, memberId);
+
+        Item item = itemRepository.findById(review.getItem().getId())
+                .orElseThrow(ItemNotFoundException::new);
+        long ratingDiff = request.getRating() - review.getStar();
+        item.addRating(ratingDiff, 0L);
+
         review.update(request, reviewValidator);
     }
 
@@ -153,6 +164,7 @@ public class ReviewService {
 
         Review review = reviewCreationRequest.toReviewEntity();
         review.setInitialForeignEntity(member, order, item);
+        item.addRating(review.getStar().longValue(), 1L);
         return reviewRepository.save(review).getId();
     }
 

@@ -54,4 +54,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             WHERE r.id = :reviewId
             """)
     ReviewUpdateResponse findReviewUpdateResponseById(@Param("reviewId") long reviewId);
+
+    @Query(value = """
+            SELECT r.id AS id,
+            m.nickname AS nickname,
+            r.content AS content,
+            star AS rating,
+            r.created_at AS createdAt,
+            FROM Review r, Member m
+            WHERE r.member_id = :memberId AND r.is_deleted = false
+                        """, nativeQuery = true)
+    List<ReviewResponse> findReviewResponseByMemberId(@Param("memberId") long memberId, Pageable pageable);
 }

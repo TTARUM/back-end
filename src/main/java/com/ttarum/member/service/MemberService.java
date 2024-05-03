@@ -137,11 +137,12 @@ public class MemberService {
      * @throws MemberException 프로필 이미지 업데이트를 실패한 경우 발생합니다.
      */
     @Transactional
-    public void updateProfileImage(final Long memberId, final MultipartFile image) {
+    public String updateProfileImage(final Long memberId, final MultipartFile image) {
         Member member = getMemberById(memberId);
         try {
             URL url = imageService.saveImage(image);
             member.setImageUrl(url.toString());
+            return url.toString();
         } catch (IOException e) {
             throw new MemberException(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다: " + e.getMessage());
         }

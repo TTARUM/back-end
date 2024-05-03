@@ -88,12 +88,12 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping(value = "/profile-image", consumes = "multipart/form-data")
-    public ResponseEntity<Void> updateProfileImage(
+    public ResponseEntity<String> updateProfileImage(
             @Parameter(description = "프로필 이미지 파일", required = true) @RequestPart("image") final MultipartFile image,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
-        memberService.updateProfileImage(user.getId(), image);
-        return ResponseEntity.ok().build();
+        String ret = memberService.updateProfileImage(user.getId(), image);
+        return ResponseEntity.ok(ret);
     }
 
     /**

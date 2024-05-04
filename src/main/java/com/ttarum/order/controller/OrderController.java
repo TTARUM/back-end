@@ -33,8 +33,12 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping()
-    public ResponseEntity<String> createOrder(@RequestBody OrderCreateRequest request){
-        return ResponseEntity.ok(request.toString());
+    public ResponseEntity<Void> createOrder(
+            @RequestBody final OrderCreateRequest request,
+            @AuthenticationPrincipal final CustomUserDetails user
+    ){
+        orderService.createOrder(request, user.getId());
+        return ResponseEntity.ok().build();
     }
 
     /**

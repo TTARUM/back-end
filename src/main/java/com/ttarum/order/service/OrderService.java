@@ -38,7 +38,9 @@ public class OrderService {
 
     private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
 
-    public void createOrder(OrderCreateRequest request) {
+    public void createOrder(final OrderCreateRequest request, final long memberId) {
+        Member member = getMemberById(memberId);
+
         List<Long> itemIds = request.getOrderItemRequests()
                 .stream().map(OrderItemRequest::getItemId).toList();
         List<Item> items = itemRepository.findAllById(itemIds);
@@ -47,21 +49,22 @@ public class OrderService {
             throw OrderException.itemNotFound();
         }
 
-        int totalPrice = calculateTotalPrice(request.getOrderItemRequests(), items);
-
+        long totalPrice = calculateTotalPrice(request.getOrderItemRequests(), items);
+        Order orderEntity = request.toOrderEntity(totalPrice, member);
+        orderRepository.save(orderEntity);
     }
 
     private boolean validateOrderItems(List<OrderItemRequest> orderItemRequests, List<Item> items) {
         return orderItemRequests.size() == items.size();
     }
 
-    private int calculateTotalPrice(List<OrderItemRequest> orderItemRequests, List<Item> items) {
+    private long calculateTotalPrice(List<OrderItemRequest> orderItemRequests, List<Item> items) {
         Map<Long, Integer> itemQuantity = orderItemRequests.stream()
                 .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
 
-        int ret = 0;
+        long ret = 0L;
         for (Item item : items) {
-            ret += item.getPrice() * itemQuantity.get(item.getId());
+            ret += (long) item.getPrice() * itemQuantity.get(item.getId());
         }
         return ret;
     }

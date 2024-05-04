@@ -2,11 +2,10 @@ package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.LoggedInUser;
+import com.ttarum.item.domain.PopularItem;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
-import com.ttarum.item.dto.response.*;
-import com.ttarum.item.domain.redis.PopularItem;
 import com.ttarum.item.service.ItemService;
 import com.ttarum.item.service.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +17,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,17 +52,12 @@ public class ItemController {
     })
     @Parameters(value = {
             @Parameter(name = "itemId", description = "제품의 아이디", example = "1", required = true),
-            @Parameter(name = "useSearch", description = "검색을 이용해 제품을 조회하는지 여부 (없을 시 false 적용)", example = "true")
     })
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDetailResponse> getDetail(
-            @PathVariable final long itemId,
-            @RequestParam(required = false, defaultValue = "false") final boolean useSearch
+            @PathVariable final long itemId
     ) {
         ItemDetailResponse response = itemService.getItemDetail(itemId);
-        if (useSearch) {
-            redisService.incrementSearchKeywordCount(response.getName(), itemId);
-        }
         return ResponseEntity.ok(response);
     }
 
@@ -80,7 +76,7 @@ public class ItemController {
     @ApiResponse(responseCode = "200", description = "성공")
     @Parameters(value = {
             @Parameter(name = "query", description = "검색어"),
-            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "0"),
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9개)", example = "9")
     })
     @GetMapping("/list")
@@ -104,20 +100,22 @@ public class ItemController {
     }
 
     /**
-     * 인기 검색어 조회
+     * 인기 상품 조회
      *
-     * @param number 조회할 인기 검색어 개수
-     * @return 인기 검색어 목록
+     * @param number 조회할 인기 상품 개수
+     * @return 인기 상품 목록
      */
-    @Operation(summary = "인기 검색어 조회")
+    @Operation(summary = "인기 상품 조회")
     @ApiResponse(responseCode = "200", description = "성공")
-    @Parameter(name = "number", description = "조회할 인기 검색어 개수 (기본 값 5)", example = "5")
+    @Parameter(name = "number", description = "조회할 인기 상품 개수 (기본 값 5)", example = "5")
     @GetMapping("/popular-list")
-    public ResponseEntity<PopularItemResponse> getPopularItemList(
+    public ResponseEntity<List<PopularItem>> getPopularItemList(
             @RequestParam(required = false, defaultValue = "5") final int number
     ) {
-        List<PopularItem> popularSearchKeywords = redisService.getPopularSearchKeywords(number);
-        return ResponseEntity.ok(new PopularItemResponse(popularSearchKeywords));
+        Pageable pageable = PageRequest.of(0, number, Sort.by(Sort.Order.desc("orderCount")));
+        List<PopularItem> popularItemList = itemService.getPopularItemList(pageable);
+
+        return ResponseEntity.ok(popularItemList);
     }
 
     /**
@@ -134,7 +132,7 @@ public class ItemController {
     })
     @Parameters(value = {
             @Parameter(name = "price", description = "가격", example = "17000"),
-            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "0"),
             @Parameter(name = "size", description = "페이지당 개수 (기본 값 7)", example = "7")
     })
     @GetMapping("/similar-price")
@@ -166,23 +164,27 @@ public class ItemController {
     @Operation(summary = "카테고리 인기상품 조회")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @Parameters(value = {
-            @Parameter(name = "category", description = "카테고리 ID", example = "1"),
-            @Parameter(name = "page", description = "페이지 넘버 (기본값 0)", example = "1"),
+            @Parameter(name = "categoryId", description = "카테고리 ID", example = "1"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본값 0)", example = "0"),
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 7)", example = "7")
     })
     @GetMapping("/popular-in-category/{categoryId}")
-    public ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(
+    public ResponseEntity<ItemSummaryResponse> getPopularItemSummaryListInCategory(
             @PathVariable final Long categoryId,
             final Optional<Integer> page,
             final Optional<Integer> size,
             @Parameter(hidden = true) @VerificationUser final Optional<LoggedInUser> user
     ) {
-        PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_POPULAR_IN_CATEGORY_DEFAULT_SIZE_PER_PAGE));
-        PopularItemInCategoryResponse response;
+        PageRequest pageRequest = PageRequest.of(
+                page.orElse(0),
+                size.orElse(ITEM_POPULAR_IN_CATEGORY_DEFAULT_SIZE_PER_PAGE),
+                Sort.by(Sort.Order.desc("orderCount"))
+        );
+        ItemSummaryResponse response;
         if (user.isPresent()) {
-            response = itemService.getPopularItemSummaryListInCategory(user.get().getId(), categoryId, pageRequest);
+            response = itemService.getItemSummaryListByCategory(user.get().getId(), categoryId, pageRequest);
         } else {
-            response = itemService.getPopularItemSummaryListInCategory(categoryId, pageRequest);
+            response = itemService.getItemSummaryListByCategory(categoryId, pageRequest);
         }
         return ResponseEntity.ok(response);
     }

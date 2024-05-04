@@ -132,7 +132,7 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @Parameters(value = {
-            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "0"),
             @Parameter(name = "size", description = "페이지 당 찜한 제품 개수 (기본 값 8)", example = "8")
     })
     @GetMapping("/wish-item")

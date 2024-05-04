@@ -22,7 +22,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      */
     //TODO: Update temporal query
     @Query("""
-            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, i.category.name, i.name, i.price, 0.0, i.itemImageUrl, false, i.createdAt, 0L)
+            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, i.category.name, i.name, i.price, i.itemImageUrl, false, i.createdAt, i.orderCount, i.ratingSum, i.ratingCount)
             FROM Item i
             WHERE i.name LIKE %:query%
             """)
@@ -85,27 +85,22 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             """)
     List<PopularItemSummaryInCategory> getPopularItemSummaryListInCategory(@Param("ids") List<Long> itemIdList);
 
-    // TODO: Update rating and salesVolume
     @Query("""
-            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl, (COUNT(wl.id) > 0), i.createdAt, COUNT(oi.order.id))
-            FROM Item i
-            LEFT JOIN FETCH Review r
-            ON r.item.id = i.id
-            LEFT JOIN FETCH OrderItem oi
-            ON oi.item.id = i.id
-            LEFT JOIN FETCH Wishlist wl
-            ON wl.item.id = i.id AND wl.member.id = :memberId
-            WHERE i.category.name = :category
-            GROUP BY i.id, i.category.name, i.name, i.price, i.itemImageUrl, i.createdAt
-            """)
-    List<ItemSummary> getItemSummaryByCategoryName(@Param("memberId") long memberId, @Param("category") String category, Pageable pageable);
-
-    // TODO: Update salesVolume
-    @Query("""
-            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, c.name, i.name, i.price, i.itemImageUrl, false, i.createdAt, 0L, i.ratingSum, i.ratingCount)
+            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, c.name, i.name, i.price, i.itemImageUrl,
+            CASE WHEN w IS NULL THEN false ELSE true END,
+            i.createdAt, i.orderCount, i.ratingSum, i.ratingCount)
             FROM Item i
             JOIN i.category c
-            WHERE c.name = :category
+            LEFT JOIN FETCH Wishlist w ON i.id = w.item.id AND w.member.id = :memberId
+            WHERE c.id = :categoryId
             """)
-    List<ItemSummary> getItemSummaryByCategoryName(@Param("category") String category, Pageable pageable);
+    List<ItemSummary> getItemSummaryByCategoryName(@Param("memberId") long memberId, @Param("categoryId") Long categoryId, Pageable pageable);
+
+    @Query("""
+            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, c.name, i.name, i.price, i.itemImageUrl, false, i.createdAt, i.orderCount, i.ratingSum, i.ratingCount)
+            FROM Item i
+            JOIN i.category c
+            WHERE c.id = :categoryId
+            """)
+    List<ItemSummary> getItemSummaryByCategoryName(@Param("categoryId") Long categoryId, Pageable pageable);
 }

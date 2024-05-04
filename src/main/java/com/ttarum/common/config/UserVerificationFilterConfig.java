@@ -25,8 +25,8 @@ public class UserVerificationFilterConfig {
                 "/api/items/similar-price",
                 "/api/items/list",
                 "/api/items/similar-price",
-                "/api/items/popular-in-category",
-                "/api/items/category"
+                "/api/items/popular-in-category/*",
+                "/api/items/category/*"
         ));
         return filterRegistrationBean;
     }

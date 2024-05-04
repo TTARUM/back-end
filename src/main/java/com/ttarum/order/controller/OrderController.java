@@ -64,7 +64,7 @@ public class OrderController {
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        List<OrderResponse> response = orderService.getOrderSummaryList(user.getId(), pageRequest);
+        List<OrderResponse> response = orderService.getOrderList(user.getId(), pageRequest);
         return ResponseEntity.ok(response);
     }
 

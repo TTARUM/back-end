@@ -22,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -97,9 +96,11 @@ public class OrderService {
      * @param pageable 페이지네이션 객체
      * @return 주문 내역 목록
      */
-    public List<OrderResponse> getOrderSummaryList(final long memberId, final Pageable pageable) {
+    public List<OrderResponse> getOrderList(final long memberId, final Pageable pageable) {
         List<Order> orderList = orderRepository.findOrderListByMemberId(memberId, pageable);
-        return new ArrayList<>();
+        return orderList.stream()
+                .map(OrderResponse::fromEntity)
+                .toList();
     }
 
     /**

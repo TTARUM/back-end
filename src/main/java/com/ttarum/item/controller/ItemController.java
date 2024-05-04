@@ -2,7 +2,7 @@ package com.ttarum.item.controller;
 
 import com.ttarum.common.annotation.VerificationUser;
 import com.ttarum.common.dto.user.LoggedInUser;
-import com.ttarum.item.domain.PopularItem;
+import com.ttarum.item.dto.response.PopularItem;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;

@@ -1,7 +1,7 @@
 package com.ttarum.item.repository;
 
 import com.ttarum.item.domain.Item;
-import com.ttarum.item.domain.PopularItem;
+import com.ttarum.item.dto.response.PopularItem;
 import com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice;
 import com.ttarum.item.dto.response.summary.ItemSummary;
 import org.springframework.data.domain.Pageable;
@@ -84,7 +84,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<ItemSummary> getItemSummaryByCategoryName(@Param("categoryId") Long categoryId, Pageable pageable);
 
     @Query("""
-            SELECT new com.ttarum.item.domain.PopularItem(i.id, i.name, i.orderCount)
+            SELECT new com.ttarum.item.dto.response.PopularItem(i.id, i.name, i.orderCount)
             FROM Item i
             """)
     List<PopularItem> getPopularItemList(Pageable pageable);

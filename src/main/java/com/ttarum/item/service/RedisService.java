@@ -1,7 +1,7 @@
 package com.ttarum.item.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ttarum.item.domain.PopularItem;
+import com.ttarum.item.dto.response.PopularItem;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;

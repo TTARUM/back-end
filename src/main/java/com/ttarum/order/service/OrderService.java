@@ -58,6 +58,7 @@ public class OrderService {
         }
 
         Map<Long, Long> itemQuantity = itemQuantity(request.getOrderItemRequests());
+        countUpItemOrderCount(items, itemQuantity);
 
         long totalPrice = calculateTotalPrice(itemQuantity, items);
         Order orderEntity = request.toOrderEntity(totalPrice, member);
@@ -82,6 +83,12 @@ public class OrderService {
             ret += (long) item.getPrice() * itemQuantity.get(item.getId());
         }
         return ret;
+    }
+
+    private void countUpItemOrderCount(List<Item> items, Map<Long, Long> itemQuantity) {
+        for (Item item : items) {
+            item.addOrderCount(itemQuantity.get(item.getId()));
+        }
     }
 
     private List<OrderItem> orderItemsList(Order order, List<Item> items, Map<Long, Long> itemQuantity) {

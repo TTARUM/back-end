@@ -71,17 +71,17 @@ public class OrderService {
         return orderItemRequests.size() == items.size();
     }
 
+    private Map<Long, Long> itemQuantity(List<OrderItemRequest> orderItemRequests) {
+        return orderItemRequests.stream()
+                .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
+    }
+
     private long calculateTotalPrice(Map<Long, Long> itemQuantity, List<Item> items) {
         long ret = 0L;
         for (Item item : items) {
             ret += (long) item.getPrice() * itemQuantity.get(item.getId());
         }
         return ret;
-    }
-
-    private Map<Long, Long> itemQuantity(List<OrderItemRequest> orderItemRequests) {
-        return orderItemRequests.stream()
-                .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
     }
 
     private List<OrderItem> orderItemsList(Order order, List<Item> items, Map<Long, Long> itemQuantity) {

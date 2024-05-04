@@ -1,7 +1,7 @@
 package com.ttarum.item.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ttarum.item.domain.redis.PopularItem;
+import com.ttarum.item.dto.response.PopularItem;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,17 +18,6 @@ public class RedisService {
     private final ObjectMapper objectMapper;
     private static final String SEARCH_KEYWORD_ZSET_KEY = "searchKeywords";
     private static final String PURCHASE_ITEM_ZSET_KEY = "purchaseItems";
-
-    /**
-     * 검색 키워드 카운트 증가
-     *
-     * @param keyword 검색 키워드
-     * @param itemId 제품의 Id 값
-     */
-    public void incrementSearchKeywordCount(String keyword, long itemId) {
-        PopularItem popularItem = new PopularItem(keyword, itemId);
-        redisTemplate.opsForZSet().incrementScore(SEARCH_KEYWORD_ZSET_KEY, popularItem, 1);
-    }
 
     /**
      * 인기 검색 키워드 목록 조회(정렬된 문자열만 조회)

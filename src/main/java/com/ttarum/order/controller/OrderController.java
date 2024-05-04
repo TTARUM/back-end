@@ -1,13 +1,15 @@
 package com.ttarum.order.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
-import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
+import com.ttarum.order.dto.response.OrderResponse;
 import com.ttarum.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -24,6 +28,20 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+
+    @Operation(summary = "주문 생성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @PostMapping()
+    public ResponseEntity<Void> createOrder(
+            @RequestBody final OrderCreateRequest request,
+            @AuthenticationPrincipal final CustomUserDetails user
+    ){
+        orderService.createOrder(request, user.getId());
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * 주문 내역 목록 조회
@@ -40,13 +58,13 @@ public class OrderController {
             @Parameter(name = "size", description = "페이지당 주문 내역 개수 (기본 값 5)", example = "5")
     })
     @GetMapping("/list")
-    public ResponseEntity<OrderSummaryListResponse> getOrderList(
+    public ResponseEntity<List<OrderResponse>> getOrderList(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "5") int size,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        OrderSummaryListResponse response = orderService.getOrderSummaryList(user.getId(), pageRequest);
+        List<OrderResponse> response = orderService.getOrderList(user.getId(), pageRequest);
         return ResponseEntity.ok(response);
     }
 

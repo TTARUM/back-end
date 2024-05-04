@@ -57,7 +57,7 @@ public class ReviewController {
     })
     @Parameters(value = {
             @Parameter(name = "itemId", description = "제품의 PK 값", example = "1"),
-            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "1"),
+            @Parameter(name = "page", description = "페이지 넘버 (기본 값 0)", example = "0"),
             @Parameter(name = "size", description = "한 페이지당 리뷰 수 (기본 값 10개)", example = "5")
 
     })

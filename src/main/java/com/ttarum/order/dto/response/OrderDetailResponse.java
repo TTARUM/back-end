@@ -3,7 +3,6 @@ package com.ttarum.order.dto.response;
 import com.ttarum.order.domain.Order;
 import com.ttarum.order.domain.OrderStatus;
 import com.ttarum.order.domain.PaymentMethod;
-import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

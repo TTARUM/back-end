@@ -1,15 +1,20 @@
 package com.ttarum.order.service;
 
+import com.ttarum.item.domain.Item;
+import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
+import com.ttarum.order.domain.OrderItem;
+import com.ttarum.order.dto.request.OrderCreateRequest;
+import com.ttarum.order.dto.request.OrderItemRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
-import com.ttarum.order.dto.response.summary.OrderItemSummary;
-import com.ttarum.order.dto.response.summary.OrderSummary;
-import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
+import com.ttarum.order.dto.response.OrderResponse;
+import com.ttarum.order.dto.response.OrderItemSummary;
+import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.exception.OrderForbiddenException;
-import com.ttarum.order.exception.OrderNotFoundException;
+import com.ttarum.order.repository.OrderItemRepository;
 import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,19 +22,79 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
 
     private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
+
+    /**
+     * 주문 생성 메서드
+     *
+     * @param request 주문 생성 요청
+     * @param memberId 회원의 Id 값
+     * @throws OrderException 주문 생성에 실패하였을 경우 발생한다.
+     */
+    public void createOrder(final OrderCreateRequest request, final long memberId) {
+        Member member = getMemberById(memberId);
+
+        List<Long> itemIds = request.getOrderItemRequests()
+                .stream().map(OrderItemRequest::getItemId).toList();
+        List<Item> items = itemRepository.findAllById(itemIds);
+
+        if (!validateOrderItems(request.getOrderItemRequests(), items)) {
+            throw OrderException.itemNotFound();
+        }
+
+        Map<Long, Long> itemQuantity = itemQuantity(request.getOrderItemRequests());
+        countUpItemOrderCount(items, itemQuantity);
+
+        long totalPrice = calculateTotalPrice(itemQuantity, items);
+        Order orderEntity = request.toOrderEntity(totalPrice, member);
+        orderRepository.save(orderEntity);
+
+        List<OrderItem> orderItems = orderItemsList(orderEntity, items, itemQuantity);
+        orderItemRepository.saveAll(orderItems);
+    }
+
+    private boolean validateOrderItems(List<OrderItemRequest> orderItemRequests, List<Item> items) {
+        return orderItemRequests.size() == items.size();
+    }
+
+    private Map<Long, Long> itemQuantity(List<OrderItemRequest> orderItemRequests) {
+        return orderItemRequests.stream()
+                .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
+    }
+
+    private long calculateTotalPrice(Map<Long, Long> itemQuantity, List<Item> items) {
+        long ret = 0L;
+        for (Item item : items) {
+            ret += (long) item.getPrice() * itemQuantity.get(item.getId());
+        }
+        return ret;
+    }
+
+    private void countUpItemOrderCount(List<Item> items, Map<Long, Long> itemQuantity) {
+        for (Item item : items) {
+            item.addOrderCount(itemQuantity.get(item.getId()));
+        }
+    }
+
+    private List<OrderItem> orderItemsList(Order order, List<Item> items, Map<Long, Long> itemQuantity) {
+        return items.stream().map(item -> new OrderItem(order, item, itemQuantity.get(item.getId()))
+        ).toList();
+    }
 
     /**
      * 주문 내역 목록 조회 메서드
@@ -38,20 +103,11 @@ public class OrderService {
      * @param pageable 페이지네이션 객체
      * @return 주문 내역 목록
      */
-    public OrderSummaryListResponse getOrderSummaryList(final long memberId, final Pageable pageable) {
+    public List<OrderResponse> getOrderList(final long memberId, final Pageable pageable) {
         List<Order> orderList = orderRepository.findOrderListByMemberId(memberId, pageable);
-        List<OrderSummary> orderSummaryList = new ArrayList<>();
-
-        for (Order order : orderList) {
-            List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(order.getId(), DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY);
-            orderSummaryList.add(OrderSummary.builder()
-                    .orderId(order.getId())
-                    .dateTime(order.getCreatedAt())
-                    .orderItemSummaryList(orderItemSummaryList)
-                    .build()
-            );
-        }
-        return new OrderSummaryListResponse(orderSummaryList);
+        return orderList.stream()
+                .map(OrderResponse::fromEntity)
+                .toList();
     }
 
     /**
@@ -61,7 +117,7 @@ public class OrderService {
      * @param orderId  주문의 Id 값
      * @return 주문의 세부사항
      * @throws MemberNotFoundException 회원을 찾지 못하였을 경우 발생한다.
-     * @throws OrderNotFoundException  주문을 찾지 못하였을 경우 발생한다.
+     * @throws OrderException  주문을 찾지 못하였을 경우 발생한다.
      * @throws OrderForbiddenException 회원의 주문이 아닌 경우 발생한다.
      */
     public OrderDetailResponse getOrderDetail(final long memberId, final long orderId) {
@@ -70,13 +126,13 @@ public class OrderService {
         if (!member.isMyOrder(order)) {
             throw new OrderForbiddenException();
         }
-        List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(orderId);
+        List<OrderItemSummary> orderItemSummaryList = orderItemRepository.findOrderItemListByOrderId(orderId);
         return OrderDetailResponse.of(orderItemSummaryList, order);
     }
 
     private Order getOrderById(final long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(OrderNotFoundException::new);
+                .orElseThrow(OrderException::notFound);
     }
 
     private Member getMemberById(final long memberId) {

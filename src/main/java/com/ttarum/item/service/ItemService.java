@@ -1,12 +1,12 @@
 package com.ttarum.item.service;
 
 import com.ttarum.item.domain.Item;
+import com.ttarum.item.dto.response.PopularItem;
 import com.ttarum.item.dto.response.ItemDetailResponse;
 import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice;
 import com.ttarum.item.dto.response.summary.ItemSummary;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
-import com.ttarum.item.dto.response.*;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.order.repository.OrderRepository;
@@ -16,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Slf4j
@@ -122,52 +120,14 @@ public class ItemService {
     }
 
     /**
-     * 카테고리 인기상품 조회 메서드
-     * 현재 시각 기준 일주일 전으로 부터의 주문 건수를 이용해 인기상품을 조회합니다.
-     * 로그인한 회원의 Id 값을 받아 찜 목록에 포함이 되어있는지에 대한 여부값을 포함합니다.
-     *
-     * @param memberId     로그인한 회원의 Id 값
-     * @param categoryName 카테고리 이름
-     * @param pageable     페이지네이션 객체
-     * @return 조회된 제품 리스트
-     */
-    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final long memberId, final String categoryName, final Pageable pageable) {
-        Instant after = Instant.now();
-        Instant before = after.minus(7, ChronoUnit.DAYS);
-        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
-
-        List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList, memberId);
-
-        return new PopularItemInCategoryResponse(list);
-    }
-
-    /**
-     * 카테고리 인기상품 조회 메서드
-     * 현재 시각 기준 일주일 전으로 부터의 주문 건수를 이용해 인기상품을 조회합니다.
-     *
-     * @param categoryName 카테고리 이름
-     * @param pageable     페이지네이션 객체
-     * @return 조회된 제품 리스트
-     */
-    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final String categoryName, final Pageable pageable) {
-        Instant after = Instant.now();
-        Instant before = after.minus(7, ChronoUnit.DAYS);
-        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
-
-        List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList);
-
-        return new PopularItemInCategoryResponse(list);
-    }
-
-    /**
      * 카테고리별 제품 조회 메서드
      *
-     * @param categoryName 카테고리 이름
+     * @param categoryId 카테고리 이름
      * @param pageable     페이지네이션 객체
      * @return 조회된 제품 리스트
      */
-    public ItemSummaryResponse getItemSummaryListByCategory(final String categoryName, final Pageable pageable) {
-        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryName, pageable);
+    public ItemSummaryResponse getItemSummaryListByCategory(final Long categoryId, final Pageable pageable) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryId, pageable);
         return new ItemSummaryResponse(itemSummaryList);
     }
 
@@ -176,12 +136,16 @@ public class ItemService {
      * 회원의 Id 값을 이용해 찜 목록 포함 여부를 함께 조회합니다.
      *
      * @param memberId     회원의 Id 값
-     * @param categoryName 카테고리 이름
+     * @param categoryId 카테고리 이름
      * @param pageable     페이지네이션 객체
      * @return 조회된 제품 리스트
      */
-    public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final String categoryName, final Pageable pageable) {
-        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryName, pageable);
+    public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final Long categoryId, final Pageable pageable) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryId, pageable);
         return new ItemSummaryResponse(itemSummaryList);
+    }
+
+    public List<PopularItem> getPopularItemList(Pageable pageable) {
+        return itemRepository.getPopularItemList(pageable);
     }
 }

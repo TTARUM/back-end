@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatusCode;
 
 public class OrderException extends TtarumException {
 
-    private static final String DEFAULT_MESSAGE = "주문을 찾을 수 없습니다.";
+    private static final String ORDER_NOT_FOUND_MESSAGE = "주문을 찾을 수 없습니다.";
     private static final HttpStatusCode DEFAULT_STATUS = HttpStatus.NOT_FOUND;
 
     public OrderException() {
-        super(DEFAULT_STATUS, DEFAULT_MESSAGE);
+        super(DEFAULT_STATUS, ORDER_NOT_FOUND_MESSAGE);
     }
 
     public OrderException(final HttpStatusCode status, final String message) {

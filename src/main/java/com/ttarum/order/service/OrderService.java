@@ -11,7 +11,7 @@ import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.request.OrderItemRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.OrderResponse;
-import com.ttarum.order.dto.response.summary.OrderItemSummary;
+import com.ttarum.order.dto.response.OrderItemSummary;
 import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.repository.OrderItemRepository;
@@ -119,7 +119,7 @@ public class OrderService {
         if (!member.isMyOrder(order)) {
             throw new OrderForbiddenException();
         }
-        List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(orderId);
+        List<OrderItemSummary> orderItemSummaryList = orderItemRepository.findOrderItemListByOrderId(orderId);
         return OrderDetailResponse.of(orderItemSummaryList, order);
     }
 

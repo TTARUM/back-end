@@ -1,4 +1,4 @@
-package com.ttarum.order.dto.response.summary;
+package com.ttarum.order.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,5 +14,4 @@ public class OrderItemSummary {
     private final String itemName;
     private final int itemPrice;
     private final long amount;
-    private final boolean hasReview;
 }

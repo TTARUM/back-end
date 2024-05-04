@@ -6,7 +6,6 @@ import com.ttarum.item.dto.response.ItemSimilarPriceResponse;
 import com.ttarum.item.dto.response.ItemSummaryWithSimilarPrice;
 import com.ttarum.item.dto.response.summary.ItemSummary;
 import com.ttarum.item.dto.response.summary.ItemSummaryResponse;
-import com.ttarum.item.dto.response.*;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.order.repository.OrderRepository;
@@ -22,8 +21,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,7 +90,7 @@ class ItemServiceTest {
         assertThat(summaryList.get(0).getImageUrl()).isEqualTo(element.getImageUrl());
         assertThat(summaryList.get(0).getCategoryName()).isEqualTo(element.getCategoryName());
         assertThat(summaryList.get(0).getCreatedAt()).isEqualTo(element.getCreatedAt());
-        assertThat(summaryList.get(0).getSalesVolume()).isEqualTo(element.getSalesVolume());
+        assertThat(summaryList.get(0).getOrderCount()).isEqualTo(element.getOrderCount());
     }
 
     @Test
@@ -187,77 +186,5 @@ class ItemServiceTest {
         assertThat(list.get(0).getPrice()).isEqualTo(17000);
         assertThat(list.get(0).getImageUrl()).isEqualTo("ttarum.image.url");
         assertThat(list.get(0).isInWishList()).isTrue();
-    }
-
-
-    @Test
-    @DisplayName("카테고리 인기상품 조회")
-    void getPopularItemSummaryListInCategory() {
-        // given
-        Long categoryId = 1L;
-        PageRequest pageRequest = PageRequest.of(0, 7);
-        List<Long> itemIds = List.of(1L);
-        List<PopularItemSummaryInCategory> popularItemSummaryInCategoryList = List.of(
-                PopularItemSummaryInCategory.builder()
-                        .itemId(1L)
-                        .itemName("모스카토 다스티")
-                        .price(25000)
-                        .imageUrl("ttarum.image.url")
-                        .inWishlist(false)
-                        .build()
-        );
-
-        when(orderRepository.getPopularItemIdsByInstant(any(), any(), eq(categoryId), any())).thenReturn(itemIds);
-        when(itemRepository.getPopularItemSummaryListInCategory(itemIds)).thenReturn(popularItemSummaryInCategoryList);
-
-        // when
-        PopularItemInCategoryResponse response = itemService.getPopularItemSummaryListInCategory(categoryId, pageRequest);
-        List<PopularItemSummaryInCategory> itemSummaryList = response.getItemSummaryList();
-
-        // then
-        verify(orderRepository, times(1)).getPopularItemIdsByInstant(any(), any(), eq(categoryId), any());
-        verify(itemRepository, times(1)).getPopularItemSummaryListInCategory(itemIds);
-        assertThat(itemSummaryList).size().isEqualTo(1);
-        assertThat(itemSummaryList.get(0).getItemId()).isEqualTo(1L);
-        assertThat(itemSummaryList.get(0).getItemName()).isEqualTo("모스카토 다스티");
-        assertThat(itemSummaryList.get(0).getPrice()).isEqualTo(25000);
-        assertThat(itemSummaryList.get(0).getImageUrl()).isEqualTo("ttarum.image.url");
-        assertThat(itemSummaryList.get(0).isInWishlist()).isFalse();
-    }
-
-    @Test
-    @DisplayName("카테고리 인기상품 조회 - 로그인한 회원의 경우")
-    void getPopularItemSummaryListInCategoryWithLoggedIn() {
-        // given
-        Long categoryId = 1L;
-        long memberId = 1L;
-        PageRequest pageRequest = PageRequest.of(0, 7);
-        List<Long> itemIds = List.of(1L);
-        List<PopularItemSummaryInCategory> popularItemSummaryInCategoryList = List.of(
-                PopularItemSummaryInCategory.builder()
-                        .itemId(1L)
-                        .itemName("모스카토 다스티")
-                        .price(25000)
-                        .imageUrl("ttarum.image.url")
-                        .inWishlist(false)
-                        .build()
-        );
-
-        when(orderRepository.getPopularItemIdsByInstant(any(), any(), eq(categoryId), any())).thenReturn(itemIds);
-        when(itemRepository.getPopularItemSummaryListInCategory(itemIds, memberId)).thenReturn(popularItemSummaryInCategoryList);
-
-        // when
-        PopularItemInCategoryResponse response = itemService.getPopularItemSummaryListInCategory(memberId, categoryId, pageRequest);
-        List<PopularItemSummaryInCategory> itemSummaryList = response.getItemSummaryList();
-
-        // then
-        verify(orderRepository, times(1)).getPopularItemIdsByInstant(any(), any(), eq(categoryId), any());
-        verify(itemRepository, times(1)).getPopularItemSummaryListInCategory(itemIds, memberId);
-        assertThat(itemSummaryList).size().isEqualTo(1);
-        assertThat(itemSummaryList.get(0).getItemId()).isEqualTo(1L);
-        assertThat(itemSummaryList.get(0).getItemName()).isEqualTo("모스카토 다스티");
-        assertThat(itemSummaryList.get(0).getPrice()).isEqualTo(25000);
-        assertThat(itemSummaryList.get(0).getImageUrl()).isEqualTo("ttarum.image.url");
-        assertThat(itemSummaryList.get(0).isInWishlist()).isFalse();
     }
 }

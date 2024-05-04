@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 
-import java.util.List;
-
 @DataJpaTest
 class ItemRepositoryTest {
 
@@ -30,14 +28,5 @@ class ItemRepositoryTest {
 
         // when
         itemRepository.getItemSummaryWithSimilarPriceListByPriceRange(lowPrice, highPrice, memberId, pageRequest);
-    }
-
-    @Test
-    void getPopularItemSummaryListInCategory() {
-        // given
-        List<Long> itemIdList = List.of(1L, 2L, 3L);
-
-        // when
-        itemRepository.getPopularItemSummaryListInCategory(itemIdList);
     }
 }

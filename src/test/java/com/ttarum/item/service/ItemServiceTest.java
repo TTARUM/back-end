@@ -194,7 +194,7 @@ class ItemServiceTest {
     @DisplayName("카테고리 인기상품 조회")
     void getPopularItemSummaryListInCategory() {
         // given
-        String categoryName = "red";
+        Long categoryId = 1L;
         PageRequest pageRequest = PageRequest.of(0, 7);
         List<Long> itemIds = List.of(1L);
         List<PopularItemSummaryInCategory> popularItemSummaryInCategoryList = List.of(
@@ -207,15 +207,15 @@ class ItemServiceTest {
                         .build()
         );
 
-        when(orderRepository.getPopularItemIdsByInstant(any(), any(), eq(categoryName), any())).thenReturn(itemIds);
+        when(orderRepository.getPopularItemIdsByInstant(any(), any(), eq(categoryId), any())).thenReturn(itemIds);
         when(itemRepository.getPopularItemSummaryListInCategory(itemIds)).thenReturn(popularItemSummaryInCategoryList);
 
         // when
-        PopularItemInCategoryResponse response = itemService.getPopularItemSummaryListInCategory(categoryName, pageRequest);
+        PopularItemInCategoryResponse response = itemService.getPopularItemSummaryListInCategory(categoryId, pageRequest);
         List<PopularItemSummaryInCategory> itemSummaryList = response.getItemSummaryList();
 
         // then
-        verify(orderRepository, times(1)).getPopularItemIdsByInstant(any(), any(), eq(categoryName), any());
+        verify(orderRepository, times(1)).getPopularItemIdsByInstant(any(), any(), eq(categoryId), any());
         verify(itemRepository, times(1)).getPopularItemSummaryListInCategory(itemIds);
         assertThat(itemSummaryList).size().isEqualTo(1);
         assertThat(itemSummaryList.get(0).getItemId()).isEqualTo(1L);
@@ -229,7 +229,7 @@ class ItemServiceTest {
     @DisplayName("카테고리 인기상품 조회 - 로그인한 회원의 경우")
     void getPopularItemSummaryListInCategoryWithLoggedIn() {
         // given
-        String categoryName = "red";
+        Long categoryId = 1L;
         long memberId = 1L;
         PageRequest pageRequest = PageRequest.of(0, 7);
         List<Long> itemIds = List.of(1L);
@@ -243,15 +243,15 @@ class ItemServiceTest {
                         .build()
         );
 
-        when(orderRepository.getPopularItemIdsByInstant(any(), any(), eq(categoryName), any())).thenReturn(itemIds);
+        when(orderRepository.getPopularItemIdsByInstant(any(), any(), eq(categoryId), any())).thenReturn(itemIds);
         when(itemRepository.getPopularItemSummaryListInCategory(itemIds, memberId)).thenReturn(popularItemSummaryInCategoryList);
 
         // when
-        PopularItemInCategoryResponse response = itemService.getPopularItemSummaryListInCategory(memberId, categoryName, pageRequest);
+        PopularItemInCategoryResponse response = itemService.getPopularItemSummaryListInCategory(memberId, categoryId, pageRequest);
         List<PopularItemSummaryInCategory> itemSummaryList = response.getItemSummaryList();
 
         // then
-        verify(orderRepository, times(1)).getPopularItemIdsByInstant(any(), any(), eq(categoryName), any());
+        verify(orderRepository, times(1)).getPopularItemIdsByInstant(any(), any(), eq(categoryId), any());
         verify(itemRepository, times(1)).getPopularItemSummaryListInCategory(itemIds, memberId);
         assertThat(itemSummaryList).size().isEqualTo(1);
         assertThat(itemSummaryList.get(0).getItemId()).isEqualTo(1L);

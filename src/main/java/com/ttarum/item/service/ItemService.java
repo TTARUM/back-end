@@ -127,14 +127,14 @@ public class ItemService {
      * 로그인한 회원의 Id 값을 받아 찜 목록에 포함이 되어있는지에 대한 여부값을 포함합니다.
      *
      * @param memberId     로그인한 회원의 Id 값
-     * @param categoryName 카테고리 이름
+     * @param categoryId 카테고리 이름
      * @param pageable     페이지네이션 객체
      * @return 조회된 제품 리스트
      */
-    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final long memberId, final String categoryName, final Pageable pageable) {
+    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final long memberId, final Long categoryId, final Pageable pageable) {
         Instant after = Instant.now();
         Instant before = after.minus(7, ChronoUnit.DAYS);
-        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
+        List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryId, pageable);
 
         List<PopularItemSummaryInCategory> list = itemRepository.getPopularItemSummaryListInCategory(itemIdList, memberId);
 
@@ -149,7 +149,7 @@ public class ItemService {
      * @param pageable     페이지네이션 객체
      * @return 조회된 제품 리스트
      */
-    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final String categoryName, final Pageable pageable) {
+    public PopularItemInCategoryResponse getPopularItemSummaryListInCategory(final Long categoryName, final Pageable pageable) {
         Instant after = Instant.now();
         Instant before = after.minus(7, ChronoUnit.DAYS);
         List<Long> itemIdList = orderRepository.getPopularItemIdsByInstant(before, after, categoryName, pageable);
@@ -162,12 +162,12 @@ public class ItemService {
     /**
      * 카테고리별 제품 조회 메서드
      *
-     * @param categoryName 카테고리 이름
+     * @param categoryId 카테고리 이름
      * @param pageable     페이지네이션 객체
      * @return 조회된 제품 리스트
      */
-    public ItemSummaryResponse getItemSummaryListByCategory(final String categoryName, final Pageable pageable) {
-        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryName, pageable);
+    public ItemSummaryResponse getItemSummaryListByCategory(final Long categoryId, final Pageable pageable) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(categoryId, pageable);
         return new ItemSummaryResponse(itemSummaryList);
     }
 
@@ -176,12 +176,12 @@ public class ItemService {
      * 회원의 Id 값을 이용해 찜 목록 포함 여부를 함께 조회합니다.
      *
      * @param memberId     회원의 Id 값
-     * @param categoryName 카테고리 이름
+     * @param categoryId 카테고리 이름
      * @param pageable     페이지네이션 객체
      * @return 조회된 제품 리스트
      */
-    public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final String categoryName, final Pageable pageable) {
-        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryName, pageable);
+    public ItemSummaryResponse getItemSummaryListByCategory(final long memberId, final Long categoryId, final Pageable pageable) {
+        List<ItemSummary> itemSummaryList = itemRepository.getItemSummaryByCategoryName(memberId, categoryId, pageable);
         return new ItemSummaryResponse(itemSummaryList);
     }
 }

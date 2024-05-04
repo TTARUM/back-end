@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             FROM Order o
             LEFT JOIN FETCH OrderItem oi
             ON oi.order.id = o.id
-            WHERE (o.createdAt BETWEEN :before AND :after) AND oi.item.category.name = :categoryName
+            WHERE (o.createdAt BETWEEN :before AND :after) AND oi.item.category.id = :categoryId
             """)
-    List<Long> getPopularItemIdsByInstant(@Param("before") Instant before, @Param("after") Instant after, @Param("categoryName") String categoryName, Pageable pageable);
+    List<Long> getPopularItemIdsByInstant(@Param("before") Instant before, @Param("after") Instant after, @Param("categoryId") Long categoryId, Pageable pageable);
 }

@@ -156,7 +156,7 @@ public class ItemController {
      * 카테고리 인기상품 조회
      *
      * @param user     로그인한 회원
-     * @param category 카테고리 이름
+     * @param categoryId 카테고리 ID
      * @param page     페이지 넘버
      * @param size     페이지당 조회할 제품의 수
      * @return 조회된 인기상품
@@ -164,13 +164,13 @@ public class ItemController {
     @Operation(summary = "카테고리 인기상품 조회")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @Parameters(value = {
-            @Parameter(name = "category", description = "카테고리 이름", example = "red"),
+            @Parameter(name = "category", description = "카테고리 ID", example = "1"),
             @Parameter(name = "page", description = "페이지 넘버 (기본값 0)", example = "1"),
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 7)", example = "7")
     })
-    @GetMapping("/popular-in-category")
+    @GetMapping("/popular-in-category/{categoryId}")
     public ResponseEntity<PopularItemInCategoryResponse> getPopularItemSummaryListInCategory(
-            final String category,
+            @PathVariable final Long categoryId,
             final Optional<Integer> page,
             final Optional<Integer> size,
             @Parameter(hidden = true) @VerificationUser final Optional<LoggedInUser> user
@@ -178,9 +178,9 @@ public class ItemController {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_POPULAR_IN_CATEGORY_DEFAULT_SIZE_PER_PAGE));
         PopularItemInCategoryResponse response;
         if (user.isPresent()) {
-            response = itemService.getPopularItemSummaryListInCategory(user.get().getId(), category, pageRequest);
+            response = itemService.getPopularItemSummaryListInCategory(user.get().getId(), categoryId, pageRequest);
         } else {
-            response = itemService.getPopularItemSummaryListInCategory(category, pageRequest);
+            response = itemService.getPopularItemSummaryListInCategory(categoryId, pageRequest);
         }
         return ResponseEntity.ok(response);
     }
@@ -189,7 +189,7 @@ public class ItemController {
      * 카테고리별 제품 조회
      *
      * @param user     로그인한 회원
-     * @param category 카테고리 이름
+     * @param categoryId 카테고리 ID
      * @param page     페이지 넘버
      * @param size     페이지당 조회할 제품의 수
      * @return 조회된 제품 리스트
@@ -200,9 +200,9 @@ public class ItemController {
             @Parameter(name = "page", description = "페이지 넘버 (기본값 0)", example = "0"),
             @Parameter(name = "size", description = "한 페이지당 제품 수 (기본 값 9)", example = "9")
     })
-    @GetMapping("/category")
+    @GetMapping("/category/{categoryId}")
     public ResponseEntity<ItemSummaryResponse> getSummaryByCategory(
-            final String category,
+            @PathVariable final Long categoryId,
             final Optional<Integer> page,
             final Optional<Integer> size,
             @Parameter(hidden = true) @VerificationUser final Optional<LoggedInUser> user
@@ -210,10 +210,9 @@ public class ItemController {
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_DEFAULT_SIZE_PER_PAGE));
         ItemSummaryResponse response;
         if (user.isPresent()) {
-            //TODO: Update here to use userId
-            response = itemService.getItemSummaryListByCategory(category, pageRequest);
+            response = itemService.getItemSummaryListByCategory(user.get().getId(), categoryId, pageRequest);
         } else {
-            response = itemService.getItemSummaryListByCategory(category, pageRequest);
+            response = itemService.getItemSummaryListByCategory(categoryId, pageRequest);
         }
         return ResponseEntity.ok(response);
     }

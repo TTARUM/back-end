@@ -48,6 +48,7 @@ public class ItemSummary {
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
+        this.isInWishList = isInWishList;
         this.createdAt = createdAt;
         this.salesVolume = salesVolume;
         if (ratingCount == 0) {

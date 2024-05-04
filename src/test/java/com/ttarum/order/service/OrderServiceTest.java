@@ -8,7 +8,7 @@ import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.dto.response.summary.OrderSummary;
 import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
 import com.ttarum.order.exception.OrderForbiddenException;
-import com.ttarum.order.exception.OrderNotFoundException;
+import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -148,7 +148,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.getOrderDetail(memberId, orderId))
-                .isInstanceOf(OrderNotFoundException.class);
+                .isInstanceOf(OrderException.class);
     }
 
     @Test

@@ -4,8 +4,6 @@ import com.ttarum.item.domain.Item;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Entity
@@ -27,4 +25,10 @@ public class OrderItem {
     @Column(name = "amount", nullable = false, columnDefinition = "int")
     private Long amount;
 
+    public OrderItem(Order order, Item item, Long amount) {
+        this.id = new OrderItemId(order.getId(), item.getId());
+        this.order = order;
+        this.item = item;
+        this.amount = amount;
+    }
 }

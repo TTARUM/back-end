@@ -7,7 +7,7 @@ import com.ttarum.member.domain.Member;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
-import com.ttarum.order.exception.OrderNotFoundException;
+import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.repository.OrderRepository;
 import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
@@ -402,7 +402,7 @@ class ReviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reviewService.createReview(memberId, request))
-                .isInstanceOf(OrderNotFoundException.class);
+                .isInstanceOf(OrderException.class);
     }
 
     @Test

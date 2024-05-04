@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -45,7 +45,7 @@ public class OrderService {
                 .stream().map(OrderItemRequest::getItemId).toList();
         List<Item> items = itemRepository.findAllById(itemIds);
 
-        if (validateOrderItems(request.getOrderItemRequests(), items)) {
+        if (!validateOrderItems(request.getOrderItemRequests(), items)) {
             throw OrderException.itemNotFound();
         }
 

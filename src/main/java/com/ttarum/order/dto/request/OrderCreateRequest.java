@@ -1,5 +1,6 @@
 package com.ttarum.order.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ttarum.member.domain.Member;
 import com.ttarum.order.domain.Order;
 import com.ttarum.order.domain.OrderStatus;
@@ -23,6 +24,7 @@ public class OrderCreateRequest {
     @Schema(description = "수령인", example = "홍길동")
     private String recipient;
     @Schema(description = "주문 상품 목록")
+    @JsonProperty("orderItems")
     private List<OrderItemRequest> orderItemRequests;
 
     public Order toOrderEntity(long price, Member member) {

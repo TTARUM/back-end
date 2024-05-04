@@ -59,7 +59,7 @@ public class OrderService {
     }
 
     private long calculateTotalPrice(List<OrderItemRequest> orderItemRequests, List<Item> items) {
-        Map<Long, Integer> itemQuantity = orderItemRequests.stream()
+        Map<Long, Long> itemQuantity = orderItemRequests.stream()
                 .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
 
         long ret = 0L;

@@ -184,7 +184,7 @@ public class ReviewService {
 
     private Order getOrderById(final long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(OrderException::new);
+                .orElseThrow(OrderException::notFound);
     }
 
     private Item getItemById(final long itemId) {

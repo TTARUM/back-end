@@ -102,7 +102,7 @@ public class OrderService {
 
     private Order getOrderById(final long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(OrderException::new);
+                .orElseThrow(OrderException::notFound);
     }
 
     private Member getMemberById(final long memberId) {

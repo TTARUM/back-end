@@ -85,16 +85,18 @@ public class ItemController {
     })
     @GetMapping("/list")
     public ResponseEntity<ItemSummaryResponse> getSummary(
-            @RequestParam(required = false) final String query,
+            @RequestParam(required = false) String query,
             @RequestParam final Optional<Integer> page,
             @RequestParam final Optional<Integer> size,
             @Parameter(hidden = true) @VerificationUser final Optional<LoggedInUser> user
     ) {
+        if (query == null) {
+            query = "";
+        }
         PageRequest pageRequest = PageRequest.of(page.orElse(0), size.orElse(ITEM_DEFAULT_SIZE_PER_PAGE));
         ItemSummaryResponse response;
         if (user.isPresent()) {
-            //TODO: Update here to use userId
-            response = itemService.getItemSummaryList(query, pageRequest);
+            response = itemService.getItemSummaryList(query, pageRequest, user.get().getId());
         } else {
             response = itemService.getItemSummaryList(query, pageRequest);
         }

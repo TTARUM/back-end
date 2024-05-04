@@ -37,16 +37,13 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      * @return {@link ItemSummary} 리스트
      */
     @Query("""
-            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, i.category.name, i.name, i.price, AVG(r.star), i.itemImageUrl, (COUNT(wl.id) > 0), i.createdAt, COUNT(oi.order.id))
+            SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, c.name, i.name, i.price, i.itemImageUrl,
+            CASE WHEN w IS NULL THEN false ELSE true END,
+            i.createdAt, i.orderCount, i.ratingSum, i.ratingCount)
             FROM Item i
-            LEFT JOIN FETCH Review r
-            ON r.item.id = i.id
-            LEFT JOIN FETCH OrderItem oi
-            ON oi.item.id = i.id
-            LEFT JOIN FETCH Wishlist wl
-            ON wl.item.id = i.id AND wl.member.id = :memberId
+            JOIN i.category c
+            LEFT JOIN FETCH Wishlist w ON i.id = w.item.id AND w.member.id = :memberId
             WHERE i.name LIKE %:query%
-            GROUP BY i.id, i.category.name, i.name, i.price, i.itemImageUrl, i.createdAt
             """)
     List<ItemSummary> getItemSummaryListByName(@Param("query") String query, Pageable pageable, @Param("memberId") Long memberId);
 

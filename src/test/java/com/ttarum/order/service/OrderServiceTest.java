@@ -6,7 +6,7 @@ import com.ttarum.order.domain.Order;
 import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.dto.response.summary.OrderSummary;
-import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
+import com.ttarum.order.dto.response.OrderListResponse;
 import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.repository.OrderRepository;
@@ -62,7 +62,7 @@ class OrderServiceTest {
         when(orderRepository.findOrderItemListByOrderId(orderId, 2)).thenReturn(orderItemSummaryList);
 
         // when
-        OrderSummaryListResponse response = orderService.getOrderSummaryList(memberId, pageRequest);
+        OrderListResponse response = orderService.getOrderSummaryList(memberId, pageRequest);
 
         List<OrderSummary> orderSummaryList = response.getOrderSummaryList();
 

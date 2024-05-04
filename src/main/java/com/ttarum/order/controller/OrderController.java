@@ -3,7 +3,7 @@ package com.ttarum.order.controller;
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
-import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
+import com.ttarum.order.dto.response.OrderListResponse;
 import com.ttarum.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,13 +56,13 @@ public class OrderController {
             @Parameter(name = "size", description = "페이지당 주문 내역 개수 (기본 값 5)", example = "5")
     })
     @GetMapping("/list")
-    public ResponseEntity<OrderSummaryListResponse> getOrderList(
+    public ResponseEntity<OrderListResponse> getOrderList(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "5") int size,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        OrderSummaryListResponse response = orderService.getOrderSummaryList(user.getId(), pageRequest);
+        OrderListResponse response = orderService.getOrderSummaryList(user.getId(), pageRequest);
         return ResponseEntity.ok(response);
     }
 

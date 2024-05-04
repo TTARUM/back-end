@@ -10,9 +10,8 @@ import com.ttarum.order.domain.OrderItem;
 import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.request.OrderItemRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
-import com.ttarum.order.dto.response.summary.OrderItemSummary;
-import com.ttarum.order.dto.response.summary.OrderSummary;
-import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
+import com.ttarum.order.dto.response.OrderResponse;
+import com.ttarum.order.dto.response.OrderItemSummary;
 import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.repository.OrderItemRepository;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -98,20 +96,11 @@ public class OrderService {
      * @param pageable 페이지네이션 객체
      * @return 주문 내역 목록
      */
-    public OrderSummaryListResponse getOrderSummaryList(final long memberId, final Pageable pageable) {
+    public List<OrderResponse> getOrderList(final long memberId, final Pageable pageable) {
         List<Order> orderList = orderRepository.findOrderListByMemberId(memberId, pageable);
-        List<OrderSummary> orderSummaryList = new ArrayList<>();
-
-        for (Order order : orderList) {
-            List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(order.getId(), DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY);
-            orderSummaryList.add(OrderSummary.builder()
-                    .orderId(order.getId())
-                    .dateTime(order.getCreatedAt())
-                    .orderItemSummaryList(orderItemSummaryList)
-                    .build()
-            );
-        }
-        return new OrderSummaryListResponse(orderSummaryList);
+        return orderList.stream()
+                .map(OrderResponse::fromEntity)
+                .toList();
     }
 
     /**
@@ -130,7 +119,7 @@ public class OrderService {
         if (!member.isMyOrder(order)) {
             throw new OrderForbiddenException();
         }
-        List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(orderId);
+        List<OrderItemSummary> orderItemSummaryList = orderItemRepository.findOrderItemListByOrderId(orderId);
         return OrderDetailResponse.of(orderItemSummaryList, order);
     }
 

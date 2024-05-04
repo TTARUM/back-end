@@ -7,13 +7,13 @@ import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
 import com.ttarum.order.dto.request.OrderCreateRequest;
-import com.ttarum.order.dto.request.OrderItem;
+import com.ttarum.order.dto.request.OrderItemRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.dto.response.summary.OrderSummary;
 import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
-import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.exception.OrderException;
+import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,24 +39,31 @@ public class OrderService {
     private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
 
     public void createOrder(OrderCreateRequest request) {
-        List<Long> itemIds = request.getOrderItems()
-                .stream().map(OrderItem::getItemId).toList();
+        List<Long> itemIds = request.getOrderItemRequests()
+                .stream().map(OrderItemRequest::getItemId).toList();
         List<Item> items = itemRepository.findAllById(itemIds);
 
-        if (validateOrderItems(request.getOrderItems(), items)) {
-            // TODO: Throw error
+        if (validateOrderItems(request.getOrderItemRequests(), items)) {
+            throw OrderException.itemNotFound();
         }
 
-        int totalPrice = calculateTotalPrice(request.getOrderItems(), items);
+        int totalPrice = calculateTotalPrice(request.getOrderItemRequests(), items);
 
     }
 
-    private boolean validateOrderItems(List<OrderItem> orderItems, List<Item> items) {
-        return true;
+    private boolean validateOrderItems(List<OrderItemRequest> orderItemRequests, List<Item> items) {
+        return orderItemRequests.size() == items.size();
     }
 
-    private int calculateTotalPrice(List<OrderItem> orderItems, List<Item> items) {
-        return 0;
+    private int calculateTotalPrice(List<OrderItemRequest> orderItemRequests, List<Item> items) {
+        Map<Long, Integer> itemQuantity = orderItemRequests.stream()
+                .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
+
+        int ret = 0;
+        for (Item item : items) {
+            ret += item.getPrice() * itemQuantity.get(item.getId());
+        }
+        return ret;
     }
 
     /**

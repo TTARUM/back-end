@@ -19,7 +19,7 @@ public class OrderCreateRequest {
     @Schema(description = "수령인", example = "홍길동")
     private String recipient;
     @Schema(description = "주문 상품 목록")
-    private List<OrderItem> orderItems;
+    private List<OrderItemRequest> orderItemRequests;
 
     public Order toOrderEntity() {
         return Order.builder()
@@ -39,8 +39,8 @@ public class OrderCreateRequest {
         sb.append("address:").append(address).append("\n");
         sb.append("recipient:").append(recipient).append("\n");
         sb.append("orderItems:\n");
-        for (OrderItem orderItem : orderItems) {
-            sb.append(orderItem.getItemId()).append(" - ").append(orderItem.getQuantity()).append("\n");
+        for (OrderItemRequest orderItemRequest : orderItemRequests) {
+            sb.append(orderItemRequest.getItemId()).append(" - ").append(orderItemRequest.getQuantity()).append("\n");
         }
         return sb.toString();
     }

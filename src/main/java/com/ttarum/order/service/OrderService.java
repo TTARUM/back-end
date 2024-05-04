@@ -13,7 +13,7 @@ import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.dto.response.summary.OrderSummary;
 import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
 import com.ttarum.order.exception.OrderForbiddenException;
-import com.ttarum.order.exception.OrderNotFoundException;
+import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,7 +87,7 @@ public class OrderService {
      * @param orderId  주문의 Id 값
      * @return 주문의 세부사항
      * @throws MemberNotFoundException 회원을 찾지 못하였을 경우 발생한다.
-     * @throws OrderNotFoundException  주문을 찾지 못하였을 경우 발생한다.
+     * @throws OrderException  주문을 찾지 못하였을 경우 발생한다.
      * @throws OrderForbiddenException 회원의 주문이 아닌 경우 발생한다.
      */
     public OrderDetailResponse getOrderDetail(final long memberId, final long orderId) {
@@ -102,7 +102,7 @@ public class OrderService {
 
     private Order getOrderById(final long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(OrderNotFoundException::new);
+                .orElseThrow(OrderException::new);
     }
 
     private Member getMemberById(final long memberId) {

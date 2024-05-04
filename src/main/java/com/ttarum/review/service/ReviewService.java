@@ -8,7 +8,7 @@ import com.ttarum.member.exception.AccessForbiddenMemberException;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
-import com.ttarum.order.exception.OrderNotFoundException;
+import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.repository.OrderRepository;
 import com.ttarum.review.domain.Review;
 import com.ttarum.review.domain.ReviewImage;
@@ -153,7 +153,7 @@ public class ReviewService {
      * @param reviewCreationRequest 작성할 리뷰의 데이터
      * @return 생성된 리뷰의 Id 값
      * @throws MemberNotFoundException   회원이 존재하지 않을 경우 발생
-     * @throws OrderNotFoundException    주문이 존재하지 않을 경우 발생
+     * @throws OrderException    주문이 존재하지 않을 경우 발생
      * @throws ItemNotFoundException     제품이 존재하지 않을 경우 발생
      * @throws DuplicatedReviewException 리뷰가 이미 존재하면 발생
      */
@@ -184,7 +184,7 @@ public class ReviewService {
 
     private Order getOrderById(final long orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(OrderNotFoundException::new);
+                .orElseThrow(OrderException::new);
     }
 
     private Item getItemById(final long itemId) {

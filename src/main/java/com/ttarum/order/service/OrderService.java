@@ -1,9 +1,13 @@
 package com.ttarum.order.service;
 
+import com.ttarum.item.domain.Item;
+import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
+import com.ttarum.order.dto.request.OrderCreateRequest;
+import com.ttarum.order.dto.request.OrderItem;
 import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.dto.response.summary.OrderSummary;
@@ -28,8 +32,30 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
+    private final ItemRepository itemRepository;
 
     private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
+
+    public void createOrder(OrderCreateRequest request) {
+        List<Long> itemIds = request.getOrderItems()
+                .stream().map(OrderItem::getItemId).toList();
+        List<Item> items = itemRepository.findAllById(itemIds);
+
+        if (validateOrderItems(request.getOrderItems(), items)) {
+            // TODO: Throw error
+        }
+
+        int totalPrice = calculateTotalPrice(request.getOrderItems(), items);
+
+    }
+
+    private boolean validateOrderItems(List<OrderItem> orderItems, List<Item> items) {
+        return true;
+    }
+
+    private int calculateTotalPrice(List<OrderItem> orderItems, List<Item> items) {
+        return 0;
+    }
 
     /**
      * 주문 내역 목록 조회 메서드

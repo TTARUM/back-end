@@ -20,7 +20,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      * @param pageable pageable
      * @return {@link ItemSummary} 리스트
      */
-    //TODO: Update temporal query
     @Query("""
             SELECT new com.ttarum.item.dto.response.summary.ItemSummary(i.id, i.category.name, i.name, i.price, i.itemImageUrl, false, i.createdAt, i.orderCount, i.ratingSum, i.ratingCount)
             FROM Item i

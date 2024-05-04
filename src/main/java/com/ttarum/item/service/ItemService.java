@@ -143,7 +143,7 @@ public class ItemService {
 
     /**
      * 카테고리 인기상품 조회 메서드
-     * 현재 시각 기준 일주일 전으로 부터의 주문 건수를 이용해 인기상품을 조회합니다.
+     * 전체 주문 건수를 이용해 인기상품을 조회합니다.
      *
      * @param categoryName 카테고리 이름
      * @param pageable     페이지네이션 객체

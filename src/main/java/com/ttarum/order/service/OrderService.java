@@ -6,6 +6,7 @@ import com.ttarum.member.domain.Member;
 import com.ttarum.member.exception.MemberNotFoundException;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
+import com.ttarum.order.domain.OrderItem;
 import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.request.OrderItemRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
@@ -14,6 +15,7 @@ import com.ttarum.order.dto.response.summary.OrderSummary;
 import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
 import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.exception.OrderForbiddenException;
+import com.ttarum.order.repository.OrderItemRepository;
 import com.ttarum.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +35,19 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
 
     private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
 
+    /**
+     * 주문 생성 메서드
+     *
+     * @param request 주문 생성 요청
+     * @param memberId 회원의 Id 값
+     * @throws OrderException 주문 생성에 실패하였을 경우 발생한다.
+     */
     public void createOrder(final OrderCreateRequest request, final long memberId) {
         Member member = getMemberById(memberId);
 
@@ -49,24 +59,36 @@ public class OrderService {
             throw OrderException.itemNotFound();
         }
 
-        long totalPrice = calculateTotalPrice(request.getOrderItemRequests(), items);
+        Map<Long, Long> itemQuantity = itemQuantity(request.getOrderItemRequests());
+
+        long totalPrice = calculateTotalPrice(itemQuantity, items);
         Order orderEntity = request.toOrderEntity(totalPrice, member);
         orderRepository.save(orderEntity);
+
+        List<OrderItem> orderItems = orderItemsList(orderEntity, items, itemQuantity);
+        orderItemRepository.saveAll(orderItems);
     }
 
     private boolean validateOrderItems(List<OrderItemRequest> orderItemRequests, List<Item> items) {
         return orderItemRequests.size() == items.size();
     }
 
-    private long calculateTotalPrice(List<OrderItemRequest> orderItemRequests, List<Item> items) {
-        Map<Long, Long> itemQuantity = orderItemRequests.stream()
-                .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
-
+    private long calculateTotalPrice(Map<Long, Long> itemQuantity, List<Item> items) {
         long ret = 0L;
         for (Item item : items) {
             ret += (long) item.getPrice() * itemQuantity.get(item.getId());
         }
         return ret;
+    }
+
+    private Map<Long, Long> itemQuantity(List<OrderItemRequest> orderItemRequests) {
+        return orderItemRequests.stream()
+                .collect(Collectors.toMap(OrderItemRequest::getItemId, OrderItemRequest::getQuantity));
+    }
+
+    private List<OrderItem> orderItemsList(Order order, List<Item> items, Map<Long, Long> itemQuantity) {
+        return items.stream().map(item -> new OrderItem(order, item, itemQuantity.get(item.getId()))
+        ).toList();
     }
 
     /**

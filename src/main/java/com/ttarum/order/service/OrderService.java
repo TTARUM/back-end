@@ -10,7 +10,7 @@ import com.ttarum.order.domain.OrderItem;
 import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.request.OrderItemRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
-import com.ttarum.order.dto.response.OrderListResponse;
+import com.ttarum.order.dto.response.OrderResponse;
 import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.exception.OrderForbiddenException;
@@ -97,9 +97,9 @@ public class OrderService {
      * @param pageable 페이지네이션 객체
      * @return 주문 내역 목록
      */
-    public OrderListResponse getOrderSummaryList(final long memberId, final Pageable pageable) {
+    public List<OrderResponse> getOrderSummaryList(final long memberId, final Pageable pageable) {
         List<Order> orderList = orderRepository.findOrderListByMemberId(memberId, pageable);
-        return new OrderListResponse(new ArrayList<>());
+        return new ArrayList<>();
     }
 
     /**

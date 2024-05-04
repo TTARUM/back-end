@@ -1,6 +1,7 @@
 package com.ttarum.order.controller;
 
 import com.ttarum.auth.domain.CustomUserDetails;
+import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.summary.OrderSummaryListResponse;
 import com.ttarum.order.service.OrderService;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,16 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+
+    @Operation(summary = "주문 생성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @PostMapping()
+    public ResponseEntity<String> createOrder(@RequestBody OrderCreateRequest request){
+        return ResponseEntity.ok(request.toString());
+    }
 
     /**
      * 주문 내역 목록 조회

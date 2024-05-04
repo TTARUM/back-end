@@ -10,9 +10,8 @@ import com.ttarum.order.domain.OrderItem;
 import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.request.OrderItemRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
-import com.ttarum.order.dto.response.summary.OrderItemSummary;
-import com.ttarum.order.dto.response.summary.OrderSummary;
 import com.ttarum.order.dto.response.OrderListResponse;
+import com.ttarum.order.dto.response.summary.OrderItemSummary;
 import com.ttarum.order.exception.OrderException;
 import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.repository.OrderItemRepository;
@@ -100,18 +99,7 @@ public class OrderService {
      */
     public OrderListResponse getOrderSummaryList(final long memberId, final Pageable pageable) {
         List<Order> orderList = orderRepository.findOrderListByMemberId(memberId, pageable);
-        List<OrderSummary> orderSummaryList = new ArrayList<>();
-
-        for (Order order : orderList) {
-            List<OrderItemSummary> orderItemSummaryList = orderRepository.findOrderItemListByOrderId(order.getId(), DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY);
-            orderSummaryList.add(OrderSummary.builder()
-                    .orderId(order.getId())
-                    .dateTime(order.getCreatedAt())
-                    .orderItemSummaryList(orderItemSummaryList)
-                    .build()
-            );
-        }
-        return new OrderListResponse(orderSummaryList);
+        return new OrderListResponse(new ArrayList<>());
     }
 
     /**

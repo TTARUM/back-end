@@ -5,10 +5,8 @@ import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
 import com.ttarum.order.dto.response.OrderDetailResponse;
 import com.ttarum.order.dto.response.summary.OrderItemSummary;
-import com.ttarum.order.dto.response.summary.OrderSummary;
-import com.ttarum.order.dto.response.OrderListResponse;
-import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.exception.OrderException;
+import com.ttarum.order.exception.OrderForbiddenException;
 import com.ttarum.order.repository.OrderRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,14 +14,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.ttarum.order.domain.OrderStatus.*;
-import static com.ttarum.order.domain.PaymentMethod.*;
-import static org.assertj.core.api.Assertions.*;
+import static com.ttarum.order.domain.OrderStatus.SHIPPING;
+import static com.ttarum.order.domain.PaymentMethod.CREDIT_CARD;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,6 +1,5 @@
 package com.ttarum.order.dto.response;
 
-import com.ttarum.order.dto.response.summary.OrderSummary;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderListResponse {
 
-    private final List<OrderSummary> orderSummaryList;
+    private final List<OrderResponse> orderSummaryList;
 }

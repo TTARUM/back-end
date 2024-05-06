@@ -52,14 +52,11 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             """)
     ReviewUpdateResponse findReviewUpdateResponseById(@Param("reviewId") long reviewId);
 
-    @Query(value = """
-            SELECT r.id AS id,
-            m.nickname AS nickname,
-            r.content AS content,
-            star AS rating,
-            r.created_at AS createdAt,
-            FROM Review r, Member m
-            WHERE r.member_id = :memberId AND r.is_deleted = false
-                        """, nativeQuery = true)
+    @Query("""
+           SELECT new com.ttarum.review.dto.response.ReviewResponse(r.id, m.nickname, r.content, r.star, r.createdAt)
+           FROM Review r
+           JOIN r.member m
+           WHERE r.member.id = :memberId AND r.isDeleted = false
+           """)
     List<ReviewResponse> findReviewResponseByMemberId(@Param("memberId") long memberId, Pageable pageable);
 }

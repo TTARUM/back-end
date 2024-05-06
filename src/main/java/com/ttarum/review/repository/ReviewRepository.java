@@ -21,15 +21,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
      * @param pageable pageable
      * @return {@link ReviewResponse} 리스트
      */
-    @Query(value = """
-            SELECT r.id AS id,
-            m.nickname AS nickname,
-            r.content AS content,
-            star AS rating,
-            r.created_at AS createdAt,
-            FROM Review r, Member m
-            WHERE r.item_id = :itemId AND m.id = r.member_id AND r.is_deleted = false
-                        """, nativeQuery = true)
+    @Query(""" 
+            SELECT new com.ttarum.review.dto.response.ReviewResponse(r.id, m.nickname, r.content, r.star, r.createdAt)
+            FROM Review r
+            JOIN r.member m
+            WHERE r.item.id = :itemId AND r.isDeleted = false
+            """)
     List<ReviewResponse> findReviewResponseByItemId(@Param("itemId") Long itemId, Pageable pageable);
 
     /**

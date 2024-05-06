@@ -4,7 +4,6 @@ import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewCreationResponse;
-import com.ttarum.review.dto.response.ReviewListResponseForSpecificMember;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import com.ttarum.review.service.ReviewImageService;
@@ -176,10 +175,10 @@ public class ReviewController {
             @Parameter(name = "size", description = "페이지당 조회할 리뷰글의 수 (기본값 10)", example = "10")
     })
     @GetMapping("/member")
-    public ResponseEntity<ReviewListResponseForSpecificMember> getReviewsForSpecificMember(@AuthenticationPrincipal final CustomUserDetails userDetails, final Optional<Integer> page, final Optional<Integer> size) {
+    public ResponseEntity<List<ReviewResponse>> getReviewsForSpecificMember(@AuthenticationPrincipal final CustomUserDetails userDetails, final Optional<Integer> page, final Optional<Integer> size) {
         PageRequest pageable = PageRequest.of(page.orElse(0), size.orElse(PAGE_DEFAULT_SIZE));
 
-        ReviewListResponseForSpecificMember response = reviewService.getReviewForSpecificMember(userDetails.getId(), pageable);
+        List<ReviewResponse> response = reviewService.getReviewForSpecificMember(userDetails.getId(), pageable);
         return ResponseEntity.ok(response);
     }
 }

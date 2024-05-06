@@ -15,7 +15,6 @@ import com.ttarum.review.domain.ReviewImage;
 import com.ttarum.review.dto.request.ReviewCreationRequest;
 import com.ttarum.review.dto.request.ReviewUpdateRequest;
 import com.ttarum.review.dto.response.ReviewImageResponse;
-import com.ttarum.review.dto.response.ReviewListResponseForSpecificMember;
 import com.ttarum.review.dto.response.ReviewResponse;
 import com.ttarum.review.dto.response.ReviewUpdateResponse;
 import com.ttarum.review.exception.DuplicatedReviewException;
@@ -220,7 +219,7 @@ public class ReviewService {
      * @return 조회한 리뷰글 리스트
      * @throws AccessForbiddenMemberException 삭제된 회원의 리뷰글 조회 시 발생
      */
-    public ReviewListResponseForSpecificMember getReviewForSpecificMember(final long memberId, final Pageable pageable) {
+    public List<ReviewResponse> getReviewForSpecificMember(final long memberId, final Pageable pageable) {
         verifyForbiddenMember(memberId);
 
         List<ReviewResponse> reviewResponseList = reviewRepository.findReviewResponseByMemberId(memberId, pageable);
@@ -235,7 +234,7 @@ public class ReviewService {
                         .addImageUrl(ReviewImageResponse.of(ri))
         );
 
-        return new ReviewListResponseForSpecificMember(reviewResponseList);
+        return reviewResponseList;
     }
 
     private void verifyForbiddenMember(final long memberId) {

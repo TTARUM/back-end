@@ -208,7 +208,7 @@ public class MemberService {
     }
 
     /**
-     * {@link Long memberId}를 Id 값으로 가진 회원의 장바구니에 제품을 추가합니다.
+     * {@code memberId}를 Id 값으로 가진 회원의 장바구니에 제품을 추가합니다.
      *
      * @param memberId            특정 회원의 Id 값
      * @param cartAdditionRequest 장바구니에 추가될 제품의 이름과 수량이 담긴 객체
@@ -216,11 +216,12 @@ public class MemberService {
      * @throws ItemNotFoundException   해당 제품이 존재하지 않으면 발생합니다.
      */
     @Transactional
-    public void addToCart(final Long memberId, final CartAdditionRequest cartAdditionRequest) {
+    public void addToCart(final long memberId, final CartAdditionRequest cartAdditionRequest) {
         Member member = getMemberById(memberId);
         Item item = getItemById(cartAdditionRequest.getItemId());
 
-        Optional<Cart> optionalCart = cartRepository.findById(new CartId(memberId, cartAdditionRequest.getItemId()));
+        CartId cartId = new CartId(memberId, cartAdditionRequest.getItemId());
+        Optional<Cart> optionalCart = cartRepository.findById(cartId);
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
             cart.addAmount(cartAdditionRequest.getAmount());
@@ -228,6 +229,7 @@ public class MemberService {
         }
 
         Cart cart = Cart.builder()
+                .id(cartId)
                 .member(member)
                 .item(item)
                 .amount(cartAdditionRequest.getAmount())

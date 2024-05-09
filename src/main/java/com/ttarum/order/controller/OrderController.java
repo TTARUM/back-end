@@ -3,7 +3,6 @@ package com.ttarum.order.controller;
 import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.order.dto.request.OrderCreateRequest;
 import com.ttarum.order.dto.response.OrderDetailResponse;
-import com.ttarum.order.dto.response.OrderResponse;
 import com.ttarum.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,12 +34,12 @@ public class OrderController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping()
-    public ResponseEntity<Void> createOrder(
+    public ResponseEntity<Long> createOrder(
             @RequestBody final OrderCreateRequest request,
             @AuthenticationPrincipal final CustomUserDetails user
     ){
-        orderService.createOrder(request, user.getId());
-        return ResponseEntity.ok().build();
+        Long ret = orderService.createOrder(request, user.getId());
+        return ResponseEntity.ok(ret);
     }
 
     /**
@@ -58,13 +57,13 @@ public class OrderController {
             @Parameter(name = "size", description = "페이지당 주문 내역 개수 (기본 값 5)", example = "5")
     })
     @GetMapping("/list")
-    public ResponseEntity<List<OrderResponse>> getOrderList(
+    public ResponseEntity<List<OrderDetailResponse>> getOrderList(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "5") int size,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        List<OrderResponse> response = orderService.getOrderList(user.getId(), pageRequest);
+        List<OrderDetailResponse> response = orderService.getOrderList(user.getId(), pageRequest);
         return ResponseEntity.ok(response);
     }
 

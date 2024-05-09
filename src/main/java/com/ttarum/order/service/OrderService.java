@@ -46,7 +46,7 @@ public class OrderService {
      * @param memberId 회원의 Id 값
      * @throws OrderException 주문 생성에 실패하였을 경우 발생한다.
      */
-    public void createOrder(final OrderCreateRequest request, final long memberId) {
+    public Long createOrder(final OrderCreateRequest request, final long memberId) {
         Member member = getMemberById(memberId);
 
         List<Long> itemIds = request.getOrderItemRequests()
@@ -62,10 +62,11 @@ public class OrderService {
 
         long totalPrice = calculateTotalPrice(itemQuantity, items);
         Order orderEntity = request.toOrderEntity(totalPrice, member);
-        orderRepository.save(orderEntity);
+        Order saved = orderRepository.save(orderEntity);
 
         List<OrderItem> orderItems = orderItemsList(orderEntity, items, itemQuantity);
         orderItemRepository.saveAll(orderItems);
+        return saved.getId();
     }
 
     private boolean validateOrderItems(List<OrderItemRequest> orderItemRequests, List<Item> items) {

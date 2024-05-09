@@ -16,9 +16,8 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(description = "주문 조회 DTO")
 public class OrderDetailResponse {
-
-    @Schema(description = "주문 내 제품 DTO 리스트")
-    private final List<OrderItemSummary> orderItemSummaryList;
+    @Schema(description = "주문 ID", example = "1")
+    private final Long orderId;
 
     @Schema(description = "주문 상태", example = "배송중")
     private final OrderStatus orderStatus;
@@ -47,9 +46,12 @@ public class OrderDetailResponse {
     @Schema(description = "배송비", example = "2500")
     private final int deliveryFee;
 
+    @Schema(description = "주문 내 제품 DTO 리스트")
+    private final List<OrderItemSummary> orderItemSummaryList;
+
     public static OrderDetailResponse of(final List<OrderItemSummary> orderItemSummaryList, final Order order) {
         return OrderDetailResponse.builder()
-                .orderItemSummaryList(orderItemSummaryList)
+                .orderId(order.getId())
                 .orderStatus(order.getStatus())
                 .orderDate(order.getCreatedAt())
                 .price(order.getPrice())
@@ -59,6 +61,7 @@ public class OrderDetailResponse {
                 .comment(order.getComment())
                 .paymentMethod(order.getPaymentMethod())
                 .deliveryFee(order.getDeliveryFee())
+                .orderItemSummaryList(orderItemSummaryList)
                 .build();
     }
 }

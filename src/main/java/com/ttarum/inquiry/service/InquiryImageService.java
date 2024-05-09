@@ -55,7 +55,7 @@ public class InquiryImageService {
             validateImageFile(image);
             URL url = imageService.saveImage(image);
             Inquiry inquiry = getInquiryByInquiryId(inquiryId);
-            InquiryImage inquiryImage = InquiryImage.of(url.getPath(), inquiry);
+            InquiryImage inquiryImage = InquiryImage.of(url.toString(), inquiry);
 
             inquiryImageRepository.save(inquiryImage);
         } catch (IOException e) {

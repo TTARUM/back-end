@@ -14,4 +14,7 @@ public class CouponResponse {
 
     @Schema(description = "쿠폰 할인 방식", example = "PERCENTAGE")
     private final CouponStrategy couponStrategy;
+
+    @Schema(description = "쿠폰 할인 값(단위는 방식에 따라 '퍼센트' 혹은 '원')", example = "10")
+    private final int value;
 }

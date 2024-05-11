@@ -25,7 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -41,6 +44,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
     private final ImageService imageService;
+    private final MemberCouponRepository memberCouponRepository;
 
     /**
      * 일반 회원의 회원가입 메서드
@@ -356,6 +360,6 @@ public class MemberService {
     }
 
     public List<CouponResponse> getCouponList(final Long memberId) {
-        return new ArrayList<>();
+        return memberCouponRepository.findCouponListByMemberId(memberId);
     }
 }

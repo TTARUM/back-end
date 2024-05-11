@@ -5,9 +5,11 @@ import com.ttarum.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member_coupon")
 public class MemberCoupon extends BaseEntity {

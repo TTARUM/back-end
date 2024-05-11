@@ -3,9 +3,11 @@ package com.ttarum.member.domain.coupon;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "coupon")
 public class Coupon {

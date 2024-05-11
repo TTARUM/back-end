@@ -4,6 +4,9 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
+import com.ttarum.member.domain.coupon.Coupon;
+import com.ttarum.member.domain.coupon.CouponStrategy;
+import com.ttarum.member.domain.coupon.MemberCoupon;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartDeletionRequest;
@@ -46,6 +49,8 @@ public class MemberService {
     private final ImageService imageService;
     private final MemberCouponRepository memberCouponRepository;
 
+    private final Coupon registerCoupon = new Coupon(1L, "신규 가입 쿠폰", CouponStrategy.PERCENTAGE, 10);
+
     /**
      * 일반 회원의 회원가입 메서드
      *
@@ -77,6 +82,11 @@ public class MemberService {
         normalMember.setMember(saved);
         normalMember.encodePassword(passwordEncoder);
         normalMemberRepository.save(normalMember);
+
+        memberCouponRepository.save(MemberCoupon.builder()
+                .member(saved)
+                .coupon(registerCoupon)
+                .build());
     }
 
     private boolean isValidLogInId(final String loginId) {

@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class OrderController {
     })
     @PostMapping()
     public ResponseEntity<Long> createOrder(
-            @RequestBody final OrderCreateRequest request,
+            @Validated @RequestBody final OrderCreateRequest request,
             @AuthenticationPrincipal final CustomUserDetails user
     ){
         Long ret = orderService.createOrder(request, user.getId());

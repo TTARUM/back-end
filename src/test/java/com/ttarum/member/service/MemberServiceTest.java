@@ -60,6 +60,8 @@ class MemberServiceTest {
     private AddressRepository addressRepository;
     @Mock
     private ImageService imageService;
+    @Mock
+    private MemberCouponRepository memberCouponRepository;
 
     @Test
     @DisplayName("일반 유저 회원가입 - happy path")

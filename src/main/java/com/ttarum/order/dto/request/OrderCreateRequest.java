@@ -48,9 +48,9 @@ public class OrderCreateRequest {
     @NotNull(message = "총 주문 금액은 필수 값입니다.")
     @Positive(message = "총 주문 금액은 0보다 커야 합니다.")
     @Schema(description = "총 주문 금액", example = "30000")
-    private final Integer totalPrice;
+    private final Long totalPrice;
 
-    public Order toOrderEntity(long price, Member member) {
+    public Order toOrderEntity(Member member) {
         return Order.builder()
                 .status(OrderStatus.COMPLETE)
                 .comment(comment)
@@ -58,7 +58,7 @@ public class OrderCreateRequest {
                 .address(address)
                 .deliveryFee(DEFAULT_DELIVERY_FEE)
                 .recipient(recipient)
-                .price(price)
+                .price(totalPrice)
                 .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .member(member)
                 .build();

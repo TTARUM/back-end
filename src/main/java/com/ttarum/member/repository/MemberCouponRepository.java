@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long> {
     @Query("""
@@ -15,4 +16,7 @@ public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long
             WHERE mc.member.id = :memberId
         """)
     List<CouponResponse> findCouponListByMemberId(Long memberId);
+
+    Optional<MemberCoupon> findByMemberIdAndCouponId(Long memberId, Long couponId);
+    void deleteMemberCouponByMemberIdAndCouponId(Long memberId, Long couponId);
 }

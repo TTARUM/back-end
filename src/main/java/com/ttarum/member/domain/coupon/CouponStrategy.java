@@ -4,19 +4,19 @@ public enum CouponStrategy {
 
     PERCENTAGE {
         @Override
-        int calculate(final int originalPrice, final int discountPercent) {
+        long calculate(final long originalPrice, final int discountPercent) {
             if (discountPercent == 100)
                 return 0;
             return (int)(originalPrice * ((double) (100 - discountPercent) / 100));
         }
     }, ABSOLUTE {
         @Override
-        int calculate(final int originalPrice, final int discountAmount) {
+        long calculate(final long originalPrice, final int discountAmount) {
             if (originalPrice < discountAmount)
                 return 0;
             return originalPrice - discountAmount;
         }
     };
 
-    abstract int calculate(int existingPrice, int value);
+    abstract long calculate(long existingPrice, int value);
 }

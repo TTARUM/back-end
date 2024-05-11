@@ -23,7 +23,7 @@ public class Coupon {
 
     private int value;
 
-    public int calculatePrice(int originalPrice) {
+    public long calculatePrice(long originalPrice) {
         return couponStrategy.calculate(originalPrice, value);
     }
 }

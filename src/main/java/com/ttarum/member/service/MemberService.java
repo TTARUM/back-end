@@ -9,6 +9,7 @@ import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartDeletionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
+import com.ttarum.member.dto.response.CouponResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
 import com.ttarum.member.exception.*;
 import com.ttarum.member.repository.*;
@@ -352,5 +353,9 @@ public class MemberService {
     private Cart getCartById(final CartId cartId) {
         return cartRepository.findById(cartId)
                 .orElseThrow(CartNotFoundException::new);
+    }
+
+    public List<CouponResponse> getCouponList(final Long memberId) {
+        return new ArrayList<>();
     }
 }

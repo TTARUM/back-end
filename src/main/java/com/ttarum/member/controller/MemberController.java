@@ -4,6 +4,7 @@ import com.ttarum.auth.domain.CustomUserDetails;
 import com.ttarum.member.dto.request.*;
 import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
+import com.ttarum.member.dto.response.CouponResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
 import com.ttarum.member.mail.dto.EmailCheckDTO;
 import com.ttarum.member.mail.dto.MailRequest;
@@ -339,5 +340,16 @@ public class MemberController {
             return ResponseEntity.ok().build();
         }
         throw MailException.getInstance(VALIDATING);
+    }
+
+    @Operation(summary = "쿠폰 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공"),
+            @ApiResponse(responseCode = "400", description = "실패")
+    })
+    @GetMapping("/coupons")
+    public ResponseEntity<List<CouponResponse>> getCouponList(@AuthenticationPrincipal final CustomUserDetails user) {
+        List<CouponResponse> ret = memberService.getCouponList(user.getId());
+        return ResponseEntity.ok(ret);
     }
 }

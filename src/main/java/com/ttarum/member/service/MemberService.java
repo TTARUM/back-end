@@ -4,11 +4,15 @@ import com.ttarum.item.domain.Item;
 import com.ttarum.item.exception.ItemNotFoundException;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.*;
+import com.ttarum.member.domain.coupon.Coupon;
+import com.ttarum.member.domain.coupon.CouponStrategy;
+import com.ttarum.member.domain.coupon.MemberCoupon;
 import com.ttarum.member.dto.request.AddressUpsertRequest;
 import com.ttarum.member.dto.request.CartAdditionRequest;
 import com.ttarum.member.dto.request.CartDeletionRequest;
 import com.ttarum.member.dto.request.CartUpdateRequest;
 import com.ttarum.member.dto.response.CartResponse;
+import com.ttarum.member.dto.response.CouponResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
 import com.ttarum.member.exception.*;
 import com.ttarum.member.repository.*;
@@ -24,7 +28,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -40,6 +47,9 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AddressRepository addressRepository;
     private final ImageService imageService;
+    private final MemberCouponRepository memberCouponRepository;
+
+    private final Coupon registerCoupon = new Coupon(1L, "신규 가입 쿠폰", CouponStrategy.PERCENTAGE, 10);
 
     /**
      * 일반 회원의 회원가입 메서드
@@ -72,6 +82,11 @@ public class MemberService {
         normalMember.setMember(saved);
         normalMember.encodePassword(passwordEncoder);
         normalMemberRepository.save(normalMember);
+
+        memberCouponRepository.save(MemberCoupon.builder()
+                .member(saved)
+                .coupon(registerCoupon)
+                .build());
     }
 
     private boolean isValidLogInId(final String loginId) {
@@ -352,5 +367,9 @@ public class MemberService {
     private Cart getCartById(final CartId cartId) {
         return cartRepository.findById(cartId)
                 .orElseThrow(CartNotFoundException::new);
+    }
+
+    public List<CouponResponse> getCouponList(final Long memberId) {
+        return memberCouponRepository.findCouponListByMemberId(memberId);
     }
 }

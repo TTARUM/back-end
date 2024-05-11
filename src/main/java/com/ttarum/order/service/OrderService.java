@@ -3,7 +3,10 @@ package com.ttarum.order.service;
 import com.ttarum.item.domain.Item;
 import com.ttarum.item.repository.ItemRepository;
 import com.ttarum.member.domain.Member;
+import com.ttarum.member.domain.coupon.Coupon;
 import com.ttarum.member.exception.MemberNotFoundException;
+import com.ttarum.member.repository.CouponRepository;
+import com.ttarum.member.repository.MemberCouponRepository;
 import com.ttarum.member.repository.MemberRepository;
 import com.ttarum.order.domain.Order;
 import com.ttarum.order.domain.OrderItem;
@@ -35,8 +38,8 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final MemberRepository memberRepository;
     private final ItemRepository itemRepository;
-
-    private static final int DEFAULT_NUMBER_OF_ITEMS_PER_SUMMARY = 2;
+    private final CouponRepository couponRepository;
+    private final MemberCouponRepository memberCouponRepository;
 
     /**
      * 주문 생성 메서드
@@ -60,7 +63,22 @@ public class OrderService {
         countUpItemOrderCount(items, itemQuantity);
 
         long totalPrice = calculateTotalPrice(itemQuantity, items);
-        Order orderEntity = request.toOrderEntity(totalPrice, member);
+        if (request.getCouponId() != null) {
+            Coupon coupon = couponRepository.findById(request.getCouponId())
+                    .orElseThrow(OrderException::couponNotFound);
+
+            memberCouponRepository.findByMemberIdAndCouponId(memberId, request.getCouponId())
+                    .orElseThrow(OrderException::couponNotFound);
+
+            totalPrice = coupon.calculatePrice(totalPrice);
+            memberCouponRepository.deleteMemberCouponByMemberIdAndCouponId(memberId, request.getCouponId());
+        }
+
+        if (totalPrice != request.getTotalPrice()) {
+            throw OrderException.priceNotMatch();
+        }
+
+        Order orderEntity = request.toOrderEntity(member);
         Order saved = orderRepository.save(orderEntity);
 
         List<OrderItem> orderItems = orderItemsList(orderEntity, items, itemQuantity);

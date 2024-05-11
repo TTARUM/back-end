@@ -3,9 +3,11 @@ package com.ttarum.member.domain.coupon;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "coupon")
 public class Coupon {
@@ -21,7 +23,7 @@ public class Coupon {
 
     private int value;
 
-    public double calculate(int existingPrice) {
-        return couponStrategy.calculate(existingPrice, value);
+    public long calculatePrice(long originalPrice) {
+        return couponStrategy.calculate(originalPrice, value);
     }
 }

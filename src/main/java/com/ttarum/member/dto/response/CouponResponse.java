@@ -9,6 +9,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Schema(description = "쿠폰 조회 DTO")
 public class CouponResponse {
+    @Schema(description = "쿠폰 ID", example = "1")
+    private final Long id;
+
     @Schema(description = "쿠폰 이름", example = "신규 가입 쿠폰")
     private final String name;
 

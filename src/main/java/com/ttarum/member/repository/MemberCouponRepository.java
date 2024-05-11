@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface MemberCouponRepository extends JpaRepository<MemberCoupon, Long> {
     @Query("""
-            SELECT new com.ttarum.member.dto.response.CouponResponse(c.name, c.couponStrategy, c.value)
+            SELECT new com.ttarum.member.dto.response.CouponResponse(c.id, c.name, c.couponStrategy, c.value)
             FROM MemberCoupon mc
             JOIN mc.coupon c
             WHERE mc.member.id = :memberId

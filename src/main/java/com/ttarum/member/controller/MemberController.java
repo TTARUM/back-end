@@ -147,6 +147,12 @@ public class MemberController {
         return ResponseEntity.ok(wishlistResponse);
     }
 
+    @DeleteMapping("/wish-item")
+    public ResponseEntity<Void> deleteWishList(@AuthenticationPrincipal final CustomUserDetails user, @RequestParam final Long itemId) {
+        memberService.deleteItemFromWishList(user.getId(), itemId);
+        return ResponseEntity.ok().build();
+    }
+
     /**
      * 장바구니에 제품 추가
      *

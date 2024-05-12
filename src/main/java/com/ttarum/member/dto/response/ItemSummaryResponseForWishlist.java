@@ -16,7 +16,7 @@ import java.time.Instant;
 public class ItemSummaryResponseForWishlist {
 
     @Schema(description = "제품의 Id 값", example = "1")
-    private long itemId;
+    private Long itemId;
 
     @Schema(description = "제품의 이름", example = "베반 셀러스 온토게니")
     private String name;
@@ -25,10 +25,10 @@ public class ItemSummaryResponseForWishlist {
     private String categoryName;
 
     @Schema(description = "제품의 가격", example = "199000")
-    private int price;
+    private Integer price;
 
     @Schema(description = "제품의 평점", example = "4.5")
-    private double rating;
+    private Double rating;
 
     @Schema(description = "제품 이미지 url", example = "ttarum.image.url")
     private String imageUrl;

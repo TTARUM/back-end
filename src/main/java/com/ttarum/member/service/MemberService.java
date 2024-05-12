@@ -372,4 +372,15 @@ public class MemberService {
     public List<CouponResponse> getCouponList(final Long memberId) {
         return memberCouponRepository.findCouponListByMemberId(memberId);
     }
+
+    /**
+     * 찜 목록에서 제품 제거 메서드
+     *
+     * @param memberId 회원의 Id 값
+     * @param itemId   제품의 Id 값
+     */
+    @Transactional
+    public void deleteItemFromWishList(final long memberId, final long itemId) {
+        wishlistRepository.deleteById(new WishlistId(memberId, itemId));
+    }
 }

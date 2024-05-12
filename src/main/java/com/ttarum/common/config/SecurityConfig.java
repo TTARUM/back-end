@@ -59,6 +59,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/inquiries/list").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/members/mail/send").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/members/mail/check").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/members/mail/send/find-id").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/members/mail/check/find-id").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/members/mail/find-id").permitAll()
                         .anyRequest().authenticated()
                 );
 

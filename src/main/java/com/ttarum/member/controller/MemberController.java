@@ -6,8 +6,14 @@ import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.CouponResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
+import com.ttarum.member.mail.EmailStatus;
+import com.ttarum.member.mail.EmailVerification;
 import com.ttarum.member.mail.dto.EmailCheckDTO;
 import com.ttarum.member.mail.dto.MailRequest;
+import com.ttarum.member.mail.dto.request.FindingEmailRequest;
+import com.ttarum.member.mail.dto.request.MailRequestToFindId;
+import com.ttarum.member.mail.dto.response.CheckVerificationCodeResponse;
+import com.ttarum.member.mail.dto.response.FindingEmailResponse;
 import com.ttarum.member.mail.exception.MailException;
 import com.ttarum.member.service.EmailService;
 import com.ttarum.member.service.MemberService;
@@ -368,5 +374,43 @@ public class MemberController {
     public ResponseEntity<List<CouponResponse>> getCouponList(@AuthenticationPrincipal final CustomUserDetails user) {
         List<CouponResponse> ret = memberService.getCouponList(user.getId());
         return ResponseEntity.ok(ret);
+    }
+
+    @Operation(summary = "아이디 찾기 - 인증 번호 전송")
+    @Parameters(value = {
+            @Parameter(name = "name", description = "이름", example = "홍길동"),
+            @Parameter(name = "email", description = "이메일", example = "asdf@adf.com")
+    })
+    @PostMapping("/mail/send/find-id")
+    public ResponseEntity<Void> sendVerificationCodeToFindId(@RequestBody @Valid final MailRequestToFindId mailRequest) {
+        emailService.sendVerificationCodeToFindId(mailRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "아이디 찾기 - 인증 번호 확인")
+    @Parameters(value = {
+            @Parameter(name = "email", description = "이메일", example = "adsf@adf.com"),
+            @Parameter(name = "verificationCode", description = "인증 번호", example = "123456")
+    })
+    @PostMapping("/mail/check/find-id")
+    public ResponseEntity<CheckVerificationCodeResponse> checkVerificationCodeToFindId(@RequestBody @Valid final EmailCheckDTO emailCheckDTO) {
+        EmailVerification emailVerification = emailService.checkVerificationCodeToFindId(emailCheckDTO.getEmail(), emailCheckDTO.getVerificationCode());
+        if (emailVerification.getStatus().equals(EmailStatus.VALID)) {
+            return ResponseEntity.ok(new CheckVerificationCodeResponse(emailVerification.getUuid()));
+        }
+        throw MailException.getInstance(VALIDATING);
+    }
+
+    @Operation(summary = "아이디 찾기")
+    @Parameters(value = {
+            @Parameter(name = "name", description = "이름", example = "홍길동"),
+            @Parameter(name = "email", description = "이메일", example = "asdf@adsf.com"),
+            @Parameter(name = "verificationCode", description = "인증 번호", example = "123456"),
+            @Parameter(name = "sessionId", description = "세션 Id", example = "asdfasaoeirj..")
+    })
+    @GetMapping("/mail/find-id")
+    public ResponseEntity<FindingEmailResponse> findEmail(@RequestParam final FindingEmailRequest findingEmailRequest) {
+        String email = emailService.findEmail(findingEmailRequest);
+        return ResponseEntity.ok(new FindingEmailResponse(email));
     }
 }

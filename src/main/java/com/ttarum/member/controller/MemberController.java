@@ -100,7 +100,7 @@ public class MemberController {
     /**
      * 제품 찜 메서드
      *
-     * @param user   로그인한 회원
+     * @param user            로그인한 회원
      * @param wishItemRequest 찜 목록에 추가할 제품의 Id 값
      * @return 빈 응답
      */
@@ -147,6 +147,16 @@ public class MemberController {
         return ResponseEntity.ok(wishlistResponse);
     }
 
+    /**
+     * 찜 목록에서 제품 제거
+     *
+     * @param user   로그인한 회원
+     * @param itemId 제거할 제품의 Id 값
+     * @return 빈 응답
+     */
+    @Operation(summary = "찜 목록에서 제품 제거")
+    @ApiResponse(responseCode = "200", description = "제거 성공")
+    @Parameter(name = "itemId", description = "제거할 제품의 Id 값", example = "1")
     @DeleteMapping("/wish-item")
     public ResponseEntity<Void> deleteWishList(@AuthenticationPrincipal final CustomUserDetails user, @RequestParam final Long itemId) {
         memberService.deleteItemFromWishList(user.getId(), itemId);
@@ -326,6 +336,7 @@ public class MemberController {
         memberService.updateItemAmountInCart(user.getId(), itemId, cartUpdateRequest);
         return ResponseEntity.ok().build();
     }
+
     @Operation(summary = "회원가입 과정의 이메일 인증 코드 요청")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공"),

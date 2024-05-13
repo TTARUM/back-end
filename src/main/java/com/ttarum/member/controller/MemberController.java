@@ -6,8 +6,14 @@ import com.ttarum.member.dto.response.AddressResponse;
 import com.ttarum.member.dto.response.CartResponse;
 import com.ttarum.member.dto.response.CouponResponse;
 import com.ttarum.member.dto.response.WishlistResponse;
+import com.ttarum.member.mail.EmailStatus;
+import com.ttarum.member.mail.EmailVerification;
 import com.ttarum.member.mail.dto.EmailCheckDTO;
 import com.ttarum.member.mail.dto.MailRequest;
+import com.ttarum.member.mail.dto.request.FindingEmailRequest;
+import com.ttarum.member.mail.dto.request.MailRequestToFindId;
+import com.ttarum.member.mail.dto.response.CheckVerificationCodeResponse;
+import com.ttarum.member.mail.dto.response.FindingEmailResponse;
 import com.ttarum.member.mail.exception.MailException;
 import com.ttarum.member.service.EmailService;
 import com.ttarum.member.service.MemberService;
@@ -26,7 +32,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.ttarum.member.mail.exception.ErrorType.VALIDATING;
@@ -54,9 +62,11 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "회원가입 실패")
     })
     @PostMapping(value = "/register", consumes = "application/json")
-    public ResponseEntity<Void> registerNormalMember(@RequestBody NormalMemberRegister dto) {
-        memberService.registerNormalUser(dto.toMemberEntity(), dto.toNormalMemberEntity());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String, Object>> registerNormalMember(@RequestBody NormalMemberRegister dto) {
+        long memberId = memberService.registerNormalUser(dto.toMemberEntity(), dto.toNormalMemberEntity());
+        HashMap<String, Object> body = new HashMap<>();
+        body.put("memberId", memberId);
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -71,7 +81,7 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "탈퇴 실패")
     })
     @DeleteMapping("/withdraw")
-    public ResponseEntity<Void> withdrawMember(@AuthenticationPrincipal final CustomUserDetails user) {
+    public ResponseEntity<Object> withdrawMember(@AuthenticationPrincipal final CustomUserDetails user) {
         memberService.withdraw(user.getId());
         return ResponseEntity.ok().build();
     }
@@ -111,12 +121,13 @@ public class MemberController {
     })
     @Parameter(name = "itemId", required = true, description = "제품의 Id 값", example = "1")
     @PostMapping("/wish-item")
-    public ResponseEntity<Void> addItemToWishlist(
+    public ResponseEntity<Map<String, Object>> addItemToWishlist(
             @RequestBody final WishItemRequest wishItemRequest,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         memberService.wishItem(user.getId(), wishItemRequest.getItemId());
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -158,9 +169,10 @@ public class MemberController {
     @ApiResponse(responseCode = "200", description = "제거 성공")
     @Parameter(name = "itemId", description = "제거할 제품의 Id 값", example = "1")
     @DeleteMapping("/wish-item")
-    public ResponseEntity<Void> deleteWishList(@AuthenticationPrincipal final CustomUserDetails user, @RequestParam final Long itemId) {
+    public ResponseEntity<Map<String, Object>> deleteWishList(@AuthenticationPrincipal final CustomUserDetails user, @RequestParam final Long itemId) {
         memberService.deleteItemFromWishList(user.getId(), itemId);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -180,12 +192,13 @@ public class MemberController {
             @Parameter(name = "cartAdditionRequest", hidden = true)
     })
     @PostMapping("/carts")
-    public ResponseEntity<Void> addToCart(
+    public ResponseEntity<Map<String, Object>> addToCart(
             @RequestBody final CartAdditionRequest cartAdditionRequest,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         memberService.addToCart(user.getId(), cartAdditionRequest);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -217,12 +230,13 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping("/address")
-    public ResponseEntity<Void> addAddress(
+    public ResponseEntity<Map<String, Object>> addAddress(
             @RequestBody final AddressUpsertRequest addressUpsertRequest,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         memberService.addAddress(user.getId(), addressUpsertRequest);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -258,13 +272,14 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping("/address/{addressId}")
-    public ResponseEntity<Void> updateAddress(
+    public ResponseEntity<Map<String, Object>> updateAddress(
             @PathVariable final Long addressId,
             @RequestBody final AddressUpsertRequest addressUpsertRequest,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         memberService.updateAddress(user.getId(), addressId, addressUpsertRequest);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -280,12 +295,13 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @DeleteMapping("/address/{addressId}")
-    public ResponseEntity<Void> deleteAddress(
+    public ResponseEntity<Map<String, Object>> deleteAddress(
             @PathVariable final Long addressId,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         memberService.deleteAddress(user.getId(), addressId);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -301,12 +317,13 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "제거 실패")
     })
     @DeleteMapping("/carts")
-    public ResponseEntity<Void> deleteFromCart(
+    public ResponseEntity<Map<String, Object>> deleteFromCart(
             @RequestBody final CartDeletionRequest cartDeletionRequest,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         memberService.deleteFromCart(user.getId(), cartDeletionRequest);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -328,13 +345,14 @@ public class MemberController {
             @Parameter(name = "cartUpdateRequest", hidden = true)
     })
     @PutMapping("/carts/{itemId}")
-    public ResponseEntity<Void> updateItemAmountInCart(
+    public ResponseEntity<Map<String, Object>> updateItemAmountInCart(
             @PathVariable final long itemId,
             @RequestBody final CartUpdateRequest cartUpdateRequest,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         memberService.updateItemAmountInCart(user.getId(), itemId, cartUpdateRequest);
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     @Operation(summary = "회원가입 과정의 이메일 인증 코드 요청")
@@ -343,18 +361,20 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "실패")
     })
     @PostMapping("/mail/send")
-    public ResponseEntity<Void> sendVerificationCodeToRegister(@RequestBody @Valid final MailRequest mailRequest) {
+    public ResponseEntity<Map<String, Object>> sendVerificationCodeToRegister(@RequestBody @Valid final MailRequest mailRequest) {
         emailService.sendVerificationCodeToRegister(mailRequest.getEmail());
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     @Operation(summary = "회원가입 과정의 이메일 인증 코드 확인")
     @ApiResponse(responseCode = "200", description = "성공")
     @PostMapping("/mail/check")
-    public ResponseEntity<Void> checkVerificationCodeToRegister(@RequestBody @Valid final EmailCheckDTO emailCheckDTO) {
+    public ResponseEntity<Map<String, Object>> checkVerificationCodeToRegister(@RequestBody @Valid final EmailCheckDTO emailCheckDTO) {
         boolean checked = emailService.checkVerificationCode(emailCheckDTO.getEmail(), emailCheckDTO.getVerificationCode());
         if (checked) {
-            return ResponseEntity.ok().build();
+            Map<String, Object> body = new HashMap<>();
+            return ResponseEntity.ok(body);
         }
         throw MailException.getInstance(VALIDATING);
     }
@@ -368,5 +388,44 @@ public class MemberController {
     public ResponseEntity<List<CouponResponse>> getCouponList(@AuthenticationPrincipal final CustomUserDetails user) {
         List<CouponResponse> ret = memberService.getCouponList(user.getId());
         return ResponseEntity.ok(ret);
+    }
+
+    @Operation(summary = "아이디 찾기 - 인증 번호 전송")
+    @Parameters(value = {
+            @Parameter(name = "name", description = "이름", example = "홍길동"),
+            @Parameter(name = "email", description = "이메일", example = "asdf@adf.com")
+    })
+    @PostMapping("/mail/send/find-id")
+    public ResponseEntity<Map<String, Object>> sendVerificationCodeToFindId(@RequestBody @Valid final MailRequestToFindId mailRequest) {
+        emailService.sendVerificationCodeToFindId(mailRequest);
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
+    }
+
+    @Operation(summary = "아이디 찾기 - 인증 번호 확인")
+    @Parameters(value = {
+            @Parameter(name = "email", description = "이메일", example = "adsf@adf.com"),
+            @Parameter(name = "verificationCode", description = "인증 번호", example = "123456")
+    })
+    @PostMapping("/mail/check/find-id")
+    public ResponseEntity<CheckVerificationCodeResponse> checkVerificationCodeToFindId(@RequestBody @Valid final EmailCheckDTO emailCheckDTO) {
+        EmailVerification emailVerification = emailService.checkVerificationCodeToFindId(emailCheckDTO.getEmail(), emailCheckDTO.getVerificationCode());
+        if (emailVerification.getStatus().equals(EmailStatus.VALID)) {
+            return ResponseEntity.ok(new CheckVerificationCodeResponse(emailVerification.getUuid()));
+        }
+        throw MailException.getInstance(VALIDATING);
+    }
+
+    @Operation(summary = "아이디 찾기")
+    @Parameters(value = {
+            @Parameter(name = "name", description = "이름", example = "홍길동"),
+            @Parameter(name = "email", description = "이메일", example = "asdf@adsf.com"),
+            @Parameter(name = "verificationCode", description = "인증 번호", example = "123456"),
+            @Parameter(name = "sessionId", description = "세션 Id", example = "asdfasaoeirj..")
+    })
+    @GetMapping("/mail/find-id")
+    public ResponseEntity<FindingEmailResponse> findEmail(@RequestParam final FindingEmailRequest findingEmailRequest) {
+        String email = emailService.findEmail(findingEmailRequest);
+        return ResponseEntity.ok(new FindingEmailResponse(email));
     }
 }

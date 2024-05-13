@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -85,12 +83,13 @@ public class ReviewController {
     })
     @Parameter(name = "reviewId", description = "제거할 리뷰의 ID 값", example = "1")
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<Void> deleteReview(
+    public ResponseEntity<Map<String, Object>> deleteReview(
             @PathVariable final long reviewId,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         reviewService.deleteReview(reviewId, user.getId());
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**
@@ -110,13 +109,14 @@ public class ReviewController {
             @Parameter(name = "reviewId", description = "리뷰의 Id값", example = "1", required = true)
     })
     @PutMapping("/{reviewId}")
-    public ResponseEntity<Void> updateReview(
+    public ResponseEntity<Map<String, Object>> updateReview(
             @PathVariable final long reviewId,
             @RequestBody final ReviewUpdateRequest request,
             @AuthenticationPrincipal final CustomUserDetails user
     ) {
         reviewService.updateReview(reviewId, request, user.getId());
-        return ResponseEntity.ok().build();
+        Map<String, Object> body = new HashMap<>();
+        return ResponseEntity.ok(body);
     }
 
     /**

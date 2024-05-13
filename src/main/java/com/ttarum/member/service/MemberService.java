@@ -59,7 +59,7 @@ public class MemberService {
      * @throws MemberException 유효성 검사에 실패한 경우 발생합니다.
      */
     @Transactional
-    public void registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
+    public long registerNormalUser(Member member, NormalMember normalMember) throws MemberException {
         if (!isValidNickname(member.getNickname())) {
             throw new MemberException(HttpStatus.BAD_REQUEST, "올바르지 않은 닉네임입니다.");
         }
@@ -87,6 +87,7 @@ public class MemberService {
                 .member(saved)
                 .coupon(registerCoupon)
                 .build());
+        return saved.getId();
     }
 
     private boolean isValidLogInId(final String loginId) {

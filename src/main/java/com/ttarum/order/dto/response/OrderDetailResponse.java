@@ -28,6 +28,9 @@ public class OrderDetailResponse {
     @Schema(description = "결제 금액", example = "30000")
     private final long price;
 
+    @Schema(description = "할인 금액", example = "3000")
+    private final long discountPrice;
+
     @Schema(description = "수령인", example = "유지민")
     private final String recipient;
 
@@ -55,6 +58,7 @@ public class OrderDetailResponse {
                 .orderStatus(order.getStatus())
                 .orderDate(order.getCreatedAt())
                 .price(order.getPrice())
+                .discountPrice(order.getDiscountPrice())
                 .recipient(order.getRecipient())
                 .phoneNumber(order.getPhoneNumber())
                 .address(order.getAddress())

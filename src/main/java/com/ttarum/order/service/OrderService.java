@@ -63,22 +63,16 @@ public class OrderService {
         countUpItemOrderCount(items, itemQuantity);
 
         long totalPrice = calculateTotalPrice(itemQuantity, items);
+        long discountPrice = 0;
         if (request.getCouponId() != null) {
-            Coupon coupon = couponRepository.findById(request.getCouponId())
-                    .orElseThrow(OrderException::couponNotFound);
-
-            memberCouponRepository.findByMemberIdAndCouponId(memberId, request.getCouponId())
-                    .orElseThrow(OrderException::couponNotFound);
-
-            totalPrice = coupon.calculatePrice(totalPrice);
-            memberCouponRepository.deleteMemberCouponByMemberIdAndCouponId(memberId, request.getCouponId());
+            discountPrice = calculateDiscountPrice(totalPrice, memberId, request.getCouponId());
         }
 
         if (totalPrice != request.getTotalPrice()) {
             throw OrderException.priceNotMatch();
         }
 
-        Order orderEntity = request.toOrderEntity(member);
+        Order orderEntity = request.toOrderEntity(member, discountPrice);
         Order saved = orderRepository.save(orderEntity);
 
         List<OrderItem> orderItems = orderItemsList(orderEntity, items, itemQuantity);
@@ -101,6 +95,18 @@ public class OrderService {
             ret += (long) item.getPrice() * itemQuantity.get(item.getId());
         }
         return ret;
+    }
+
+    private long calculateDiscountPrice(long totalPrice, long memberId, long couponId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(OrderException::couponNotFound);
+
+        memberCouponRepository.findByMemberIdAndCouponId(memberId, couponId)
+                .orElseThrow(OrderException::couponNotFound);
+
+        memberCouponRepository.deleteMemberCouponByMemberIdAndCouponId(memberId, couponId);
+
+        return coupon.calculateDiscount(totalPrice);
     }
 
     private void countUpItemOrderCount(List<Item> items, Map<Long, Long> itemQuantity) {

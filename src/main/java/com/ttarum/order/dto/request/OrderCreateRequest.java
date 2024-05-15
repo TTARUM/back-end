@@ -50,7 +50,7 @@ public class OrderCreateRequest {
     @Schema(description = "총 주문 금액", example = "30000")
     private final Long totalPrice;
 
-    public Order toOrderEntity(Member member) {
+    public Order toOrderEntity(Member member, long discountPrice) {
         return Order.builder()
                 .status(OrderStatus.COMPLETE)
                 .comment(comment)
@@ -59,6 +59,7 @@ public class OrderCreateRequest {
                 .deliveryFee(DEFAULT_DELIVERY_FEE)
                 .recipient(recipient)
                 .price(totalPrice)
+                .discountPrice(discountPrice)
                 .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .member(member)
                 .build();

@@ -39,6 +39,9 @@ public class Order extends BaseEntity {
     @Column(name = "price", nullable = false, columnDefinition = "int")
     private Long price;
 
+    @Column(name = "discount_price", nullable = false, columnDefinition = "int")
+    private Long discountPrice;
+
     @Column(name = "payment_method", nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;

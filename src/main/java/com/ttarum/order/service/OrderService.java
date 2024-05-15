@@ -41,6 +41,9 @@ public class OrderService {
     private final CouponRepository couponRepository;
     private final MemberCouponRepository memberCouponRepository;
 
+    private static final int DELIVERY_FEE = 3000;
+    private static final int FREE_DELIVERY_PRICE = 100000;
+
     /**
      * 주문 생성 메서드
      *
@@ -63,22 +66,17 @@ public class OrderService {
         countUpItemOrderCount(items, itemQuantity);
 
         long totalPrice = calculateTotalPrice(itemQuantity, items);
+        long discountPrice = 0;
         if (request.getCouponId() != null) {
-            Coupon coupon = couponRepository.findById(request.getCouponId())
-                    .orElseThrow(OrderException::couponNotFound);
-
-            memberCouponRepository.findByMemberIdAndCouponId(memberId, request.getCouponId())
-                    .orElseThrow(OrderException::couponNotFound);
-
-            totalPrice = coupon.calculatePrice(totalPrice);
-            memberCouponRepository.deleteMemberCouponByMemberIdAndCouponId(memberId, request.getCouponId());
+            discountPrice = calculateDiscountPrice(totalPrice, memberId, request.getCouponId());
+            totalPrice -= discountPrice;
         }
 
         if (totalPrice != request.getTotalPrice()) {
             throw OrderException.priceNotMatch();
         }
 
-        Order orderEntity = request.toOrderEntity(member);
+        Order orderEntity = request.toOrderEntity(member, discountPrice, calculateDeliveryFee(totalPrice));
         Order saved = orderRepository.save(orderEntity);
 
         List<OrderItem> orderItems = orderItemsList(orderEntity, items, itemQuantity);
@@ -101,6 +99,22 @@ public class OrderService {
             ret += (long) item.getPrice() * itemQuantity.get(item.getId());
         }
         return ret;
+    }
+
+    private long calculateDiscountPrice(long totalPrice, long memberId, long couponId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(OrderException::couponNotFound);
+
+        memberCouponRepository.findByMemberIdAndCouponId(memberId, couponId)
+                .orElseThrow(OrderException::couponNotFound);
+
+        memberCouponRepository.deleteMemberCouponByMemberIdAndCouponId(memberId, couponId);
+
+        return coupon.calculateDiscount(totalPrice);
+    }
+
+    private int calculateDeliveryFee(long totalPrice) {
+        return totalPrice >= FREE_DELIVERY_PRICE ? 0 : DELIVERY_FEE;
     }
 
     private void countUpItemOrderCount(List<Item> items, Map<Long, Long> itemQuantity) {

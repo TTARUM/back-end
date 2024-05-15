@@ -19,8 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(name = "OrderCreateRequest", description = "주문 생성 요청 DTO")
 public class OrderCreateRequest {
-    private static final int DEFAULT_DELIVERY_FEE = 3000;
-
     // TODO: 주문 요청사항 필수 값인지 확인하고 필요시 스키마 변경하기
     @Schema(description = "주문 요청 사항", example = "부재 시 경비실에 맡겨주세요")
     private final String comment;
@@ -50,15 +48,16 @@ public class OrderCreateRequest {
     @Schema(description = "총 주문 금액", example = "30000")
     private final Long totalPrice;
 
-    public Order toOrderEntity(Member member) {
+    public Order toOrderEntity(Member member, long discountPrice, int deliveryFee) {
         return Order.builder()
                 .status(OrderStatus.COMPLETE)
                 .comment(comment)
                 .phoneNumber(phoneNumber)
                 .address(address)
-                .deliveryFee(DEFAULT_DELIVERY_FEE)
+                .deliveryFee(deliveryFee)
                 .recipient(recipient)
                 .price(totalPrice)
+                .discountPrice(discountPrice)
                 .paymentMethod(PaymentMethod.CREDIT_CARD)
                 .member(member)
                 .build();

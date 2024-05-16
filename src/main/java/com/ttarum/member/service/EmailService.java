@@ -144,7 +144,6 @@ public class EmailService {
         if (!member.getMember().getName().equals(mailRequest.getName())) {
             throw new MemberNotFoundException();
         }
-        validateDuplicatingEmail(mailRequest.getEmail());
         String verificationCode = makeVerificationCode();
 
         String title = "[TTARUM] 아이디 찾기 이메일 인증 메일입니다.";

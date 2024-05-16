@@ -14,7 +14,7 @@ import java.time.Duration;
 public class RedisAuthService {
 
     private final StringRedisTemplate stringTemplate;
-    private final RedisTemplate<String, EmailVerification> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     public String getData(final String key) {
         ValueOperations<String, String> valueOperations = stringTemplate.opsForValue();
@@ -22,8 +22,8 @@ public class RedisAuthService {
     }
 
     public EmailVerification getEmailVerification(final String key) {
-        ValueOperations<String, EmailVerification> valueOperations = redisTemplate.opsForValue();
-        return valueOperations.get(key);
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
+        return (EmailVerification) valueOperations.get(key);
     }
 
     public void setData(final String key, final String value) {
@@ -38,7 +38,7 @@ public class RedisAuthService {
     }
 
     public void setDataExpire(final String key, final EmailVerification value, final long duration) {
-        ValueOperations<String, EmailVerification> valueOperations = redisTemplate.opsForValue();
+        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);
         valueOperations.set(key, value, expireDuration);
     }

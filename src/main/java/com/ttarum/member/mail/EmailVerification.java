@@ -1,16 +1,26 @@
 package com.ttarum.member.mail;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@RedisHash
 public class EmailVerification {
 
-    private final String email;
+    private String email;
 
-    private final String verificationCode;
+    @Id
+    private String verificationCode;
 
     private EmailStatus status;
-    private final String uuid;
+    private String uuid;
 
     public EmailVerification(final String email, final String verificationCode, final String uuid) {
         this.email = email;

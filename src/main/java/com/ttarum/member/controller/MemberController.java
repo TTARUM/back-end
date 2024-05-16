@@ -377,10 +377,6 @@ public class MemberController {
     }
 
     @Operation(summary = "아이디 찾기 - 인증 번호 전송")
-    @Parameters(value = {
-            @Parameter(name = "name", description = "이름", example = "홍길동"),
-            @Parameter(name = "email", description = "이메일", example = "asdf@adf.com")
-    })
     @PostMapping("/mail/send/find-id")
     public ResponseEntity<Void> sendVerificationCodeToFindId(@RequestBody @Valid final MailRequestToFindId mailRequest) {
         emailService.sendVerificationCodeToFindId(mailRequest);

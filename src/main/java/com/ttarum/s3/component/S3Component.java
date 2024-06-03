@@ -17,7 +17,7 @@ import java.util.UUID;
 @Component
 public class S3Component {
     private final S3Client s3Client;
-    private final String bucketName = "ttarum-bucket";
+    private static final String BUCKET_NAME = "ttarum";
 
     public S3Component(@Value("${cloud.aws.credentials.accessKey}") String accessKey,
                        @Value("${cloud.aws.credentials.secretKey}") String secretKey,
@@ -45,11 +45,11 @@ public class S3Component {
         byte[] bytes = file.getBytes();
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(BUCKET_NAME)
                 .key(key)
                 .build();
 
         s3Client.putObject(putObjectRequest, software.amazon.awssdk.core.sync.RequestBody.fromBytes(bytes));
-        return s3Client.utilities().getUrl(builder -> builder.bucket(bucketName).key(key));
+        return s3Client.utilities().getUrl(builder -> builder.bucket(BUCKET_NAME).key(key));
     }
 }

@@ -35,7 +35,7 @@ async function initializeEmptyDatabase() {
     const tables: unknown[] = await db.query("SHOW TABLES");
     if (tables.length)
       throw new Error(
-        "db:init only supports an EMPTY database. Existing Spring databases must not be synchronized.",
+        "db:init only supports an EMPTY database. Existing databases must not be synchronized.",
       );
     await db.synchronize();
     const references: [string, string, string][] = [

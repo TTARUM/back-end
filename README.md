@@ -2,7 +2,7 @@
 
 회원가입, 상품 조회, 찜, 장바구니, 배송지, 쿠폰, 주문, 리뷰, 문의 기능을 제공하는 **NestJS REST API 서버**입니다. 화면을 제공하는 프런트엔드는 포함되어 있지 않습니다. API는 HTTP 요청을 받아 JSON으로 결과를 반환합니다.
 
-Spring Boot 프로젝트를 NestJS로 옮긴 코드입니다. 이전 Java 코드와 테스트는 `legacy/spring/`에 보관되어 있으며 현재 서버 실행에는 사용하지 않습니다.
+서버와 테스트는 TypeScript로 작성되어 있습니다. DB 초기화용 SQL과 Docker·CI 설정도 함께 제공합니다.
 
 ## 목차
 
@@ -113,7 +113,7 @@ npm run db:init
 
 성공하면 `Empty database initialized.`가 출력됩니다. 회원과 상품은 생성하지 않습니다.
 
-기존 Spring DB 또는 이미 초기화한 DB는 이 단계를 건너뜁니다. 서버는 `synchronize: false`이므로 실행할 때 스키마를 자동 변경하지 않습니다. 엔티티를 수정해도 기존 테이블은 바뀌지 않습니다. 현재 별도의 버전별 DB 마이그레이션 명령은 없습니다.
+기존 DB 또는 이미 초기화한 DB는 이 단계를 건너뜁니다. 서버는 `synchronize: false`이므로 실행할 때 스키마를 자동 변경하지 않습니다. 엔티티를 수정해도 기존 테이블은 바뀌지 않습니다. 현재 별도의 버전별 DB 마이그레이션 명령은 없습니다.
 
 ### 2-5. 서버 실행 및 종료
 
@@ -414,7 +414,6 @@ src/
   inquiry/inquiry.module.ts   문의 DTO·Controller·Service·Module
   storage/storage.module.ts  이미지 검사와 S3 연동
  test/                       HTTP 통합 테스트와 서비스 테스트
- legacy/spring/              이전 Java 구현 및 테스트
 ```
 
 요청이 처리되는 순서는 다음과 같습니다.

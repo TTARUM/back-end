@@ -3,6 +3,4 @@ dist
 .git
 .env
 .env.*
-legacy
-.gradle
 coverage

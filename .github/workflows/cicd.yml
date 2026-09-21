@@ -1,33 +1,26 @@
 name: Deploy to AWS EC2
-
 on:
-  push:
-    branches:
-      - main
-
+  workflow_dispatch:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up SSH
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Deploy checked revision
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} "echo Successfully connected"
-
-      - name: Deploy to EC2
-        run: |
-          ssh ec2-user@${{ secrets.EC2_HOST }} "\
-          cd /home/ec2-user/back-end && \
-          git pull && \
-          docker compose down && \
-          docker compose build && \
-          docker rmi $(docker images -f "dangling=true" -q) || true && \
-          docker compose up -d \
-          "
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh "ec2-user@$EC2_HOST" "cd /home/ec2-user/back-end && git fetch origin && git checkout --detach '$GITHUB_SHA' && docker compose --env-file /home/ec2-user/.env -f docker-compose.yml -f docker-compose.production.yml up -d --build"

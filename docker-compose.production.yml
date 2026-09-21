@@ -1,0 +1,6 @@
+services:
+  app:
+    env_file: !override
+      - /home/ec2-user/.env
+    ports: !override
+      - "80:8080"

@@ -1,21 +1,17 @@
-# Stage 1: Build the application
-FROM gradle:8.5.0-jdk17 AS build
+FROM node:22-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY tsconfig*.json ./
+COPY src ./src
+RUN npm run build && npm prune --omit=dev
 
-# Copy source code to the build stage
-COPY --chown=gradle:gradle . /home/gradle/src
-WORKDIR /home/gradle/src
-
-# Build the application
-RUN gradle build --no-daemon -x intTest
-
-# Stage 2: Run the application
-FROM openjdk:17-alpine
-
-# Copy the built JAR from the build stage to the run stage
-COPY --from=build /home/gradle/src/build/libs/*.jar /app/app.jar
-
-# Expose the port the app runs on
+FROM node:22-alpine AS runtime
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/dist ./dist
+COPY --chown=node:node package*.json ./
+USER node
 EXPOSE 8080
-
-# Run the JAR file
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+CMD ["node", "dist/main.js"]

@@ -1,37 +1,45 @@
-version: '3.8'
-
 services:
   app:
     build: .
-    platform: linux/amd64
-    restart: always
+    restart: unless-stopped
     ports:
-      - "80:8080"
-    env_file:
-      - /home/ec2-user/.env
+      - "${APP_PORT:-8080}:8080"
+    env_file: .env
+    environment:
+      DATABASE_HOST: mysql
+      REDIS_HOST: redis
     depends_on:
-      - mysql
-      - redis
-
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   mysql:
     image: mysql:8.3
-    restart: always
+    restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=ttarum
-      - MYSQL_ROOT_PASSWORD=secret
+      MYSQL_DATABASE: ${DATABASE_NAME:-ttarum}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD:-secret}
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - /home/ec2-user/mysql/config/mysql.conf:/etc/my.cnf
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p\"$$MYSQL_ROOT_PASSWORD\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
   redis:
-    image: redis:alpine
-    restart: always
+    image: redis:7-alpine
+    restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis-data:/data
-
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 volumes:
   mysql-data:
   redis-data:

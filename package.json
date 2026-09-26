@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --runInBand",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "db:migrate:kakao": "ts-node src/database/migrate-kakao.ts",
     "db:init": "ts-node src/database/init.ts"
   },
   "dependencies": {

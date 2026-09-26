@@ -81,6 +81,7 @@ export class MemberService {
     }
   }
   async wish(memberId: number, itemId: number) {
+    console.log("memberId:", memberId, "itemId:", itemId);
     await this.items.get(itemId);
     if (await this.db.getRepository(Wishlist).existsBy({ memberId, itemId }))
       throw new BadRequestException("이미 찜한 제품입니다.");

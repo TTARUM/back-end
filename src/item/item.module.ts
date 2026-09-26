@@ -45,6 +45,7 @@ export class ItemService {
       .findOneBy({ id: item.categoryId });
     return {
       id: item.id,
+      categoryId: item.categoryId,
       categoryName: category?.name ?? "",
       name: item.name,
       price: item.price,

@@ -16,7 +16,7 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   IsBoolean,
   IsInt,
@@ -39,9 +39,15 @@ import { StorageService, uploadOptions } from "../storage/storage.module";
 export class InquiryDto {
   @IsString() @Length(1, 100) title: string;
   @IsString() @Length(1, 1000) content: string;
-  @IsInt() @Min(1) itemId: number;
-  @IsOptional() @IsBoolean() isSecret?: boolean;
-  @IsOptional() @IsBoolean() secret?: boolean;
+  @Type(() => Number) @IsInt() @Min(1) itemId: number;
+  @IsOptional()
+  @Transform(({ value }) => value === "true" ? true : value === "false" ? false : value)
+  @IsBoolean()
+  isSecret?: boolean;
+  @IsOptional()
+  @Transform(({ value }) => value === "true" ? true : value === "false" ? false : value)
+  @IsBoolean()
+  secret?: boolean;
 }
 class InquiryQuery extends PageDto {
   @Type(() => Number) @IsInt() @Min(1) itemId: number;

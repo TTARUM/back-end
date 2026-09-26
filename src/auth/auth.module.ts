@@ -1,3 +1,4 @@
+import { KakaoService, KakaoLoginDto, KakaoRegisterDto } from "./kakao.service";
 import {
     Body,
     CanActivate,
@@ -34,15 +35,14 @@ export class AuthService {
         const account = await this.db.getRepository(NormalMember).findOneBy({ loginId: dto.loginId });
         const member =
             account && (await this.db.getRepository(Member).findOneBy({ id: account.memberId, isDeleted: false }));
-        console.log("account",account);
-        console.log("member",member);
+   
         if (
             !account ||
-            !member
-            // !(await compare(
-            //     dto.password,
-            //     account.password.replace(/^\$2y\$/, "$2b$"),
-            // ))
+            !member ||
+            !(await compare(
+                dto.password,
+                account.password.replace(/^\$2y\$/, "$2b$"),
+            ))
         )
             throw new UnauthorizedException("로그인 정보가 올바르지 않습니다.");
         const { name, nickname, imageUrl, phoneNumber } = member;
@@ -89,7 +89,9 @@ export class AuthGuard implements CanActivate {
 }
 @Controller("auth")
 class AuthController {
-    constructor(private readonly auth: AuthService) {}
+    constructor(private readonly auth: AuthService, private readonly kakao: KakaoService) {}
+    @Public() @Post("kakao/login") @HttpCode(200) kakaoLogin(@Body() dto: KakaoLoginDto) { return this.kakao.login(dto); }
+    @Public() @Post("kakao/register") @HttpCode(200) kakaoRegister(@Body() dto: KakaoRegisterDto) { return this.kakao.register(dto); }
     @Public() @Post("login") @HttpCode(200) login(@Body() dto: LoginDto) {
         return this.auth.login(dto);
     }
@@ -113,7 +115,7 @@ class AuthController {
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService, { provide: APP_GUARD, useClass: AuthGuard }],
+    providers: [KakaoService, AuthService, { provide: APP_GUARD, useClass: AuthGuard }],
     exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

@@ -23,6 +23,7 @@ async function bootstrap() {
       .setTitle("TTARUM API")
       .setVersion("1.0")
       .addBearerAuth()
+      .addSecurityRequirements("bearer")
       .build(),
   );
   SwaggerModule.setup("api-docs/swagger", app, document, {

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   OnModuleDestroy,
   ServiceUnavailableException,
 } from "@nestjs/common";
@@ -21,6 +22,7 @@ type Verification = {
 @Injectable()
 export class MailService implements OnModuleDestroy {
   private readonly redis: Redis;
+  private readonly logger = new Logger(MailService.name);
   constructor(
     private readonly db: DataSource,
     private readonly config: ConfigService,
@@ -31,11 +33,25 @@ export class MailService implements OnModuleDestroy {
       password: config.get("REDIS_PASSWORD") || undefined,
       lazyConnect: true,
       maxRetriesPerRequest: 1,
+      connectTimeout: 3000,
+      commandTimeout: 5000,
     });
     this.redis.on("error", () => undefined);
   }
   onModuleDestroy() {
     this.redis.disconnect();
+  }
+  private async withRedis<T>(operation: () => Promise<T>): Promise<T> {
+    try {
+      return await operation();
+    } catch {
+      this.logger.error(
+        "Email verification Redis operation failed; check Redis connection and authentication.",
+      );
+      throw new ServiceUnavailableException(
+        "인증 저장소(Redis)에 연결할 수 없습니다. Redis 실행 상태와 연결 설정을 확인해주세요.",
+      );
+    }
   }
   private key(email: string, purpose: string) {
     return `mail:${purpose}:${createHash("sha256").update(email).digest("hex")}`;
@@ -63,7 +79,11 @@ export class MailService implements OnModuleDestroy {
     if (!this.config.get("MAIL_USERNAME") || !this.config.get("MAIL_PASSWORD"))
       throw new ServiceUnavailableException("메일 설정이 필요합니다.");
     const key = this.key(email, purpose);
-    if (!(await this.redis.set(`${key}:cooldown`, "1", "EX", 60, "NX")))
+    if (
+      !(await this.withRedis(() =>
+        this.redis.set(`${key}:cooldown`, "1", "EX", 60, "NX"),
+      ))
+    )
       throw new BadRequestException("잠시 후 다시 요청해주세요.");
     const code = String(randomInt(0, 1000000)).padStart(6, "0");
     const transporter = createTransport({
@@ -76,17 +96,19 @@ export class MailService implements OnModuleDestroy {
       },
       connectionTimeout: 5000,
     });
-    await this.redis.set(
-      key,
-      JSON.stringify({
-        code,
-        uuid: randomUUID(),
-        valid: false,
-        name,
-        attempts: 0,
-      }),
-      "EX",
-      180,
+    await this.withRedis(() =>
+      this.redis.set(
+        key,
+        JSON.stringify({
+          code,
+          uuid: randomUUID(),
+          valid: false,
+          name,
+          attempts: 0,
+        }),
+        "EX",
+        180,
+      ),
     );
     try {
       await transporter.sendMail({
@@ -96,7 +118,7 @@ export class MailService implements OnModuleDestroy {
         text: `인증 번호: ${code}\n3분 이내에 입력해주세요.`,
       });
     } catch {
-      await this.redis.del(key);
+      await this.withRedis(() => this.redis.del(key)).catch(() => undefined);
       throw new ServiceUnavailableException("메일 전송에 실패했습니다.");
     }
     return {};
@@ -104,8 +126,9 @@ export class MailService implements OnModuleDestroy {
   async check(email: string, code: string, purpose: "register" | "find") {
     const key = this.key(email, purpose);
     // Atomic verification prevents concurrent requests from resetting attempt limits or TTL.
-    const result = await this.redis.eval(
-      `
+    const result = await this.withRedis(() =>
+      this.redis.eval(
+        `
       local raw = redis.call('GET', KEYS[1])
       if not raw then return nil end
       local v = cjson.decode(raw)
@@ -116,9 +139,10 @@ export class MailService implements OnModuleDestroy {
       if v.code ~= ARGV[1] then return nil end
       return cjson.encode(v)
     `,
-      1,
-      key,
-      code,
+        1,
+        key,
+        code,
+      ),
     );
     if (typeof result !== "string")
       throw new BadRequestException("인증 번호가 잘못되었거나 만료되었습니다.");
@@ -127,7 +151,7 @@ export class MailService implements OnModuleDestroy {
   }
   async find(dto: FindIdDto) {
     const key = this.key(dto.email, "find");
-    const raw = await this.redis.get(key);
+    const raw = await this.withRedis(() => this.redis.get(key));
     const value: Verification | undefined = raw ? JSON.parse(raw) : undefined;
     if (
       !value?.valid ||
@@ -140,7 +164,7 @@ export class MailService implements OnModuleDestroy {
       .getRepository(NormalMember)
       .findOneBy({ email: dto.email });
     if (!account) throw new BadRequestException("회원을 찾을 수 없습니다.");
-    await this.redis.del(key);
+    await this.withRedis(() => this.redis.del(key));
     return { email: account.loginId };
   }
 }

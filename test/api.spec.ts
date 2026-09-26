@@ -162,10 +162,26 @@ describe("Nest API integration", () => {
       .auth(token, { type: "bearer" })
       .expect(200);
     expect(result.body.itemSummaryResponseList[0].inWishList).toBe(true);
+    const anonymous = await request(app.getHttpServer())
+      .get("/api/items/list")
+      .expect(200);
+    expect(anonymous.body.itemSummaryResponseList[0].inWishList).toBe(false);
+    const wishes = await request(app.getHttpServer())
+      .get("/api/members/wish-item")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(wishes.body.wishlist).toEqual(
+      expect.arrayContaining([expect.objectContaining({ itemId })]),
+    );
     await request(app.getHttpServer())
       .delete(`/api/members/wish-item?itemId=${itemId}`)
       .auth(token, { type: "bearer" })
       .expect(200);
+    const removed = await request(app.getHttpServer())
+      .get("/api/items/list")
+      .auth(token, { type: "bearer" })
+      .expect(200);
+    expect(removed.body.itemSummaryResponseList[0].inWishList).toBe(false);
   });
   it("rejects nonpositive quantities and duplicate order items before persistence", async () => {
     await request(app.getHttpServer())
@@ -208,15 +224,29 @@ describe("Nest API integration", () => {
         }),
       )
       .expect(200);
+    const multipartValues = await request(app.getHttpServer())
+      .post("/api/inquiries")
+      .auth(token, { type: "bearer" })
+      .field(
+        "inquiryRequest",
+        JSON.stringify({
+          itemId: String(itemId),
+          title: "문자열 값 문의",
+          content: "multipart 요청 값",
+          secret: "false",
+        }),
+      )
+      .expect(200);
+    expect(multipartValues.body.inquiryId).toEqual(expect.any(Number));
     const list = await request(app.getHttpServer())
       .get(`/api/inquiries/list?itemId=${itemId}`)
       .expect(200);
-    expect(list.body[0]).toMatchObject({
+    expect(list.body).toEqual(expect.arrayContaining([expect.objectContaining({
       title: "비밀글입니다.",
       memberName: "홍*동",
       secretInquiry: true,
       thisOwnInquiry: false,
-    });
+    })]));
     const detail = await request(app.getHttpServer())
       .get(`/api/inquiries/${created.body.inquiryId}`)
       .auth(token, { type: "bearer" })

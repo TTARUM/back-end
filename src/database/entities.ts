@@ -1,5 +1,6 @@
 import {
   Column,
+  Index,
   CreateDateColumn,
   Entity,
   PrimaryColumn,
@@ -38,10 +39,12 @@ export class MemberProvider extends Identified {
   @Column({ length: 100 }) name: string;
 }
 @Entity("oauth_member")
+@Index("uq_oauth_provider_subject", ["providerId", "providerSubject"], { unique: true })
 export class OauthMember {
   @PrimaryColumn({ name: "member_id" }) memberId: number;
   @Column({ length: 320 }) email: string;
   @Column({ name: "provider_id" }) providerId: number;
+  @Column({ name: "provider_subject", type: "varchar", length: 100, nullable: true }) providerSubject: string | null;
 }
 @Entity("category")
 export class Category extends Identified {

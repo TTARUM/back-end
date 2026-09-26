@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { config } from "dotenv";
 import { DataSource } from "typeorm";
 import { createConnection } from "mysql2/promise";
-import { Coupon, entities } from "./entities";
+import { Coupon, MemberProvider, entities } from "./entities";
 config();
 async function initializeEmptyDatabase() {
   const database = process.env.DATABASE_NAME ?? "ttarum";
@@ -74,6 +74,7 @@ async function initializeEmptyDatabase() {
         couponStrategy: "PERCENTAGE",
         value: 10,
       });
+    await db.getRepository(MemberProvider).insert({ name: "KAKAO" });
     console.log("Empty database initialized.");
   } finally {
     await db.destroy();
